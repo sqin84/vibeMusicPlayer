@@ -16,9 +16,9 @@ public class Album {
     private String last_day;
     private String last_time;
 
-    public Album(String name,String artist, String album){
+    public Album(String name,String artist){
         album_name = name;
-        album_artist = album;
+        album_artist = artist;
     }
     public String get_name(){
         return album_name;

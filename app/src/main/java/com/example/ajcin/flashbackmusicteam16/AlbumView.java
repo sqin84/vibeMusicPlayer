@@ -22,6 +22,7 @@ public class AlbumView extends AppCompatActivity {
 
     private TextView mTextMessage;
     private ArrayList<Song> songList;
+    private ArrayList<Album> albumList;
     private ListView songView;
     private MediaPlayer mediaPlayer;
 
@@ -57,7 +58,6 @@ public class AlbumView extends AppCompatActivity {
 
         songView = (ListView)findViewById(R.id.song_list);
         songList = new ArrayList<Song>();
-        songList.add(new Song("test","test", "test", 12));
         getSongList();
 
         SongAdapter songAdt = new SongAdapter(this, songList);
@@ -67,24 +67,26 @@ public class AlbumView extends AppCompatActivity {
     public void getSongList() {
         Field[] fields=R.raw.class.getFields();
         int[] resArray = new int[fields.length];
-        Log.d("getSongList", "" + fields.length);
         for(int count=0; count < fields.length; count++){
             try {
-                int res_name = fields[count].getInt(null);
-                Log.d("getSongList", ""+res_name);
+                int res_id = fields[count].getInt(null);
                 AssetFileDescriptor assetFileDescriptor =
-                        this.getResources().openRawResourceFd(res_name);
+                        this.getResources().openRawResourceFd(res_id);
                 MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-                mmr.setDataSource(assetFileDescriptor.getFileDescriptor());
+                mmr.setDataSource(assetFileDescriptor.getFileDescriptor(),assetFileDescriptor.getStartOffset(), assetFileDescriptor.getLength());
                 String song_album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
-                String song_artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-                Log.d("getSongList", "TEST");
-                songList.add(new Song("test","test", "test", 12));
+                String song_artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST);
+                String song_name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+                songList.add(new Song(song_name, song_artist, song_album, res_id));
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
+    }
+
+    public void getAlbumList(ArrayList<Song> songList){
+
     }
 
 };
