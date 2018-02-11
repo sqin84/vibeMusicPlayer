@@ -19,7 +19,10 @@ public class Album {
     public Album(String name,String artist){
         album_name = name;
         album_artist = artist;
+        album_songs = new ArrayList<Song>();
     }
+
+    public void add_song(Song s){album_songs.add(s);}
     public String get_name(){
         return album_name;
     }

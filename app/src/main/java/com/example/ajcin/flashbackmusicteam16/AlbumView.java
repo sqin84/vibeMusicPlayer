@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class AlbumView extends AppCompatActivity {
 
@@ -58,18 +59,32 @@ public class AlbumView extends AppCompatActivity {
 
         songView = (ListView)findViewById(R.id.song_list);
         songList = new ArrayList<Song>();
-        getSongList();
+        albumList = new ArrayList<Album>();
+        populateMusicList();
+
+//        LogCat to view albums/artists/songs
+//        Iterator<Album> iter = albumList.iterator();
+//        while(iter.hasNext()){
+//            Album curr = iter.next();
+//            Log.d("Albums", curr.get_name());
+//            Log.d("Albums", curr.get_artist());
+//            Iterator<Song> s_iter = curr.get_album_songs().iterator();
+//            while(s_iter.hasNext()){
+//                Song curr_s = s_iter.next();
+//                Log.d("Albums", curr_s.get_title());
+//            }
+//        }
 
         SongAdapter songAdt = new SongAdapter(this, songList);
         songView.setAdapter(songAdt);
     }
 
-    public void getSongList() {
+    public void populateMusicList() {
         Field[] fields=R.raw.class.getFields();
         int[] resArray = new int[fields.length];
-        for(int count=0; count < fields.length; count++){
+        for(int f=0; f < fields.length; f++){
             try {
-                int res_id = fields[count].getInt(null);
+                int res_id = fields[f].getInt(null);
                 AssetFileDescriptor assetFileDescriptor =
                         this.getResources().openRawResourceFd(res_id);
                 MediaMetadataRetriever mmr = new MediaMetadataRetriever();
@@ -77,7 +92,20 @@ public class AlbumView extends AppCompatActivity {
                 String song_album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
                 String song_artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST);
                 String song_name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-                songList.add(new Song(song_name, song_artist, song_album, res_id));
+                Song curr_song = new Song(song_name, song_artist, song_album, res_id);
+                songList.add(curr_song);
+                Iterator<Album> itr = albumList.iterator();
+                boolean indexed = false;
+                while(itr.hasNext()){
+                   Album curr_album = itr.next();
+                   if(song_album.equals(curr_album.get_name())){
+                        curr_album.add_song(curr_song);
+                        indexed = true;
+                   }
+                }
+                if(!indexed){
+                    albumList.add(new Album(song_album, song_artist));
+                }
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -85,8 +113,5 @@ public class AlbumView extends AppCompatActivity {
         }
     }
 
-    public void getAlbumList(ArrayList<Song> songList){
-
-    }
 
 };
