@@ -1,15 +1,29 @@
 package com.example.ajcin.flashbackmusicteam16;
 
+import android.content.ContentResolver;
+import android.content.res.AssetFileDescriptor;
+import android.database.Cursor;
+import android.media.MediaMetadataRetriever;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 public class AlbumView extends AppCompatActivity {
 
     private TextView mTextMessage;
+    private ArrayList<Song> songList;
+    private ListView songView;
+    private MediaPlayer mediaPlayer;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -29,6 +43,7 @@ public class AlbumView extends AppCompatActivity {
             }
             return false;
         }
+
     };
 
     @Override
@@ -39,6 +54,37 @@ public class AlbumView extends AppCompatActivity {
         mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        songView = (ListView)findViewById(R.id.song_list);
+        songList = new ArrayList<Song>();
+        songList.add(new Song("test","test", "test", 12));
+        getSongList();
+
+        SongAdapter songAdt = new SongAdapter(this, songList);
+        songView.setAdapter(songAdt);
     }
 
-}
+    public void getSongList() {
+        Field[] fields=R.raw.class.getFields();
+        int[] resArray = new int[fields.length];
+        Log.d("getSongList", "" + fields.length);
+        for(int count=0; count < fields.length; count++){
+            try {
+                int res_name = fields[count].getInt(null);
+                Log.d("getSongList", ""+res_name);
+                AssetFileDescriptor assetFileDescriptor =
+                        this.getResources().openRawResourceFd(res_name);
+                MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+                mmr.setDataSource(assetFileDescriptor.getFileDescriptor());
+                String song_album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
+                String song_artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+                Log.d("getSongList", "TEST");
+                songList.add(new Song("test","test", "test", 12));
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
+};

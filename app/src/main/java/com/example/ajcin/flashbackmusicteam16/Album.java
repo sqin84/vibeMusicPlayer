@@ -35,6 +35,7 @@ public class Album {
     public String get_last_time(){
         return last_time;
     }
+    public ArrayList<Song> get_album_songs() {return album_songs;}
     public void update_last_location(String location){
         last_location = location;
     }
