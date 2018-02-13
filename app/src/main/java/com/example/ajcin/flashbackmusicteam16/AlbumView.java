@@ -18,14 +18,17 @@ public class AlbumView extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction transaction =fragmentManager.beginTransaction();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
             switch (item.getItemId()) {
                 case R.id.navigation_albums:
+                    transaction.replace(R.id.musicItems,new AlbumFragment()).commit();
                     return true;
                 case R.id.navigation_songs:
+                    transaction.replace(R.id.musicItems,new songListFragment()).commit();
                     return true;
                 case R.id.navigation_nowPlaying:
-                    transaction.replace(R.id.musicItems,new NowPlayingFragment()).commit();
+                 transaction.replace(R.id.musicItems,new NowPlayingFragment()).commit();
+
                     return true;
             }
             return false;
