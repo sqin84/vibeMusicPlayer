@@ -27,6 +27,8 @@ public class AlbumView extends AppCompatActivity {
                     transaction.replace(R.id.musicItems,new songListFragment()).commit();
                     return true;
                 case R.id.navigation_nowPlaying:
+                 transaction.replace(R.id.musicItems,new NowPlayingFragment()).commit();
+
                     return true;
             }
             return false;
