@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,16 +8,15 @@
     android:orientation="vertical"
     tools:context="com.example.ajcin.flashbackmusicteam16.AlbumView">
 
-    <TextView
-        android:id="@+id/message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="@string/title_albums"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <FrameLayout
+        android:id="@+id/musicItems"
+        android:layout_width="match_parent"
+        android:layout_height="457dp"
+
+        android:layout_above="@+id/navigation"
+        android:layout_alignParentStart="true">
+
+    </FrameLayout>
 
     <ListView
         android:id="@+id/song_list"
@@ -32,9 +31,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="452dp"
-        android:background="?android:attr/windowBackground"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/navigation" />
+        <!--android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"-->
+        android:background="?android:attr/windowBackground"
+        app:menu="@menu/navigation">
 
-</android.support.constraint.ConstraintLayout>
+    </android.support.design.widget.BottomNavigationView>
+</RelativeLayout>
+

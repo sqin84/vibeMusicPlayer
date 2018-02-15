@@ -3,4 +3,13 @@
     <string name="title_albums">Albums</string>
     <string name="title_songs">Songs</string>
     <string name="title_nowPlaying">Now Playing</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="PLAY">Play</string>
+    <string name="Pause">Pause</string>
+    <string name="reset">Reset</string>
+    <string name="albumsName">albumsName</string>
+    <string name="songName">songName</string>
+
 </resources>
