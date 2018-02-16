@@ -26,10 +26,15 @@ public class albumsongsFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, songs_in_an_album);
+        String[] album_song_list_string;
+        Bundle bundle = getArguments();
+        album_song_list_string = bundle.getStringArray("album_songs");
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, album_song_list_string);
         setListAdapter(adapter);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_albumsongs, container, false);
+        View view = inflater.inflate(R.layout.fragment_album, container, false);
+        view.findViewById(android.R.id.list).setScrollContainer(true);
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

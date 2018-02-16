@@ -7,29 +7,36 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+
 
 public class AlbumFragment extends ListFragment {
 
 
     private OnFragmentInteractionListener mListener;
+    String[] album_list_string;
+    private PopulateMusic populateMusic;
 
     public AlbumFragment() {
         // Required empty public constructor
     }
 
 
-    private String[] list = new String[] {"12","23","2q32","poop","asda","ASdasd","asdasd","dasd","Asdas","asdasd"};
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_list_item_1, list);
+        Bundle bundle = getArguments();
+        album_list_string = bundle.getStringArray("albums");
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, album_list_string);
         setListAdapter(adapter);
         // Inflate the layout for this fragment
          View view = inflater.inflate(R.layout.fragment_album, container, false);
@@ -42,7 +49,15 @@ public class AlbumFragment extends ListFragment {
         super.onListItemClick(l, v, position, id);
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.musicItems,new albumsongsFragment()).commit();
+        AlbumView album_view = new AlbumView();
+        populateMusic = album_view.getPopulateMusic();
+        Album selected_album = populateMusic.getAlbum(album_list_string[position]);
+        String[] album_song_list = populateMusic.getSongListInAlbumString(selected_album);
+        Bundle album_song_bundle = new Bundle();
+        album_song_bundle.putStringArray("album_songs",album_song_list);
+        albumsongsFragment album_songs_fragment = new albumsongsFragment();
+        album_songs_fragment.setArguments(album_song_bundle);
+        transaction.replace(R.id.musicItems,album_songs_fragment).commit();
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -23,11 +23,8 @@ import java.util.Iterator;
 
 public class AlbumView extends AppCompatActivity {
 
-    private TextView mTextMessage;
-    private ArrayList<Song> songList;
-    private ArrayList<Album> albumList;
-    private ListView songView;
-    private MediaPlayer mediaPlayer;
+
+    static PopulateMusic populateMusic;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -38,13 +35,23 @@ public class AlbumView extends AppCompatActivity {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             switch (item.getItemId()) {
                 case R.id.navigation_albums:
-                    transaction.replace(R.id.musicItems,new AlbumFragment()).commit();
+                    String[] album_list_string = populateMusic.getAlbumListString();
+                    Bundle album_bundle = new Bundle();
+                    album_bundle.putStringArray("albums",album_list_string);
+                    AlbumFragment album_fragment = new AlbumFragment();
+                    album_fragment.setArguments(album_bundle);
+                    transaction.replace(R.id.musicItems,album_fragment).commit();
                     return true;
                 case R.id.navigation_songs:
-                    transaction.replace(R.id.musicItems,new songListFragment()).commit();
+                    String[] song_list_string = populateMusic.getSongListString();
+                    Bundle song_bundle = new Bundle();
+                    song_bundle.putStringArray("songs",song_list_string);
+                    songListFragment song_fragment = new songListFragment();
+                    song_fragment.setArguments(song_bundle);
+                    transaction.replace(R.id.musicItems,song_fragment).commit();
                     return true;
                 case R.id.navigation_nowPlaying:
-                 transaction.replace(R.id.musicItems,new NowPlayingFragment()).commit();
+                    transaction.replace(R.id.musicItems,new NowPlayingFragment()).commit();
 
                     return true;
             }
@@ -58,64 +65,14 @@ public class AlbumView extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album_view);
 
+        populateMusic = new PopulateMusic(this);
+
+
+
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        songView = (ListView)findViewById(R.id.song_list);
-        songList = new ArrayList<Song>();
-        albumList = new ArrayList<Album>();
-        populateMusicList();
-
-//        LogCat to view albums/artists/songs
-//        Iterator<Album> iter = albumList.iterator();
-//        while(iter.hasNext()){
-//            Album curr = iter.next();
-//            Log.d("Albums", curr.get_name());
-//            Log.d("Albums", curr.get_artist());
-//            Iterator<Song> s_iter = curr.get_album_songs().iterator();
-//            while(s_iter.hasNext()){
-//                Song curr_s = s_iter.next();
-//                Log.d("Albums", curr_s.get_title());
-//            }
-//        }
-
-        SongAdapter songAdt = new SongAdapter(this, songList);
-        songView.setAdapter(songAdt);
     }
 
-    public void populateMusicList() {
-        Field[] fields=R.raw.class.getFields();
-        int[] resArray = new int[fields.length];
-        for(int f=0; f < fields.length; f++){
-            try {
-                int res_id = fields[f].getInt(null);
-                AssetFileDescriptor assetFileDescriptor =
-                        this.getResources().openRawResourceFd(res_id);
-                MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-                mmr.setDataSource(assetFileDescriptor.getFileDescriptor(),assetFileDescriptor.getStartOffset(), assetFileDescriptor.getLength());
-                String song_album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
-                String song_artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST);
-                String song_name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-                Song curr_song = new Song(song_name, song_artist, song_album, res_id);
-                songList.add(curr_song);
-                Iterator<Album> itr = albumList.iterator();
-                boolean indexed = false;
-                while(itr.hasNext()){
-                   Album curr_album = itr.next();
-                   if(song_album.equals(curr_album.get_name())){
-                        curr_album.add_song(curr_song);
-                        indexed = true;
-                   }
-                }
-                if(!indexed){
-                    albumList.add(new Album(song_album, song_artist));
-                }
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-    }
-
-
+    public PopulateMusic getPopulateMusic(){return populateMusic;}
 };
