@@ -25,6 +25,8 @@ public class AlbumView extends AppCompatActivity {
 
 
     static PopulateMusic populateMusic;
+    static MediaPlayer mediaPlayer;
+    private static final int MEDIA_RES_ID = R.raw.after_the_storm;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -67,11 +69,43 @@ public class AlbumView extends AppCompatActivity {
 
         populateMusic = new PopulateMusic(this);
 
-
-
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+    }
 
+    public void createMediaPlayer(){mediaPlayer = new MediaPlayer();}
+
+    public void loadAlbumMedia(Album selected_album){
+
+    }
+
+    public void loadMedia(Song selected_song){
+
+        if(mediaPlayer == null){
+            mediaPlayer = new MediaPlayer();
+        }
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                mediaPlayer.start();
+            }
+        });
+
+        int resourceId = selected_song.get_id();
+
+        AssetFileDescriptor assetFileDescriptor = this.getResources().openRawResourceFd(resourceId);
+        try {
+            mediaPlayer.setDataSource(assetFileDescriptor);
+            mediaPlayer.prepareAsync();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        mediaPlayer.release();
     }
 
     public PopulateMusic getPopulateMusic(){return populateMusic;}

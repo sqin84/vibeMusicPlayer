@@ -17,14 +17,6 @@
 
     </FrameLayout>
 
-    <!--<ListView-->
-        <!--android:id="@+id/song_list"-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="394dp"-->
-        <!--android:layout_marginTop="56dp"-->
-        <!--app:layout_constraintLeft_toLeftOf="parent"-->
-        <!--app:layout_constraintTop_toTopOf="parent" />-->
-
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"
         android:layout_width="match_parent"

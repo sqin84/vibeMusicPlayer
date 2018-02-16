@@ -9,13 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-
+import android.widget.ListView;
 
 
 public class albumsongsFragment extends ListFragment {
 
 
     private OnFragmentInteractionListener mListener;
+    String[] album_song_list_string;
+
 
     public albumsongsFragment() {
         // Required empty public constructor
@@ -26,7 +28,6 @@ public class albumsongsFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        String[] album_song_list_string;
         Bundle bundle = getArguments();
         album_song_list_string = bundle.getStringArray("album_songs");
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, album_song_list_string);
@@ -35,6 +36,18 @@ public class albumsongsFragment extends ListFragment {
         View view = inflater.inflate(R.layout.fragment_album, container, false);
         view.findViewById(android.R.id.list).setScrollContainer(true);
         return view;
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        if(((AlbumView)getActivity()).mediaPlayer == null){
+            ((AlbumView)getActivity()).createMediaPlayer();
+        }
+        ((AlbumView)getActivity()).mediaPlayer.reset();
+        Song selected_song = ((AlbumView)getActivity()).populateMusic.getSong(album_song_list_string[position]);
+        ((AlbumView)getActivity()).loadMedia(selected_song);
+        ((AlbumView)getActivity()).mediaPlayer.start();
     }
 
     // TODO: Rename method, update argument and hook method into UI event

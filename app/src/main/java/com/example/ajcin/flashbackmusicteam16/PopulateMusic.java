@@ -24,12 +24,23 @@ public class PopulateMusic {
     private ArrayList<Song> song_list;
     private ArrayList<Album> album_list;
 
-
     public PopulateMusic(Context current){
         this.context = current;
         song_list = new ArrayList<Song>();
         album_list = new ArrayList<Album>();
         populateMusicList();
+    }
+
+    public Song getSong(String song){
+        Song selected_song = new Song("NA","NA","NA",12);
+        Iterator<Song> iter = song_list.iterator();
+        while(iter.hasNext()){
+            Song curr_song = iter.next();
+            if(curr_song.get_title().equals(song)){
+                selected_song = curr_song;
+            }
+        }
+        return selected_song;
     }
 
     public ArrayList<Song> getSongList(){return song_list;}
@@ -57,6 +68,7 @@ public class PopulateMusic {
         }
         return selected_album;
     }
+
     public ArrayList<Album> getAlbumList(){return album_list;}
 
     public String[] getAlbumListString(){

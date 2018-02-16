@@ -9,7 +9,7 @@ public class Song {
     private final String song_title;
     private final String song_artist;
     private final String song_album;
-    private final long song_id;
+    private final int song_id;
 
     private String last_location;
     private String last_day;
@@ -17,7 +17,7 @@ public class Song {
     private boolean is_liked;
     private boolean is_favorited;
 
-    public Song(String title,String artist, String album, long id){
+    public Song(String title,String artist, String album, int id){
         song_title = title;
         song_album = album;
         song_artist = artist;
@@ -27,6 +27,7 @@ public class Song {
     public String get_title(){return song_title;}
     public String get_album(){return song_album;}
     public String get_artist(){return song_artist;}
+    public int get_id(){return song_id;}
     public String get_last_location(){return last_location;}
     public String get_last_day(){return last_day;}
     public String get_last_time(){return last_time;}

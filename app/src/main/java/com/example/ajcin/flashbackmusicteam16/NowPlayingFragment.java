@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 
@@ -18,7 +19,64 @@ import android.widget.Toast;
  * Use the {@link NowPlayingFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NowPlayingFragment extends Fragment {
+public class NowPlayingFragment extends Fragment implements View.OnClickListener {
+
+    private OnFragmentInteractionListener mListener;
+    Button play_btn;
+    Button pause_btn;
+    Button reset_btn;
+
+    public NowPlayingFragment() {
+        // Required empty public constructor
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_now_playing, container, false);
+
+        play_btn = (Button) rootView.findViewById(R.id.btn_play);
+        pause_btn = (Button) rootView.findViewById(R.id.btn_pause);
+        reset_btn = (Button) rootView.findViewById(R.id.btn_reset);
+
+        play_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((AlbumView)getActivity()).mediaPlayer.start();
+            }
+        });
+        pause_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(((AlbumView)getActivity()).mediaPlayer.isPlaying()){
+                    ((AlbumView)getActivity()).mediaPlayer.pause();
+                }
+            }
+        });
+        reset_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((AlbumView)getActivity()).mediaPlayer.seekTo(0);
+                ((AlbumView)getActivity()).mediaPlayer.start();
+            }
+        });
+
+        return rootView;
+    }
+
+    @Override
+    public void onClick(View v){
+
+    }
+
+
+    // TODO: Rename method, update argument and hook method into UI event
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
+        }
+    }
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -27,12 +85,6 @@ public class NowPlayingFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
-
-    public NowPlayingFragment() {
-        // Required empty public constructor
-    }
 
     /**
      * Use this factory method to create a new instance of
@@ -58,20 +110,6 @@ public class NowPlayingFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_now_playing, container, false);
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
         }
     }
 

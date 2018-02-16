@@ -24,7 +24,6 @@ public class AlbumFragment extends ListFragment {
 
     private OnFragmentInteractionListener mListener;
     String[] album_list_string;
-    private PopulateMusic populateMusic;
 
     public AlbumFragment() {
         // Required empty public constructor
@@ -49,10 +48,8 @@ public class AlbumFragment extends ListFragment {
         super.onListItemClick(l, v, position, id);
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        AlbumView album_view = new AlbumView();
-        populateMusic = album_view.getPopulateMusic();
-        Album selected_album = populateMusic.getAlbum(album_list_string[position]);
-        String[] album_song_list = populateMusic.getSongListInAlbumString(selected_album);
+        Album selected_album = ((AlbumView)getActivity()).populateMusic.getAlbum(album_list_string[position]);
+        String[] album_song_list = ((AlbumView)getActivity()).populateMusic.getSongListInAlbumString(selected_album);
         Bundle album_song_bundle = new Bundle();
         album_song_bundle.putStringArray("album_songs",album_song_list);
         albumsongsFragment album_songs_fragment = new albumsongsFragment();
