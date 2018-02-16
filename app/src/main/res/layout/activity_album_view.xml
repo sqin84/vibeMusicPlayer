@@ -11,30 +11,17 @@
     <FrameLayout
         android:id="@+id/musicItems"
         android:layout_width="match_parent"
-        android:layout_height="457dp"
-
-        android:layout_above="@+id/navigation"
-        android:layout_alignParentStart="true">
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentTop="false">
 
     </FrameLayout>
-
-    <ListView
-        android:id="@+id/song_list"
-        android:layout_width="fill_parent"
-        android:layout_height="394dp"
-        android:layout_marginTop="56dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="452dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        <!--android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"-->
         android:background="?android:attr/windowBackground"
         app:menu="@menu/navigation">
 

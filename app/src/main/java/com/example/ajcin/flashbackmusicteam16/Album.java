@@ -23,7 +23,7 @@ public class Album {
     }
 
     public void add_song(Song s){album_songs.add(s);}
-    public String get_name(){
+    public String get_title(){
         return album_name;
     }
     public String get_artist(){
