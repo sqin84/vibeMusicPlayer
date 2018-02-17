@@ -62,12 +62,12 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
             SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", Context.MODE_PRIVATE);
             String name = sharedPreferences.getString("song_name", "");
             String album = sharedPreferences.getString("song_album", "");
-            song_name.setText("Song name: " + name);
-            song_album.setText("Album name: " + album);
+            song_name.setText(name);
+            song_album.setText(album);
         }else{
             //if there is nothing playing at the momenr
-            song_name.setText("Song name: ");
-            song_album.setText("Album name: ");
+            song_name.setText("No Song Playing");
+            song_album.setText("");
         }
 
 
