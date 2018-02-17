@@ -8,23 +8,23 @@
     android:orientation="vertical"
     tools:context="com.example.ajcin.flashbackmusicteam16.AlbumView">
 
-    <FrameLayout
+    <RelativeLayout
         android:id="@+id/musicItems"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentStart="false"
         android:layout_alignParentTop="false">
 
-    </FrameLayout>
+        <android.support.design.widget.BottomNavigationView
+            android:id="@+id/navigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="?android:attr/windowBackground"
+            app:menu="@menu/navigation">
 
-    <android.support.design.widget.BottomNavigationView
-        android:id="@+id/navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="452dp"
-        android:background="?android:attr/windowBackground"
-        app:menu="@menu/navigation">
+        </android.support.design.widget.BottomNavigationView>
+    </RelativeLayout>
 
-    </android.support.design.widget.BottomNavigationView>
 </RelativeLayout>
 
