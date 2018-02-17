@@ -10,7 +10,6 @@ public class Song {
     private final String song_artist;
     private final String song_album;
     private final int song_id;
-
     private String last_location;
     private String last_day;
     private String last_time;

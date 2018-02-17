@@ -61,7 +61,6 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
         album_name = (TextView) rootView.findViewById(R.id.albumName);
 
         //Display song name and album in NowPlaying
-
         if(((AlbumView)getActivity()).mediaPlayer != null) {
             SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", Context.MODE_PRIVATE);
             String name = sharedPreferences.getString("song_name", "");
@@ -71,12 +70,11 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
             artist_name.setText(artist);
             album_name.setText(album);
         }else{
-            //if there is nothing playing at the momenr
+            //if there is nothing playing at the moment
             song_name.setText("");
             artist_name.setText("No Song Playing");
             album_name.setText("");
         }
-
 
         play_btn.setOnClickListener(new View.OnClickListener() {
             @Override

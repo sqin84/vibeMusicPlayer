@@ -68,8 +68,9 @@ public class AlbumFragment extends ListFragment {
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 if(item.getItemId()==R.id.one){
-                transaction.replace(R.id.musicItems,album_songs_fragment).commit();
+                    transaction.replace(R.id.musicItems,album_songs_fragment).commit();
                 }
+                //TODO: Be able to play entire album if two is selected
                 return true;
             }
         });

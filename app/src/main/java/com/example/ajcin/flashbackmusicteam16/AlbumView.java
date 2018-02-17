@@ -53,7 +53,6 @@ public class AlbumView extends AppCompatActivity {
                     return true;
                 case R.id.navigation_nowPlaying:
                     transaction.replace(R.id.musicItems,new NowPlayingFragment()).commit();
-
                     return true;
             }
             return false;
@@ -75,7 +74,10 @@ public class AlbumView extends AppCompatActivity {
     public void createMediaPlayer(){mediaPlayer = new MediaPlayer();}
 
     public void loadAlbumMedia(Album selected_album){
+        /*ArrayList<Song> songs = selected_album.get_album_songs();
+        for(int i = 0; i < selected_album.get_album_songs().size(); i++) {
 
+        }*/
     }
 
     public void loadMedia(final Song selected_song){
