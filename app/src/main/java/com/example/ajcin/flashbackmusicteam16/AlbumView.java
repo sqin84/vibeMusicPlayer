@@ -1,8 +1,14 @@
 package com.example.ajcin.flashbackmusicteam16;
 
+import android.Manifest;
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -11,6 +17,7 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -18,6 +25,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.lang.reflect.Field;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -26,6 +34,10 @@ public class AlbumView extends AppCompatActivity {
     public PopulateMusic populateMusic;
     public MediaPlayer mediaPlayer;
     private static final int MEDIA_RES_ID = R.raw.after_the_storm;
+    private LocationInfo currentLocationInfo;
+    private int currentResource;
+    private LocalTime intervalStart, intervalEnd;
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -70,6 +82,43 @@ public class AlbumView extends AppCompatActivity {
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        currentLocationInfo=new LocationInfo();
+        LocationListener locationListener=new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+
+                currentLocationInfo.setLocation(location);
+                System.out.println(currentLocationInfo.getCurrentLatitude()+" "+currentLocationInfo.getCurrentLongitude());
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+
+            }
+        };
+        LocationManager locationManger=(LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
+        String locationProvider=LocationManager.GPS_PROVIDER;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    100);
+            Log.d("test1","ins");
+            return;
+        }
+        locationManger.requestLocationUpdates(locationProvider,0,0,locationListener);
+
+
     }
 
     public void createMediaPlayer(){mediaPlayer = new MediaPlayer();}
