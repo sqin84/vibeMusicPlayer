@@ -10,8 +10,10 @@
         android:id="@+id/btn_pause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="350dp"
-        android:layout_toStartOf="@+id/btn_play"
+
+        android:layout_alignBaseline="@+id/btn_play"
+        android:layout_alignBottom="@+id/btn_play"
+        android:layout_toEndOf="@+id/btn_play"
         android:text="@string/Pause" />
 
     <TextView
@@ -38,17 +40,19 @@
         android:id="@+id/btn_reset"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="350dp"
-        android:layout_toEndOf="@+id/btn_play"
+
+        android:layout_alignBaseline="@+id/btn_play"
+        android:layout_alignBottom="@+id/btn_play"
+        android:layout_toStartOf="@+id/btn_play"
         android:text="@string/reset" />
 
     <Button
         android:id="@+id/btn_dislike"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/btn_pause"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="400dp"
+        android:layout_alignStart="@+id/btn_reset"
+        android:layout_below="@+id/btn_reset"
+
         android:text="Dislike" />
 
     <Button
@@ -56,36 +60,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:layout_marginTop="350dp"
+
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="45dp"
         android:text="@string/PLAY" />
 
     <Button
         android:id="@+id/btn_favorite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="200dp"
-        android:layout_marginTop="400dp"
+        android:layout_alignEnd="@+id/btn_pause"
+        android:layout_alignParentBottom="true"
         android:text="Favorite" />
 
 
-   
-    <Button
-        android:id="@+id/btn_pause"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/btn_reset"
-        android:layout_alignBottom="@+id/btn_reset"
-        android:layout_centerHorizontal="true"
-        android:text="@string/Pause" />
 
-    <Button
-        android:id="@+id/btn_reset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="107dp"
-        android:text="@string/reset" />
 
 </RelativeLayout>
