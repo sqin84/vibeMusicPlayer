@@ -87,7 +87,6 @@ public class AlbumView extends AppCompatActivity {
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
-                currentlyPlaying = selected_song;
                 setContentView(R.layout.fragment_now_playing);
                 mediaPlayer.start();
             }

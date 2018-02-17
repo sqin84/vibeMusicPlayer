@@ -67,13 +67,13 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
         favorite_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((AlbumView)getActivity()).currentlyPlaying.favorite_song();
+                //((AlbumView)getActivity()).currentlyPlaying.favorite_song();
             }
         });
         dislike_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((AlbumView)getActivity()).currentlyPlaying.dislike_song();
+                //((AlbumView)getActivity()).currentlyPlaying.dislike_song();
             }
         });
 
