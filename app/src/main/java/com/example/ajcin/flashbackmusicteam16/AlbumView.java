@@ -25,7 +25,6 @@ public class AlbumView extends AppCompatActivity {
 
     static PopulateMusic populateMusic;
     static MediaPlayer mediaPlayer;
-    static Song currentlyPlaying;
     private static final int MEDIA_RES_ID = R.raw.after_the_storm;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -87,7 +86,6 @@ public class AlbumView extends AppCompatActivity {
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
-                setContentView(R.layout.fragment_now_playing);
                 mediaPlayer.start();
             }
         });

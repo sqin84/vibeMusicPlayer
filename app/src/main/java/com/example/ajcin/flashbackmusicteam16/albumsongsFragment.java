@@ -1,10 +1,13 @@
 package com.example.ajcin.flashbackmusicteam16;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.design.widget.BottomNavigationView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +50,20 @@ public class albumsongsFragment extends ListFragment {
         ((AlbumView)getActivity()).mediaPlayer.reset();
         Song selected_song = ((AlbumView)getActivity()).populateMusic.getSong(album_song_list_string[position]);
         ((AlbumView)getActivity()).loadMedia(selected_song);
+        changeToNowPlaying(selected_song);
         ((AlbumView)getActivity()).mediaPlayer.start();
+    }
+
+    public void changeToNowPlaying(Song song) {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        Bundle song_bundle = new Bundle();
+        String[] song_name = new String[1];
+        song_name[0] = song.get_title();
+        song_bundle.putStringArray("song", song_name);
+        NowPlayingFragment npFragment = new NowPlayingFragment();
+        npFragment.setArguments(song_bundle);
+        transaction.replace(R.id.musicItems, npFragment).commit();
     }
 
     // TODO: Rename method, update argument and hook method into UI event

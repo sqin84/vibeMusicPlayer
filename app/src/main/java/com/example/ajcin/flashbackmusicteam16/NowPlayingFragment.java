@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.design.widget.BottomNavigationView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,10 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_now_playing, container, false);
+
+        /*BottomNavigationView bottomNavigationView;
+        bottomNavigationView = (BottomNavigationView) getActivity().findViewById(R.id.navigation);
+        bottomNavigationView.setSelectedItemId(R.id.navigation_nowPlaying);*/
 
         play_btn = (Button) rootView.findViewById(R.id.btn_play);
         pause_btn = (Button) rootView.findViewById(R.id.btn_pause);
