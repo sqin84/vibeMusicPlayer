@@ -34,15 +34,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
+        android:background="@android:color/background_light"
         android:text="albumsName:"
-        android:textSize="22sp" />
+        android:textColor="@android:color/background_dark"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/songName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="200dp"
         android:text="songName:"
-        android:textSize="22sp" />
+        android:textColor="@android:color/background_dark"
+        android:textSize="18sp" />
 
 </FrameLayout>
