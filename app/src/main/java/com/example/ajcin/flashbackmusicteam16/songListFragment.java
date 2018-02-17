@@ -4,7 +4,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.content.Context;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -16,6 +16,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+
+import static android.content.Context.MODE_PRIVATE;
 
 
 public class songListFragment extends ListFragment {
@@ -51,6 +53,13 @@ public class songListFragment extends ListFragment {
         ((AlbumView)getActivity()).loadMedia(selected_song);
         changeToNowPlaying(selected_song);
         ((AlbumView)getActivity()).mediaPlayer.start();
+
+        //Store song name and album
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("song_name",selected_song.get_title());
+        editor.putString("song_album",selected_song.get_album());
+        editor.apply();
     }
 
     public void changeToNowPlaying(Song song) {

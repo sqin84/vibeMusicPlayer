@@ -1,6 +1,7 @@
 package com.example.ajcin.flashbackmusicteam16;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -29,6 +31,9 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
     Button favorite_btn;
     Button dislike_btn;
 
+    TextView song_name;
+    TextView song_album;
+
     public NowPlayingFragment() {
         // Required empty public constructor
     }
@@ -47,6 +52,16 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
         reset_btn = (Button) rootView.findViewById(R.id.btn_reset);
         favorite_btn = (Button) rootView.findViewById(R.id.btn_favorite);
         dislike_btn = (Button) rootView.findViewById(R.id.btn_dislike);
+
+        song_name = (TextView) rootView.findViewById(R.id.songName);
+        song_album = (TextView) rootView.findViewById(R.id.albums);
+
+        //Display song name and album in NowPlaying
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name",Context.MODE_PRIVATE);
+        String name = sharedPreferences.getString("song_name","");
+        String album = sharedPreferences.getString("song_album","");
+        song_name.setText("Song name: " + name);
+        song_album.setText("Album name: "+album);
 
         play_btn.setOnClickListener(new View.OnClickListener() {
             @Override
