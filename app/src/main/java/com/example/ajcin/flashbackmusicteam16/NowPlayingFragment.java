@@ -25,6 +25,8 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
     Button play_btn;
     Button pause_btn;
     Button reset_btn;
+    Button favorite_btn;
+    Button dislike_btn;
 
     public NowPlayingFragment() {
         // Required empty public constructor
@@ -38,6 +40,8 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
         play_btn = (Button) rootView.findViewById(R.id.btn_play);
         pause_btn = (Button) rootView.findViewById(R.id.btn_pause);
         reset_btn = (Button) rootView.findViewById(R.id.btn_reset);
+        favorite_btn = (Button) rootView.findViewById(R.id.btn_favorite);
+        dislike_btn = (Button) rootView.findViewById(R.id.btn_dislike);
 
         play_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,6 +62,18 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
             public void onClick(View view) {
                 ((AlbumView)getActivity()).mediaPlayer.seekTo(0);
                 ((AlbumView)getActivity()).mediaPlayer.start();
+            }
+        });
+        favorite_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((AlbumView)getActivity()).currentlyPlaying.favorite_song();
+            }
+        });
+        dislike_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((AlbumView)getActivity()).currentlyPlaying.dislike_song();
             }
         });
 
