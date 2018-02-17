@@ -50,8 +50,9 @@
         android:id="@+id/btn_dislike"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toStartOf="@+id/albums"
+        android:layout_alignStart="@+id/btn_reset"
+        android:layout_below="@+id/btn_reset"
+
         android:text="Dislike" />
 
     <Button
@@ -69,8 +70,8 @@
         android:id="@+id/btn_favorite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/btn_pause"
         android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@+id/btn_dislike"
         android:text="Favorite" />
 
 
