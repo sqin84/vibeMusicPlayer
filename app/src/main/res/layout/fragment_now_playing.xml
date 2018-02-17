@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,15 +10,16 @@
         android:id="@+id/btn_pause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="150dp"
-        android:layout_marginTop="400dp"
+        android:layout_marginTop="350dp"
+        android:layout_toStartOf="@+id/btn_play"
         android:text="@string/Pause" />
 
     <TextView
         android:id="@+id/albums"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:text="albumsName:"
         android:textSize="22sp" />
 
@@ -26,39 +27,42 @@
         android:id="@+id/songName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="150dp"
+        android:layout_above="@+id/albums"
+        android:layout_centerHorizontal="true"
         android:text="songName:"
         android:textSize="22sp" />
-
-    <Button
-        android:id="@+id/btn_play"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="400dp"
-        android:text="@string/PLAY" />
 
     <Button
         android:id="@+id/btn_reset"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="280dp"
-        android:layout_marginTop="400dp"
+        android:layout_marginTop="350dp"
+        android:layout_toEndOf="@+id/btn_play"
         android:text="@string/reset" />
+
+    <Button
+        android:id="@+id/btn_dislike"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/btn_pause"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="400dp"
+        android:text="Dislike" />
+
+    <Button
+        android:id="@+id/btn_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="350dp"
+        android:layout_centerHorizontal="true"
+        android:text="@string/PLAY" />
 
     <Button
         android:id="@+id/btn_favorite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="200dp"
-        android:layout_marginTop="300dp"
+        android:layout_marginTop="400dp"
         android:text="Favorite" />
 
-    <Button
-        android:id="@+id/btn_dislike"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="300dp"
-        android:text="Dislike" />
-
-</FrameLayout>
+</RelativeLayout>
