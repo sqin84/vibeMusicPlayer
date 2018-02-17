@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,7 +27,7 @@ public class AlbumView extends AppCompatActivity {
 
     public PopulateMusic populateMusic;
     public MediaPlayer mediaPlayer;
-    private static final int MEDIA_RES_ID = R.raw.after_the_storm;
+    public ArrayList<Song> album_playlist;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -75,8 +76,33 @@ public class AlbumView extends AppCompatActivity {
 
     public void createMediaPlayer(){mediaPlayer = new MediaPlayer();}
 
-    public void loadAlbumMedia(Album selected_album){
+    public void playAlbumMedia(Album selected_album){
+        if(mediaPlayer == null){
+            mediaPlayer = new MediaPlayer();
+        }
+        album_playlist = selected_album.get_album_songs();
+        Song first_song;
+        if(album_playlist.size()>0) {
+            first_song = album_playlist.remove(0);
+            loadMedia(first_song);
+            mediaPlayer.start();
+        }
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                nextAlbumTrack();
+            }
+        });
+    }
 
+    //Test method
+    public void nextAlbumTrack(){
+        if(album_playlist.size()>0) {
+            mediaPlayer.reset();
+            Song curr_song = album_playlist.remove(0);
+            loadMedia(curr_song);
+            mediaPlayer.start();
+        }
     }
 
     public void loadMedia(Song selected_song){

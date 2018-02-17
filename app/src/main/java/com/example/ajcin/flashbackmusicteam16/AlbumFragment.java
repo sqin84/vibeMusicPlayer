@@ -26,6 +26,7 @@ public class AlbumFragment extends ListFragment {
 
     private OnFragmentInteractionListener mListener;
     String[] album_list_string;
+    Album selected_album;
 
     public AlbumFragment() {
         // Required empty public constructor
@@ -48,9 +49,7 @@ public class AlbumFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        FragmentManager fragmentManager = getFragmentManager();
-        final FragmentTransaction transaction = fragmentManager.beginTransaction();
-        Album selected_album = ((AlbumView)getActivity()).populateMusic.getAlbum(album_list_string[position]);
+        selected_album = ((AlbumView)getActivity()).populateMusic.getAlbum(album_list_string[position]);
         String[] album_song_list = ((AlbumView)getActivity()).populateMusic.getSongListInAlbumString(selected_album);
         Bundle album_song_bundle = new Bundle();
         album_song_bundle.putStringArray("album_songs",album_song_list);
@@ -67,7 +66,16 @@ public class AlbumFragment extends ListFragment {
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 if(item.getItemId()==R.id.one){
-                transaction.replace(R.id.musicItems,album_songs_fragment).commit();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    transaction.replace(R.id.musicItems,album_songs_fragment).commit();
+                }
+                else if(item.getItemId()==R.id.two){
+                    if(((AlbumView)getActivity()).mediaPlayer == null){
+                        ((AlbumView)getActivity()).createMediaPlayer();
+                    }
+                    ((AlbumView)getActivity()).mediaPlayer.reset();
+                    ((AlbumView)getActivity()).playAlbumMedia(selected_album);
                 }
                 return true;
             }

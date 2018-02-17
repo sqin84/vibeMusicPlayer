@@ -27,6 +27,7 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
     Button play_btn;
     Button pause_btn;
     Button reset_btn;
+    Button skip_btn;
 
     TextView song_name;
     TextView song_album;
@@ -43,6 +44,7 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
         play_btn = (Button) rootView.findViewById(R.id.btn_play);
         pause_btn = (Button) rootView.findViewById(R.id.btn_pause);
         reset_btn = (Button) rootView.findViewById(R.id.btn_reset);
+        skip_btn = (Button) rootView.findViewById(R.id.btn_skip);
 
         song_name = (TextView) rootView.findViewById(R.id.songName);
         song_album = (TextView) rootView.findViewById(R.id.albums);
@@ -74,6 +76,13 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
                 ((AlbumView)getActivity()).mediaPlayer.seekTo(0);
                 ((AlbumView)getActivity()).mediaPlayer.start();
             }
+        });
+        skip_btn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                ((AlbumView)getActivity()).nextAlbumTrack();
+            }
+
         });
 
         return rootView;
