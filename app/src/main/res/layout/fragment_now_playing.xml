@@ -20,7 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="albumsName:"
+        android:text=""
+        android:gravity="center_horizontal"
         android:textSize="22sp" />
 
     <TextView
@@ -29,7 +30,8 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/albums"
         android:layout_centerHorizontal="true"
-        android:text="songName:"
+        android:text=""
+        android:gravity="center_horizontal"
         android:textSize="22sp" />
 
     <Button
