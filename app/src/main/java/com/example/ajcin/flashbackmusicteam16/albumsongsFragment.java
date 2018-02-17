@@ -2,6 +2,7 @@ package com.example.ajcin.flashbackmusicteam16;
 
 import android.app.ListFragment;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -10,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import static android.content.Context.MODE_PRIVATE;
 
 
 public class albumsongsFragment extends ListFragment {
@@ -48,6 +51,13 @@ public class albumsongsFragment extends ListFragment {
         Song selected_song = ((AlbumView)getActivity()).populateMusic.getSong(album_song_list_string[position]);
         ((AlbumView)getActivity()).loadMedia(selected_song);
         ((AlbumView)getActivity()).mediaPlayer.start();
+
+        //Store song name and album
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("song_name",selected_song.get_title());
+        editor.putString("song_album",selected_song.get_album());
+        editor.apply();
     }
 
     // TODO: Rename method, update argument and hook method into UI event
