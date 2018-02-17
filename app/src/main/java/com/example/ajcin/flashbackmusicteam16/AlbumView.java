@@ -23,7 +23,6 @@ import java.util.Iterator;
 
 public class AlbumView extends AppCompatActivity {
 
-
     public PopulateMusic populateMusic;
     public MediaPlayer mediaPlayer;
     private static final int MEDIA_RES_ID = R.raw.after_the_storm;
@@ -79,7 +78,7 @@ public class AlbumView extends AppCompatActivity {
 
     }
 
-    public void loadMedia(Song selected_song){
+    public void loadMedia(final Song selected_song){
 
         if(mediaPlayer == null){
             mediaPlayer = new MediaPlayer();

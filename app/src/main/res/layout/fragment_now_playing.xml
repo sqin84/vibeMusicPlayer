@@ -7,34 +7,69 @@
     <!-- TODO: Update blank fragment layout -->
 
     <Button
-        android:id="@+id/btn_play"
+        android:id="@+id/btn_pause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/btn_pause"
-        android:layout_alignBottom="@+id/btn_pause"
-        android:layout_alignParentStart="true"
-        android:text="@string/PLAY" />
+        android:layout_marginTop="350dp"
+        android:layout_toStartOf="@+id/btn_play"
+        android:text="@string/Pause" />
 
     <TextView
         android:id="@+id/albums"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/songName"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="52dp"
-        android:text="albumsName:"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text=""
+        android:gravity="center_horizontal"
         android:textSize="22sp" />
 
     <TextView
         android:id="@+id/songName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="152dp"
-        android:text="songName:"
+        android:layout_above="@+id/albums"
+        android:layout_centerHorizontal="true"
+        android:text=""
+        android:gravity="center_horizontal"
         android:textSize="22sp" />
 
+    <Button
+        android:id="@+id/btn_reset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="350dp"
+        android:layout_toEndOf="@+id/btn_play"
+        android:text="@string/reset" />
+
+    <Button
+        android:id="@+id/btn_dislike"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/btn_pause"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="400dp"
+        android:text="Dislike" />
+
+    <Button
+        android:id="@+id/btn_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="350dp"
+        android:layout_centerHorizontal="true"
+        android:text="@string/PLAY" />
+
+    <Button
+        android:id="@+id/btn_favorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="200dp"
+        android:layout_marginTop="400dp"
+        android:text="Favorite" />
+
+
+   
     <Button
         android:id="@+id/btn_pause"
         android:layout_width="wrap_content"

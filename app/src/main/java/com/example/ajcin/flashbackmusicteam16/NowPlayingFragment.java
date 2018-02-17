@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.design.widget.BottomNavigationView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,8 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
     Button play_btn;
     Button pause_btn;
     Button reset_btn;
+    Button favorite_btn;
+    Button dislike_btn;
 
     TextView song_name;
     TextView song_album;
@@ -40,14 +43,21 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_now_playing, container, false);
 
+        /*BottomNavigationView bottomNavigationView;
+        bottomNavigationView = (BottomNavigationView) getActivity().findViewById(R.id.navigation);
+        bottomNavigationView.setSelectedItemId(R.id.navigation_nowPlaying);*/
+
         play_btn = (Button) rootView.findViewById(R.id.btn_play);
         pause_btn = (Button) rootView.findViewById(R.id.btn_pause);
         reset_btn = (Button) rootView.findViewById(R.id.btn_reset);
+        favorite_btn = (Button) rootView.findViewById(R.id.btn_favorite);
+        dislike_btn = (Button) rootView.findViewById(R.id.btn_dislike);
 
         song_name = (TextView) rootView.findViewById(R.id.songName);
         song_album = (TextView) rootView.findViewById(R.id.albums);
 
         //Display song name and album in NowPlaying
+
         if(((AlbumView)getActivity()).mediaPlayer != null) {
             SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", Context.MODE_PRIVATE);
             String name = sharedPreferences.getString("song_name", "");
@@ -59,6 +69,7 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
             song_name.setText("Song name: ");
             song_album.setText("Album name: ");
         }
+
 
         play_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +96,18 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
                     ((AlbumView) getActivity()).mediaPlayer.seekTo(0);
                     ((AlbumView) getActivity()).mediaPlayer.start();
                 }
+            }
+        });
+        favorite_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //((AlbumView)getActivity()).currentlyPlaying.favorite_song();
+            }
+        });
+        dislike_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //((AlbumView)getActivity()).currentlyPlaying.dislike_song();
             }
         });
 
