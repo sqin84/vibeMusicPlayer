@@ -9,10 +9,12 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -47,14 +49,31 @@ public class AlbumFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        final FragmentTransaction transaction = fragmentManager.beginTransaction();
         Album selected_album = ((AlbumView)getActivity()).populateMusic.getAlbum(album_list_string[position]);
         String[] album_song_list = ((AlbumView)getActivity()).populateMusic.getSongListInAlbumString(selected_album);
         Bundle album_song_bundle = new Bundle();
         album_song_bundle.putStringArray("album_songs",album_song_list);
-        albumsongsFragment album_songs_fragment = new albumsongsFragment();
+        final albumsongsFragment album_songs_fragment = new albumsongsFragment();
         album_songs_fragment.setArguments(album_song_bundle);
-        transaction.replace(R.id.musicItems,album_songs_fragment).commit();
+
+
+        //Show pop up menu
+        PopupMenu popup = new PopupMenu(getContext(), v);
+        //Inflating the Popup using xml file
+        popup.getMenuInflater().inflate(R.menu.popup, popup.getMenu());
+
+        //registering popup with OnMenuItemClickListener
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                if(item.getItemId()==R.id.one){
+                transaction.replace(R.id.musicItems,album_songs_fragment).commit();
+                }
+                return true;
+            }
+        });
+
+        popup.show();//showing popup menu
     }
 
     // TODO: Rename method, update argument and hook method into UI event
