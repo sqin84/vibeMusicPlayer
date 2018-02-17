@@ -57,31 +57,45 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
         song_album = (TextView) rootView.findViewById(R.id.albums);
 
         //Display song name and album in NowPlaying
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name",Context.MODE_PRIVATE);
-        String name = sharedPreferences.getString("song_name","");
-        String album = sharedPreferences.getString("song_album","");
-        song_name.setText(name);
-        song_album.setText(album);
+
+        if(((AlbumView)getActivity()).mediaPlayer != null) {
+            SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", Context.MODE_PRIVATE);
+            String name = sharedPreferences.getString("song_name", "");
+            String album = sharedPreferences.getString("song_album", "");
+            song_name.setText("Song name: " + name);
+            song_album.setText("Album name: " + album);
+        }else{
+            //if there is nothing playing at the momenr
+            song_name.setText("Song name: ");
+            song_album.setText("Album name: ");
+        }
+
 
         play_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((AlbumView)getActivity()).mediaPlayer.start();
+                if(((AlbumView)getActivity()).mediaPlayer != null){
+                    ((AlbumView)getActivity()).mediaPlayer.start();
+                }
             }
         });
         pause_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(((AlbumView)getActivity()).mediaPlayer.isPlaying()){
-                    ((AlbumView)getActivity()).mediaPlayer.pause();
+                if(((AlbumView)getActivity()).mediaPlayer != null) {
+                    if (((AlbumView) getActivity()).mediaPlayer.isPlaying()) {
+                        ((AlbumView) getActivity()).mediaPlayer.pause();
+                    }
                 }
             }
         });
         reset_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((AlbumView)getActivity()).mediaPlayer.seekTo(0);
-                ((AlbumView)getActivity()).mediaPlayer.start();
+                if(((AlbumView)getActivity()).mediaPlayer != null) {
+                    ((AlbumView) getActivity()).mediaPlayer.seekTo(0);
+                    ((AlbumView) getActivity()).mediaPlayer.start();
+                }
             }
         });
         favorite_btn.setOnClickListener(new View.OnClickListener() {
