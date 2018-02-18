@@ -1,5 +1,9 @@
 package com.example.ajcin.flashbackmusicteam16;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import static java.security.AccessController.getContext;
+
 /**
  * Created by luke on 2/7/2018.
  */
@@ -10,7 +14,6 @@ public class Song {
     private final String song_artist;
     private final String song_album;
     private final int song_id;
-
     private String last_location;
     private String last_day;
     private String last_time;
@@ -25,13 +28,23 @@ public class Song {
     }
 
     public void favorite_song() {
-        is_favorited = (is_favorited) ? false : true;
-        if(is_favorited)    is_disliked = false;
+        if(get_is_favorited()) {
+            is_favorited = false;
+        }
+        else {
+            is_favorited = true;
+            is_disliked = false;
+        }
     }
 
     public void dislike_song() {
-        is_disliked = (get_is_disliked()) ? false : true;
-        if(is_disliked) is_favorited = false;
+        if(get_is_disliked()) {
+            is_disliked = false;
+        }
+        else {
+            is_disliked = true;
+            is_favorited = false;
+        }
     }
 
     public String get_title() {  return song_title;}

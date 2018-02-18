@@ -25,6 +25,7 @@ public class AlbumView extends AppCompatActivity {
 
     public PopulateMusic populateMusic;
     public MediaPlayer mediaPlayer;
+    public Song currentlyPlaying;
     private static final int MEDIA_RES_ID = R.raw.after_the_storm;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -53,7 +54,6 @@ public class AlbumView extends AppCompatActivity {
                     return true;
                 case R.id.navigation_nowPlaying:
                     transaction.replace(R.id.musicItems,new NowPlayingFragment()).commit();
-
                     return true;
             }
             return false;
@@ -91,6 +91,7 @@ public class AlbumView extends AppCompatActivity {
         });
 
         int resourceId = selected_song.get_id();
+        currentlyPlaying = selected_song;
 
         AssetFileDescriptor assetFileDescriptor = this.getResources().openRawResourceFd(resourceId);
         try {
