@@ -64,10 +64,20 @@ public class Song {
         if(is_disliked) is_favorited = false;
     }
     public void addLocation(Location e){
-        locations.add(e);
+        if(locations.size() < 10) {
+            ((LinkedList) locations).addFirst(e);
+        }else{
+            ((LinkedList) locations).addFirst(e);
+            ((LinkedList) locations).removeLast();
+        }
     }
     public void addDateTime(LocalDateTime e)
-    {dateTimes.add(e);}
+    {if(dateTimes.size() < 10) {
+        ((LinkedList) dateTimes).addFirst(e);
+    }else{
+        ((LinkedList) dateTimes).addFirst(e);
+        ((LinkedList) dateTimes).removeLast();
+    }}
 
     public String get_title() {  return song_title;}
     public String get_album() {  return song_album;}
