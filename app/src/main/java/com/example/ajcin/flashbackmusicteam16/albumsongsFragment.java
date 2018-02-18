@@ -31,8 +31,6 @@ public class albumsongsFragment extends ListFragment {
         // Required empty public constructor
     }
 
-    private String[] songs_in_an_album = {"song1", "song2", "heuheue"};
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -57,6 +55,7 @@ public class albumsongsFragment extends ListFragment {
         ((AlbumView)getActivity()).loadMedia(selected_song);
         ((AlbumView)getActivity()).album_playlist = new ArrayList<Song>(0);
         changeToNowPlaying(selected_song);
+        //((AlbumView)getActivity()).mediaPlayer.start();
 
         //Store song name and album
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", MODE_PRIVATE);
@@ -76,6 +75,7 @@ public class albumsongsFragment extends ListFragment {
         song_bundle.putStringArray("song", song_name);
         NowPlayingFragment npFragment = new NowPlayingFragment();
         npFragment.setArguments(song_bundle);
+        ((AlbumView)getActivity()).navigation.getMenu().getItem(2).setChecked(true);
         transaction.replace(R.id.musicItems, npFragment).commit();
     }
 

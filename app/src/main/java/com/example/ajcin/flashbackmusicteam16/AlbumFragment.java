@@ -67,9 +67,9 @@ public class AlbumFragment extends ListFragment {
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 if(item.getItemId()==R.id.one){
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.replace(R.id.musicItems,album_songs_fragment).commit();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    transaction.replace(R.id.musicItems,album_songs_fragment).commit();
                 }
                 else if(item.getItemId()==R.id.two){
                     if(((AlbumView)getActivity()).mediaPlayer == null){
@@ -79,6 +79,7 @@ public class AlbumFragment extends ListFragment {
                     ((AlbumView)getActivity()).album_playlist  = new ArrayList<Song>(selected_album.get_album_songs());
                     ((AlbumView)getActivity()).nextAlbumTrack();
                 }
+              
                 return true;
             }
         });
