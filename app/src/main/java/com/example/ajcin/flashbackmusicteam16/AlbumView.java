@@ -21,12 +21,17 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/** AlbumView class to handle logic associated with playing Songs from an album.
+  * Author: CSE 110 - Team 16, Winter 2018
+  * Date: February 7, 2018
+ */
+
 public class AlbumView extends AppCompatActivity {
 
     public PopulateMusic populateMusic;
     public MediaPlayer mediaPlayer;
     public Song currentlyPlaying;
-    private static final int MEDIA_RES_ID = R.raw.after_the_storm;
+    //private static final int MEDIA_RES_ID = R.raw.after_the_storm;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -72,7 +77,7 @@ public class AlbumView extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
-    public void createMediaPlayer(){mediaPlayer = new MediaPlayer();}
+    public void createMediaPlayer(){    mediaPlayer = new MediaPlayer();}
 
     public void loadAlbumMedia(Album selected_album){
 

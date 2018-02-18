@@ -1,11 +1,9 @@
 package com.example.ajcin.flashbackmusicteam16;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import static java.security.AccessController.getContext;
-
 /**
- * Created by luke on 2/7/2018.
+  * Song class to store resource id of file, along with various information about the Song.
+  * Author: CSE 110 - Team 16, Winter 2018
+  * Date: February 7, 2018
  */
 
 public class Song {
