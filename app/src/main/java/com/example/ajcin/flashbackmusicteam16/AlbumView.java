@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,6 +26,8 @@ public class AlbumView extends AppCompatActivity {
     public PopulateMusic populateMusic;
     public MediaPlayer mediaPlayer;
     public ArrayList<Song> album_playlist;
+    public Song currentlyPlaying;
+    private static final int MEDIA_RES_ID = R.raw.after_the_storm;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -54,7 +55,6 @@ public class AlbumView extends AppCompatActivity {
                     return true;
                 case R.id.navigation_nowPlaying:
                     transaction.replace(R.id.musicItems,new NowPlayingFragment()).commit();
-
                     return true;
             }
             return false;
@@ -91,6 +91,8 @@ public class AlbumView extends AppCompatActivity {
             }
         });
         int resourceId = selected_song.get_id();
+        currentlyPlaying = selected_song;
+
         AssetFileDescriptor assetFileDescriptor = this.getResources().openRawResourceFd(resourceId);
         try {
             mediaPlayer.setDataSource(assetFileDescriptor);

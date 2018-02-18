@@ -2,6 +2,7 @@ package com.example.ajcin.flashbackmusicteam16;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -12,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 
 /**
@@ -32,7 +35,8 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
     Button dislike_btn;
 
     TextView song_name;
-    TextView song_album;
+    TextView artist_name;
+    TextView album_name;
 
     public NowPlayingFragment() {
         // Required empty public constructor
@@ -54,22 +58,24 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
         dislike_btn = (Button) rootView.findViewById(R.id.btn_dislike);
 
         song_name = (TextView) rootView.findViewById(R.id.songName);
-        song_album = (TextView) rootView.findViewById(R.id.albums);
+        artist_name = (TextView) rootView.findViewById(R.id.artistName);
+        album_name = (TextView) rootView.findViewById(R.id.albumName);
 
         //Display song name and album in NowPlaying
-
         if(((AlbumView)getActivity()).mediaPlayer != null) {
             SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", Context.MODE_PRIVATE);
             String name = sharedPreferences.getString("song_name", "");
-            String album = sharedPreferences.getString("song_album", "");
+            String artist = sharedPreferences.getString("artist_name", "");
+            String album = sharedPreferences.getString("album_name", "");
             song_name.setText(name);
-            song_album.setText(album);
+            artist_name.setText(artist);
+            album_name.setText(album);
         }else{
-            //if there is nothing playing at the momenr
-            song_name.setText("No Song Playing");
-            song_album.setText("");
+            //if there is nothing playing at the moment
+            song_name.setText("");
+            artist_name.setText("No Song Playing");
+            album_name.setText("");
         }
-
 
         play_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,13 +107,34 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
         favorite_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //((AlbumView)getActivity()).currentlyPlaying.favorite_song();
+                if(((AlbumView)getActivity()).mediaPlayer != null) {
+                    Song currSong = ((AlbumView) getActivity()).currentlyPlaying;
+                    currSong.favorite_song();
+
+                    if (currSong.get_is_favorited()) {
+                        favorite_btn.setBackgroundColor(Color.RED);
+                        dislike_btn.setBackgroundColor(Color.LTGRAY);
+                    } else {
+                        favorite_btn.setBackgroundColor(Color.LTGRAY);
+                    }
+                }
+
             }
         });
         dislike_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //((AlbumView)getActivity()).currentlyPlaying.dislike_song();
+                if(((AlbumView)getActivity()).mediaPlayer != null) {
+                    Song currSong = ((AlbumView) getActivity()).currentlyPlaying;
+                    currSong.dislike_song();
+
+                    if (currSong.get_is_disliked()) {
+                        dislike_btn.setBackgroundColor(Color.RED);
+                        favorite_btn.setBackgroundColor(Color.LTGRAY);
+                    } else {
+                        dislike_btn.setBackgroundColor(Color.LTGRAY);
+                    }
+                }
             }
         });
 
@@ -118,7 +145,6 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
     public void onClick(View v){
 
     }
-
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
