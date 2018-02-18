@@ -107,32 +107,16 @@ public class AlbumView extends AppCompatActivity {
                     return false;
                 case R.id.navigation_flashbackMode:
                     if(!isFlashbackMode) {
-                        FlashbackMode flashbackMode = new FlashbackMode(currentLocationInfo.getLocation(), TimeMachine.now(),populateMusic);
-                        queuedSongs= flashbackMode.initiate();
-                        isFlashbackMode = true;
-                        if(mediaPlayer == null){
-                            createMediaPlayer();
-                        }
-
-                        //Store song name and album
-                        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("user_name", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString("song_name",queuedSongs.get(0).get_title());
-                        editor.putString("song_album",queuedSongs.get(0).get_album());
-
-                        editor.apply();
-
-                        mediaPlayer.reset();
-                        loadMedia(queuedSongs.get(0));
-
-                        queuedSongs.remove(0);
-
+                        setUpFlashBackMode();
                         transaction.replace(R.id.musicItems, new NowPlayingFragment()).commit();
                         Toast.makeText(getApplicationContext(), "Flashback mode engaged", Toast.LENGTH_SHORT).show();
-
                         return true;
                     }else{
                         Toast.makeText(getApplicationContext(), "Standard mode", Toast.LENGTH_SHORT).show();
+                        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("flash_back_mode", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("isFlashBackMode", "false");
+                        editor.apply();
                         transaction.replace(R.id.musicItems, new NowPlayingFragment()).commit();
                         navigation.getMenu().getItem(2).setChecked(true);
                         isFlashbackMode = false;
@@ -143,7 +127,31 @@ public class AlbumView extends AppCompatActivity {
 
     };
 
+    private void setUpFlashBackMode(){
+        FlashbackMode flashbackMode = new FlashbackMode(currentLocationInfo.getLocation(), TimeMachine.now(),populateMusic);
+        queuedSongs= flashbackMode.initiate();
+        isFlashbackMode = true;
+        if(mediaPlayer == null){
+            createMediaPlayer();
+        }
 
+        //Store song name and album
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("user_name", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("song_name",queuedSongs.get(0).get_title());
+        editor.putString("song_album",queuedSongs.get(0).get_album());
+        editor.apply();
+
+        sharedPreferences = getSharedPreferences("flash_back_mode", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        editor.putString("isFlashBackMode", "true");
+        editor.apply();
+
+        mediaPlayer.reset();
+        loadMedia(queuedSongs.get(0));
+
+        queuedSongs.remove(0);
+    }
 
 
     @Override
@@ -203,13 +211,37 @@ public class AlbumView extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         String flashback_mode = sharedPreferences.getString("isFlashBackMode", "");
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
         if(flashback_mode.equals("")){
             editor.putString("isFlashBackMode", "false");
             editor.apply();
+
+            String[] album_list_string = populateMusic.getAlbumListString();
+            Bundle album_bundle = new Bundle();
+            album_bundle.putStringArray("albums", album_list_string);
+
+            // launch new fragment
+            AlbumFragment album_fragment = new AlbumFragment();
+            album_fragment.setArguments(album_bundle);
+            transaction.replace(R.id.musicItems, album_fragment).commit();
         }else if(flashback_mode.equals("true")){
             isFlashbackMode = true;
-            Toast.makeText(getApplicationContext(), "Flashback Mode", Toast.LENGTH_SHORT).show();
+            setUpFlashBackMode();
+            transaction.replace(R.id.musicItems, new NowPlayingFragment()).commit();
+            navigation.getMenu().getItem(2).setChecked(true);
+            Toast.makeText(getApplicationContext(), "Flashback mode engaged", Toast.LENGTH_SHORT).show();
         }else if(flashback_mode.equals("false")){
+
+            String[] album_list_string = populateMusic.getAlbumListString();
+            Bundle album_bundle = new Bundle();
+            album_bundle.putStringArray("albums", album_list_string);
+
+            // launch new fragment
+            AlbumFragment album_fragment = new AlbumFragment();
+            album_fragment.setArguments(album_bundle);
+            transaction.replace(R.id.musicItems, album_fragment).commit();
+
             isFlashbackMode = false;
             Toast.makeText(getApplicationContext(), "Standard Mode", Toast.LENGTH_SHORT).show();
         }
