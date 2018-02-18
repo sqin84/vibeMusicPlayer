@@ -4,6 +4,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -76,7 +77,8 @@ public class AlbumFragment extends ListFragment {
                         ((AlbumView)getActivity()).createMediaPlayer();
                     }
                     ((AlbumView)getActivity()).mediaPlayer.reset();
-                    ((AlbumView)getActivity()).playAlbumMedia(selected_album);
+                    ((AlbumView)getActivity()).album_playlist  = new ArrayList<Song>(selected_album.get_album_songs());
+                    ((AlbumView)getActivity()).nextAlbumTrack();
                 }
                 return true;
             }
@@ -84,6 +86,26 @@ public class AlbumFragment extends ListFragment {
 
         popup.show();//showing popup menu
     }
+
+//    public void playAlbumMedia(Album selected_album){
+//        album_playlist  = new ArrayList<Song>(selected_album.get_album_songs());
+//        Song first_song;
+//        if(album_playlist.size()>0) {
+//            first_song = album_playlist.remove(0);
+//            ((AlbumView)getActivity()).loadMedia(first_song);
+//            Log.d("MediaPlayer","Starting first song from album");
+////            ((AlbumView)getActivity()).mediaPlayer.start();
+//        }
+//        else{
+//            Log.d("AlbumView","No music in playlist");
+//        }
+//        ((AlbumView)getActivity()).mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//            @Override
+//            public void onCompletion(MediaPlayer mediaPlayer) {
+//                ((AlbumView) getActivity()).nextAlbumTrack(album_playlist);
+//            }
+//        });
+//    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

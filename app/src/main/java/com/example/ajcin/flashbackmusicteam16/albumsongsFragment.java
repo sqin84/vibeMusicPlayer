@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+
 import static android.content.Context.MODE_PRIVATE;
 
 
@@ -53,8 +55,8 @@ public class albumsongsFragment extends ListFragment {
         ((AlbumView)getActivity()).mediaPlayer.reset();
         Song selected_song = ((AlbumView)getActivity()).populateMusic.getSong(album_song_list_string[position]);
         ((AlbumView)getActivity()).loadMedia(selected_song);
+        ((AlbumView)getActivity()).album_playlist = new ArrayList<Song>(0);
         changeToNowPlaying(selected_song);
-        ((AlbumView)getActivity()).mediaPlayer.start();
 
         //Store song name and album
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", MODE_PRIVATE);

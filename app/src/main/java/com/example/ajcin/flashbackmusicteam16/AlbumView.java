@@ -66,7 +66,6 @@ public class AlbumView extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album_view);
-
         populateMusic = new PopulateMusic(this);
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
@@ -75,57 +74,45 @@ public class AlbumView extends AppCompatActivity {
 
     public void createMediaPlayer(){mediaPlayer = new MediaPlayer();}
 
-    public void playAlbumMedia(Album selected_album){
+    public void loadMedia(Song selected_song){
         if(mediaPlayer == null){
             mediaPlayer = new MediaPlayer();
         }
-        album_playlist = selected_album.get_album_songs();
-        Song first_song;
-        if(album_playlist.size()>0) {
-            first_song = album_playlist.remove(0);
-            loadMedia(first_song);
-            mediaPlayer.start();
-        }
+        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                mediaPlayer.start();
+            }
+        });
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 nextAlbumTrack();
             }
         });
-    }
-
-    //Test method
-    public void nextAlbumTrack(){
-        if(album_playlist.size()>0) {
-            mediaPlayer.reset();
-            Song curr_song = album_playlist.remove(0);
-            loadMedia(curr_song);
-            mediaPlayer.start();
-        }
-    }
-
-    public void loadMedia(final Song selected_song){
-
-        if(mediaPlayer == null){
-            mediaPlayer = new MediaPlayer();
-        }
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                mediaPlayer.start();
-            }
-        });
-
         int resourceId = selected_song.get_id();
-
         AssetFileDescriptor assetFileDescriptor = this.getResources().openRawResourceFd(resourceId);
         try {
             mediaPlayer.setDataSource(assetFileDescriptor);
             mediaPlayer.prepareAsync();
         } catch (Exception e) {
+            Log.d("MediaPlayer", "did not prepare correctly");
             System.out.println(e.toString());
         }
     }
+
+    //Test method
+    public void nextAlbumTrack(){
+        if(album_playlist != null && album_playlist.size()>0) {
+            if(mediaPlayer == null){
+                mediaPlayer = new MediaPlayer();
+            }
+            mediaPlayer.reset();
+            Song curr_song = album_playlist.remove(0);
+            loadMedia(curr_song);
+        }
+    }
+
 
     @Override
     public void onDestroy(){
