@@ -107,32 +107,33 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
         favorite_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Song currSong = ((AlbumView)getActivity()).currentlyPlaying;
-                currSong.favorite_song();
+                if(((AlbumView)getActivity()).mediaPlayer != null) {
+                    Song currSong = ((AlbumView) getActivity()).currentlyPlaying;
+                    currSong.favorite_song();
 
-                if(currSong.get_is_favorited()) {
-                    favorite_btn.setBackgroundColor(Color.RED);
-                    dislike_btn.setBackgroundColor(Color.LTGRAY);
+                    if (currSong.get_is_favorited()) {
+                        favorite_btn.setBackgroundColor(Color.RED);
+                        dislike_btn.setBackgroundColor(Color.LTGRAY);
+                    } else {
+                        favorite_btn.setBackgroundColor(Color.LTGRAY);
+                    }
                 }
-                else {
-                    favorite_btn.setBackgroundColor(Color.LTGRAY);
-                }
-
 
             }
         });
         dislike_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Song currSong = ((AlbumView)getActivity()).currentlyPlaying;
-                currSong.dislike_song();
+                if(((AlbumView)getActivity()).mediaPlayer != null) {
+                    Song currSong = ((AlbumView) getActivity()).currentlyPlaying;
+                    currSong.dislike_song();
 
-                if(currSong.get_is_disliked()) {
-                    dislike_btn.setBackgroundColor(Color.RED);
-                    favorite_btn.setBackgroundColor(Color.LTGRAY);
-                }
-                else {
-                    dislike_btn.setBackgroundColor(Color.LTGRAY);
+                    if (currSong.get_is_disliked()) {
+                        dislike_btn.setBackgroundColor(Color.RED);
+                        favorite_btn.setBackgroundColor(Color.LTGRAY);
+                    } else {
+                        dislike_btn.setBackgroundColor(Color.LTGRAY);
+                    }
                 }
             }
         });
