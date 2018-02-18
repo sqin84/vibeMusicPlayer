@@ -52,7 +52,7 @@ public class songListFragment extends ListFragment {
         Song selected_song = ((AlbumView)getActivity()).populateMusic.getSong(song_list_string[position]);
         ((AlbumView)getActivity()).loadMedia(selected_song);
         changeToNowPlaying(selected_song);
-        ((AlbumView)getActivity()).mediaPlayer.start();
+        //((AlbumView)getActivity()).mediaPlayer.start();
 
         //Store song name and album
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", MODE_PRIVATE);
@@ -72,6 +72,7 @@ public class songListFragment extends ListFragment {
         song_bundle.putStringArray("song", song_name);
         NowPlayingFragment npFragment = new NowPlayingFragment();
         npFragment.setArguments(song_bundle);
+        ((AlbumView)getActivity()).navigation.getMenu().getItem(2).setChecked(true);
         transaction.replace(R.id.musicItems, npFragment).commit();
     }
 

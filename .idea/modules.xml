@@ -4,6 +4,10 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/FlashbackMusicTeam16.iml" filepath="$PROJECT_DIR$/FlashbackMusicTeam16.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+
+      <module fileurl="file://$PROJECT_DIR$/cse-110-team-project-team-16.iml" filepath="$PROJECT_DIR$/cse-110-team-project-team-16.iml" />
+      <module fileurl="file://C:\Users\ajcin\Documents\AndroidStudioProjects\FlashbackMusicTeam16\cse-110-team-project-team-16.iml" filepath="C:\Users\ajcin\Documents\AndroidStudioProjects\FlashbackMusicTeam16\cse-110-team-project-team-16.iml" />
+      <module fileurl="file://C:\Users\sqin8\AndroidStudioProjects\cse-110-team-project-team-16\.idea\cse-110-team-project-team-16_2.iml" filepath="C:\Users\sqin8\AndroidStudioProjects\cse-110-team-project-team-16\.idea\cse-110-team-project-team-16_2.iml" />
     </modules>
   </component>
 </project>
