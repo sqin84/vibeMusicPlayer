@@ -26,6 +26,7 @@ public class AlbumView extends AppCompatActivity {
     public PopulateMusic populateMusic;
     public MediaPlayer mediaPlayer;
     private static final int MEDIA_RES_ID = R.raw.after_the_storm;
+    public ArrayList<String> HistoricalTrack = new ArrayList<>();
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {

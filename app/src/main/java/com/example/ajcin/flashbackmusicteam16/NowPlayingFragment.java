@@ -9,9 +9,13 @@ import android.support.design.widget.BottomNavigationView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 
 /**
@@ -25,14 +29,17 @@ import android.widget.Toast;
 public class NowPlayingFragment extends Fragment implements View.OnClickListener {
 
     private OnFragmentInteractionListener mListener;
+
     Button play_btn;
     Button pause_btn;
     Button reset_btn;
     Button favorite_btn;
     Button dislike_btn;
+    Button historical_btn;
 
     TextView song_name;
     TextView song_album;
+    ListView lv;
 
     public NowPlayingFragment() {
         // Required empty public constructor
@@ -41,20 +48,21 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_now_playing, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_now_playing, container, false);
 
         /*BottomNavigationView bottomNavigationView;
         bottomNavigationView = (BottomNavigationView) getActivity().findViewById(R.id.navigation);
         bottomNavigationView.setSelectedItemId(R.id.navigation_nowPlaying);*/
 
-        play_btn = (Button) rootView.findViewById(R.id.btn_play);
-        pause_btn = (Button) rootView.findViewById(R.id.btn_pause);
-        reset_btn = (Button) rootView.findViewById(R.id.btn_reset);
-        favorite_btn = (Button) rootView.findViewById(R.id.btn_favorite);
-        dislike_btn = (Button) rootView.findViewById(R.id.btn_dislike);
+        play_btn = rootView.findViewById(R.id.btn_play);
+        pause_btn = rootView.findViewById(R.id.btn_pause);
+        reset_btn = rootView.findViewById(R.id.btn_reset);
+        favorite_btn = rootView.findViewById(R.id.btn_favorite);
+        dislike_btn = rootView.findViewById(R.id.btn_dislike);
+        historical_btn = rootView.findViewById(R.id.btn_historical);
 
-        song_name = (TextView) rootView.findViewById(R.id.songName);
-        song_album = (TextView) rootView.findViewById(R.id.albums);
+        song_name = rootView.findViewById(R.id.songName);
+        song_album = rootView.findViewById(R.id.albums);
 
         //Display song name and album in NowPlaying
 
@@ -62,6 +70,7 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
             SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", Context.MODE_PRIVATE);
             String name = sharedPreferences.getString("song_name", "");
             String album = sharedPreferences.getString("song_album", "");
+
             song_name.setText(name);
             song_album.setText(album);
         }else{
@@ -108,6 +117,15 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
             @Override
             public void onClick(View view) {
                 //((AlbumView)getActivity()).currentlyPlaying.dislike_song();
+            }
+        });
+
+        historical_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lv = (ListView) rootView.findViewById(R.id.historical);
+                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,((AlbumView)getActivity()).HistoricalTrack);
+                lv.setAdapter(arrayAdapter);
             }
         });
 

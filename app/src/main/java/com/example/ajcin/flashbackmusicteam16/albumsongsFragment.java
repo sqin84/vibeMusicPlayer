@@ -56,6 +56,9 @@ public class albumsongsFragment extends ListFragment {
         changeToNowPlaying(selected_song);
         ((AlbumView)getActivity()).mediaPlayer.start();
 
+        //Store the track information to historicalTrack arrayList
+        ((AlbumView)getActivity()).HistoricalTrack.add(selected_song.get_title()+" "+"("+selected_song.get_album()+")");
+
         //Store song name and album
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
