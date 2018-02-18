@@ -59,7 +59,8 @@ public class albumsongsFragment extends ListFragment {
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("song_name",selected_song.get_title());
-        editor.putString("song_album",selected_song.get_album());
+        editor.putString("artist_name", selected_song.get_artist());
+        editor.putString("album_name",selected_song.get_album());
         editor.apply();
     }
 

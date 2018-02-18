@@ -57,8 +57,9 @@ public class songListFragment extends ListFragment {
         //Store song name and album
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("song_name",selected_song.get_title());
-        editor.putString("song_album",selected_song.get_album());
+        editor.putString("song_name", selected_song.get_title());
+        editor.putString("artist_name", selected_song.get_artist());
+        editor.putString("album_name", selected_song.get_album());
         editor.apply();
     }
 
@@ -74,8 +75,6 @@ public class songListFragment extends ListFragment {
         ((AlbumView)getActivity()).navigation.getMenu().getItem(2).setChecked(true);
         transaction.replace(R.id.musicItems, npFragment).commit();
     }
-
-
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

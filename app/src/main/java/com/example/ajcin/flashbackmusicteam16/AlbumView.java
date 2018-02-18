@@ -46,6 +46,7 @@ public class AlbumView extends AppCompatActivity {
 
     public PopulateMusic populateMusic;
     public MediaPlayer mediaPlayer;
+    public Song currentlyPlaying;
     private static final int MEDIA_RES_ID = R.raw.after_the_storm;
     public BottomNavigationView navigation;
     public ProgressBar progressBar;
@@ -101,7 +102,7 @@ public class AlbumView extends AppCompatActivity {
                 case R.id.navigation_nowPlaying:
                     if (!isFlashbackMode){
                         transaction.replace(R.id.musicItems, new NowPlayingFragment()).commit();
-                    return true;
+                        return true;
                     }
                     Toast.makeText(getApplicationContext(), "Not available in Flashback Mode", Toast.LENGTH_SHORT).show();
                     return false;
@@ -282,6 +283,7 @@ public class AlbumView extends AppCompatActivity {
         });
 
         int resourceId = selected_song.get_id();
+        currentlyPlaying = selected_song;
 
         AssetFileDescriptor assetFileDescriptor = this.getResources().openRawResourceFd(resourceId);
         try {
