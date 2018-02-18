@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,48 +7,74 @@
     <!-- TODO: Update blank fragment layout -->
 
     <Button
-        android:id="@+id/btn_play"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="400dp"
-        android:text="@string/PLAY" />
-
-    <Button
         android:id="@+id/btn_pause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="150dp"
-        android:layout_marginTop="400dp"
+
+        android:layout_alignBaseline="@+id/btn_play"
+        android:layout_alignBottom="@+id/btn_play"
+        android:layout_toEndOf="@+id/btn_play"
         android:text="@string/Pause" />
-
-    <Button
-        android:id="@+id/btn_reset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="280dp"
-        android:layout_marginTop="400dp"
-        android:text="@string/reset" />
-
-    <Button
-        android:id="@+id/btn_skip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Skip"/>
 
     <TextView
         android:id="@+id/albums"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:text="albumsName:"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text=""
+        android:gravity="center_horizontal"
         android:textSize="22sp" />
 
     <TextView
         android:id="@+id/songName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="150dp"
-        android:text="songName:"
+        android:layout_above="@+id/albums"
+        android:layout_centerHorizontal="true"
+        android:text=""
+        android:gravity="center_horizontal"
         android:textSize="22sp" />
 
-</FrameLayout>
+    <Button
+        android:id="@+id/btn_reset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_alignBaseline="@+id/btn_play"
+        android:layout_alignBottom="@+id/btn_play"
+        android:layout_toStartOf="@+id/btn_play"
+        android:text="@string/reset" />
+
+    <Button
+        android:id="@+id/btn_dislike"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/btn_reset"
+        android:layout_below="@+id/btn_reset"
+
+        android:text="Dislike" />
+
+    <Button
+        android:id="@+id/btn_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="45dp"
+        android:text="@string/PLAY" />
+
+    <Button
+        android:id="@+id/btn_favorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/btn_pause"
+        android:layout_alignParentBottom="true"
+        android:text="Favorite" />
+
+
+
+
+</RelativeLayout>

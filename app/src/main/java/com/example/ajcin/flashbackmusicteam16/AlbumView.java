@@ -24,7 +24,6 @@ import java.util.Iterator;
 
 public class AlbumView extends AppCompatActivity {
 
-
     public PopulateMusic populateMusic;
     public MediaPlayer mediaPlayer;
     public ArrayList<Song> album_playlist;
@@ -105,7 +104,7 @@ public class AlbumView extends AppCompatActivity {
         }
     }
 
-    public void loadMedia(Song selected_song){
+    public void loadMedia(final Song selected_song){
 
         if(mediaPlayer == null){
             mediaPlayer = new MediaPlayer();

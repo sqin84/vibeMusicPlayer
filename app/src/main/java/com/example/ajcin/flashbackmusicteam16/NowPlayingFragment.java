@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.design.widget.BottomNavigationView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +28,8 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
     Button play_btn;
     Button pause_btn;
     Button reset_btn;
-    Button skip_btn;
+    Button favorite_btn;
+    Button dislike_btn;
 
     TextView song_name;
     TextView song_album;
@@ -41,48 +43,72 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_now_playing, container, false);
 
+        /*BottomNavigationView bottomNavigationView;
+        bottomNavigationView = (BottomNavigationView) getActivity().findViewById(R.id.navigation);
+        bottomNavigationView.setSelectedItemId(R.id.navigation_nowPlaying);*/
+
         play_btn = (Button) rootView.findViewById(R.id.btn_play);
         pause_btn = (Button) rootView.findViewById(R.id.btn_pause);
         reset_btn = (Button) rootView.findViewById(R.id.btn_reset);
-        skip_btn = (Button) rootView.findViewById(R.id.btn_skip);
+        favorite_btn = (Button) rootView.findViewById(R.id.btn_favorite);
+        dislike_btn = (Button) rootView.findViewById(R.id.btn_dislike);
 
         song_name = (TextView) rootView.findViewById(R.id.songName);
         song_album = (TextView) rootView.findViewById(R.id.albums);
 
         //Display song name and album in NowPlaying
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name",Context.MODE_PRIVATE);
-        String name = sharedPreferences.getString("song_name","");
-        String album = sharedPreferences.getString("song_album","");
-        song_name.setText("Song name: " + name);
-        song_album.setText("Album name: "+album);
+
+        if(((AlbumView)getActivity()).mediaPlayer != null) {
+            SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", Context.MODE_PRIVATE);
+            String name = sharedPreferences.getString("song_name", "");
+            String album = sharedPreferences.getString("song_album", "");
+            song_name.setText(name);
+            song_album.setText(album);
+        }else{
+            //if there is nothing playing at the momenr
+            song_name.setText("No Song Playing");
+            song_album.setText("");
+        }
+
 
         play_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((AlbumView)getActivity()).mediaPlayer.start();
+                if(((AlbumView)getActivity()).mediaPlayer != null){
+                    ((AlbumView)getActivity()).mediaPlayer.start();
+                }
             }
         });
         pause_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(((AlbumView)getActivity()).mediaPlayer.isPlaying()){
-                    ((AlbumView)getActivity()).mediaPlayer.pause();
+                if(((AlbumView)getActivity()).mediaPlayer != null) {
+                    if (((AlbumView) getActivity()).mediaPlayer.isPlaying()) {
+                        ((AlbumView) getActivity()).mediaPlayer.pause();
+                    }
                 }
             }
         });
         reset_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((AlbumView)getActivity()).mediaPlayer.seekTo(0);
-                ((AlbumView)getActivity()).mediaPlayer.start();
+                if(((AlbumView)getActivity()).mediaPlayer != null) {
+                    ((AlbumView) getActivity()).mediaPlayer.seekTo(0);
+                    ((AlbumView) getActivity()).mediaPlayer.start();
+                }
             }
         });
-        skip_btn.setOnClickListener(new View.OnClickListener(){
+        favorite_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
-                ((AlbumView)getActivity()).nextAlbumTrack();
+            public void onClick(View view) {
+                //((AlbumView)getActivity()).currentlyPlaying.favorite_song();
             }
-
+        });
+        dislike_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //((AlbumView)getActivity()).currentlyPlaying.dislike_song();
+            }
         });
 
         return rootView;

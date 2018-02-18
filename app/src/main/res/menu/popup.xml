@@ -9,5 +9,4 @@
         android:id="@+id/two"
         android:title="Play album" />
 
-
 </menu>

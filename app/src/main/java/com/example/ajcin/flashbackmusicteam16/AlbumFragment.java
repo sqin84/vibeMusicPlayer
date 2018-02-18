@@ -48,6 +48,7 @@ public class AlbumFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
+
         super.onListItemClick(l, v, position, id);
         selected_album = ((AlbumView)getActivity()).populateMusic.getAlbum(album_list_string[position]);
         String[] album_song_list = ((AlbumView)getActivity()).populateMusic.getSongListInAlbumString(selected_album);
