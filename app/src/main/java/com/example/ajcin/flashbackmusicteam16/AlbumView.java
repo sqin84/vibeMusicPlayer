@@ -25,6 +25,7 @@ public class AlbumView extends AppCompatActivity {
 
     public PopulateMusic populateMusic;
     public MediaPlayer mediaPlayer;
+    public Song currentlyPlaying;
     private static final int MEDIA_RES_ID = R.raw.after_the_storm;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -74,10 +75,7 @@ public class AlbumView extends AppCompatActivity {
     public void createMediaPlayer(){mediaPlayer = new MediaPlayer();}
 
     public void loadAlbumMedia(Album selected_album){
-        /*ArrayList<Song> songs = selected_album.get_album_songs();
-        for(int i = 0; i < selected_album.get_album_songs().size(); i++) {
 
-        }*/
     }
 
     public void loadMedia(final Song selected_song){
@@ -93,6 +91,7 @@ public class AlbumView extends AppCompatActivity {
         });
 
         int resourceId = selected_song.get_id();
+        currentlyPlaying = selected_song;
 
         AssetFileDescriptor assetFileDescriptor = this.getResources().openRawResourceFd(resourceId);
         try {
