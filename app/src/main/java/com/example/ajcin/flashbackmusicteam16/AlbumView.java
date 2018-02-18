@@ -46,6 +46,7 @@ public class AlbumView extends AppCompatActivity {
 
     public PopulateMusic populateMusic;
     public MediaPlayer mediaPlayer;
+    public ArrayList<Song> album_playlist;
     public Song currentlyPlaying;
     private static final int MEDIA_RES_ID = R.raw.after_the_storm;
     public BottomNavigationView navigation;
@@ -161,7 +162,6 @@ public class AlbumView extends AppCompatActivity {
         setContentView(R.layout.activity_album_view);
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
-
         populateMusic = new PopulateMusic(this);
         intervalStart=LocalTime.parse("11:00:00");
         intervalEnd= LocalTime.parse("16:00:00");
@@ -214,7 +214,7 @@ public class AlbumView extends AppCompatActivity {
         String flashback_mode = sharedPreferences.getString("isFlashBackMode", "");
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        if(flashback_mode.equals("")){
+        if(flashback_mode.equals("")) {
             editor.putString("isFlashBackMode", "false");
             editor.apply();
 
@@ -226,14 +226,15 @@ public class AlbumView extends AppCompatActivity {
             AlbumFragment album_fragment = new AlbumFragment();
             album_fragment.setArguments(album_bundle);
             transaction.replace(R.id.musicItems, album_fragment).commit();
-        }else if(flashback_mode.equals("true")){
+        }
+        else if(flashback_mode.equals("true")) {
             isFlashbackMode = true;
             setUpFlashBackMode();
             transaction.replace(R.id.musicItems, new NowPlayingFragment()).commit();
             navigation.getMenu().getItem(2).setChecked(true);
             Toast.makeText(getApplicationContext(), "Flashback mode engaged", Toast.LENGTH_SHORT).show();
-        }else if(flashback_mode.equals("false")){
-
+        } 
+        else if(flashback_mode.equals("false")) {
             String[] album_list_string = populateMusic.getAlbumListString();
             Bundle album_bundle = new Bundle();
             album_bundle.putStringArray("albums", album_list_string);
@@ -246,42 +247,40 @@ public class AlbumView extends AppCompatActivity {
             isFlashbackMode = false;
             Toast.makeText(getApplicationContext(), "Standard Mode", Toast.LENGTH_SHORT).show();
         }
-
-
     }
 
-    public void createMediaPlayer(){mediaPlayer = new MediaPlayer();}
+    public void createMediaPlayer() {  mediaPlayer = new MediaPlayer();}
 
-    public void loadAlbumMedia(Album selected_album){
-
-    }
-
-    public void loadMedia(final Song selected_song){
-
+    public void loadMedia(Song selected_song) {
         if(mediaPlayer == null){
             mediaPlayer = new MediaPlayer();
         }
+        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                mediaPlayer.start();
+            }
+        });
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 Toast.makeText(getApplicationContext(), "song completed!", Toast.LENGTH_SHORT).show();
-               Location currentLocation = currentLocationInfo.getLocation();
-               selected_song.addLocation(currentLocation);
-               selected_song.addDateTime(TimeMachine.now());
-               mediaPlayer.start();
+                Location currentLocation = currentLocationInfo.getLocation();
+                selected_song.addLocation(currentLocation);
+                selected_song.addDateTime(TimeMachine.now());
+                mediaPlayer.start();
 
-
-               if(isFlashbackMode){
-                   Toast.makeText(getApplicationContext(), "song completed!", Toast.LENGTH_SHORT).show();
+                if(isFlashbackMode){
+                    Toast.makeText(getApplicationContext(), "song completed!", Toast.LENGTH_SHORT).show();
                     mediaPlayer.reset();
                     loadMedia(queuedSongs.get(0));
                     queuedSongs.remove(0);
-               }
-
-
+                }
+                else {
+                    nextAlbumTrack();
+                }
             }
         });
-
         int resourceId = selected_song.get_id();
         currentlyPlaying = selected_song;
 
@@ -295,12 +294,26 @@ public class AlbumView extends AppCompatActivity {
             });
             mediaPlayer.prepareAsync();
         } catch (Exception e) {
+            Log.d("MediaPlayer", "did not prepare correctly");
             System.out.println(e.toString());
         }
     }
 
+    //Test method
+    public void nextAlbumTrack() {
+        if(album_playlist != null && album_playlist.size()>0) {
+            if(mediaPlayer == null){
+                mediaPlayer = new MediaPlayer();
+            }
+            mediaPlayer.reset();
+            Song curr_song = album_playlist.remove(0);
+            loadMedia(curr_song);
+        }
+    }
+
+
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
         if(mediaPlayer != null)
         mediaPlayer.release();
@@ -312,5 +325,5 @@ public class AlbumView extends AppCompatActivity {
         moveTaskToBack(true);
     }
 
-    public PopulateMusic getPopulateMusic(){return populateMusic;}
+    public PopulateMusic getPopulateMusic() { return populateMusic;}
 };

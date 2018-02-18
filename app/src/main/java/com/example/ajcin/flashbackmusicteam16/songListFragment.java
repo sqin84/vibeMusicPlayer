@@ -51,6 +51,7 @@ public class songListFragment extends ListFragment {
         ((AlbumView)getActivity()).mediaPlayer.reset();
         Song selected_song = ((AlbumView)getActivity()).populateMusic.getSong(song_list_string[position]);
         ((AlbumView)getActivity()).loadMedia(selected_song);
+        ((AlbumView)getActivity()).album_playlist = new ArrayList<Song>(0);
         changeToNowPlaying(selected_song);
         //((AlbumView)getActivity()).mediaPlayer.start();
 
