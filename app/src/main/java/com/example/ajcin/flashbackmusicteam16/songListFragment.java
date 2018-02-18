@@ -71,6 +71,7 @@ public class songListFragment extends ListFragment {
         song_bundle.putStringArray("song", song_name);
         NowPlayingFragment npFragment = new NowPlayingFragment();
         npFragment.setArguments(song_bundle);
+        ((AlbumView)getActivity()).navigation.getMenu().getItem(2).setChecked(true);
         transaction.replace(R.id.musicItems, npFragment).commit();
     }
 

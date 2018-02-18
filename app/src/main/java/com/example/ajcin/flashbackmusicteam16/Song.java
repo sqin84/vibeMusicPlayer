@@ -1,5 +1,12 @@
 package com.example.ajcin.flashbackmusicteam16;
 
+import android.location.Location;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Created by luke on 2/7/2018.
  */
@@ -17,11 +24,34 @@ public class Song {
     private boolean is_disliked;
     private boolean is_favorited;
 
+    private int score;
+    private List<Location> locations;
+    private List<LocalDateTime> dateTimes;
+    public LinkedList<Location> getListOfLocations()
+    {
+        return (LinkedList)this.locations;
+    }
+    public LinkedList<LocalDateTime> getListOfLocalDateTimes()
+    {
+        return (LinkedList)this.dateTimes;
+    }
     public Song(String title,String artist, String album, int id){
         song_title = title;
         song_album = album;
         song_artist = artist;
         song_id = id;
+        score = 0;
+        locations=new LinkedList<Location>();
+        dateTimes=new LinkedList<LocalDateTime>();
+    }
+
+    public int getScore()
+    {
+        return this.score;
+    }
+    public void setScore(int score)
+    {
+        this.score=score;
     }
 
     public void favorite_song() {
@@ -33,6 +63,11 @@ public class Song {
         is_disliked = (get_is_disliked()) ? false : true;
         if(is_disliked) is_favorited = false;
     }
+    public void addLocation(Location e){
+        locations.add(e);
+    }
+    public void addDateTime(LocalDateTime e)
+    {dateTimes.add(e);}
 
     public String get_title() {  return song_title;}
     public String get_album() {  return song_album;}
@@ -46,4 +81,5 @@ public class Song {
     public void update_last_location(String location)   {last_location = location;}
     public void update_last_day(String day) {last_day = day;}
     public void update_last_time(String time)   {last_time = time;}
+
 }
