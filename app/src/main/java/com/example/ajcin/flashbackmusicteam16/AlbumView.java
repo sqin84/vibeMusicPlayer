@@ -1,6 +1,7 @@
 package com.example.ajcin.flashbackmusicteam16;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -28,6 +30,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +48,7 @@ public class AlbumView extends AppCompatActivity {
     public MediaPlayer mediaPlayer;
     private static final int MEDIA_RES_ID = R.raw.after_the_storm;
     public BottomNavigationView navigation;
+    public ProgressBar progressBar;
 
     private LocationInfo currentLocationInfo;
     private int currentResource;
@@ -54,6 +58,8 @@ public class AlbumView extends AppCompatActivity {
     ArrayList<Song> queuedSongs;
 
     public static boolean isFlashbackMode = false;
+
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -104,8 +110,6 @@ public class AlbumView extends AppCompatActivity {
                         FlashbackMode flashbackMode = new FlashbackMode(currentLocationInfo.getLocation(), TimeMachine.now(),populateMusic);
                         queuedSongs= flashbackMode.initiate();
                         isFlashbackMode = true;
-                        transaction.replace(R.id.musicItems, new NowPlayingFragment()).commit();
-                        Toast.makeText(getApplicationContext(), "Flashback mode engaged", Toast.LENGTH_SHORT).show();
                         if(mediaPlayer == null){
                             createMediaPlayer();
                         }
@@ -120,9 +124,12 @@ public class AlbumView extends AppCompatActivity {
 
                         mediaPlayer.reset();
                         loadMedia(queuedSongs.get(0));
-                        mediaPlayer.start();
 
                         queuedSongs.remove(0);
+
+                        transaction.replace(R.id.musicItems, new NowPlayingFragment()).commit();
+                        Toast.makeText(getApplicationContext(), "Flashback mode engaged", Toast.LENGTH_SHORT).show();
+
                         return true;
                     }else{
                         Toast.makeText(getApplicationContext(), "Standard mode", Toast.LENGTH_SHORT).show();
@@ -136,10 +143,15 @@ public class AlbumView extends AppCompatActivity {
 
     };
 
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album_view);
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
 
         populateMusic = new PopulateMusic(this);
         intervalStart=LocalTime.parse("11:00:00");
@@ -185,7 +197,7 @@ public class AlbumView extends AppCompatActivity {
             Log.d("test1","ins");
             return;
         }
-        locationManger.requestLocationUpdates(locationProvider,0,0,locationListener);
+        locationManger.requestLocationUpdates(locationProvider,3000,0,locationListener);
 
         SharedPreferences sharedPreferences = getSharedPreferences("flash_back_mode", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -229,11 +241,10 @@ public class AlbumView extends AppCompatActivity {
                if(isFlashbackMode){
                    Toast.makeText(getApplicationContext(), "song completed!", Toast.LENGTH_SHORT).show();
                     mediaPlayer.reset();
-                    //loadMedia(queuedSongs.get(0));
-
-                    mediaPlayer.start();
+                    loadMedia(queuedSongs.get(0));
                     queuedSongs.remove(0);
                }
+
 
             }
         });
@@ -243,6 +254,11 @@ public class AlbumView extends AppCompatActivity {
         AssetFileDescriptor assetFileDescriptor = this.getResources().openRawResourceFd(resourceId);
         try {
             mediaPlayer.setDataSource(assetFileDescriptor);
+            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                public void onPrepared(MediaPlayer mp) {
+                    mp.start();
+                }
+            });
             mediaPlayer.prepareAsync();
         } catch (Exception e) {
             System.out.println(e.toString());

@@ -52,7 +52,7 @@ public class albumsongsFragment extends ListFragment {
         Song selected_song = ((AlbumView)getActivity()).populateMusic.getSong(album_song_list_string[position]);
         ((AlbumView)getActivity()).loadMedia(selected_song);
         changeToNowPlaying(selected_song);
-        ((AlbumView)getActivity()).mediaPlayer.start();
+        //((AlbumView)getActivity()).mediaPlayer.start();
 
 
         //Store song name and album
