@@ -2,14 +2,13 @@ package com.example.ajcin.flashbackmusicteam16;
 
 import android.location.Location;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by luke on 2/7/2018.
+/** Song class to store resource id of file, along with various information about the Song.
+  * Author: CSE 110 - Team 16, Winter 2018
+  * Date: February 7, 2018
  */
-
 public class Song {
 
     private final String song_title;
@@ -23,18 +22,16 @@ public class Song {
 
     private boolean is_disliked;
     private boolean is_favorited;
-
     private int score;
     private List<Location> locations;
     private List<LocalDateTime> dateTimes;
-    public LinkedList<Location> getListOfLocations()
-    {
-        return (LinkedList)this.locations;
-    }
-    public LinkedList<LocalDateTime> getListOfLocalDateTimes()
-    {
-        return (LinkedList)this.dateTimes;
-    }
+
+    /** Song constructor
+      * @param title title of the song
+      * @param artist name of song's artist
+      * @param album name of album the song belongs to
+      * @param id resource id of the song
+     */
     public Song(String title,String artist, String album, int id){
         song_title = title;
         song_album = album;
@@ -61,11 +58,18 @@ public class Song {
     {
         return this.score;
     }
-    public void setScore(int score)
-    {
+
+    /** set_score
+      * Update song's score with specified value.
+      * @param score new score to assign to the song
+     */
+    public void set_score(int score) {
         this.score=score;
     }
 
+    /** favorite_song
+      * Toggle whether the song is favorited or not.
+     */
     public void favorite_song() {
         if(get_is_favorited()) {
             is_favorited = false;
@@ -76,6 +80,9 @@ public class Song {
         }
     }
 
+    /** dislike_song
+      * Toggle whether the song is disliked or not.
+     */
     public void dislike_song() {
         if(get_is_disliked()) {
             is_disliked = false;
@@ -85,6 +92,11 @@ public class Song {
             is_favorited = false;
         }
     }
+
+    /** addLocation
+      * Add location to the list of locations where the song was played.
+      * @param e location to add
+     */
     public void addLocation(Location e){
        // if(!locations.isEmpty()&&(e.distanceTo(locations.get(0)) < 100))
          //   return;
@@ -95,6 +107,10 @@ public class Song {
             ((LinkedList) locations).removeLast();
         }
     }
+  /** addDateTime
+      * Add dateTime to the list of dateTimes where the song was played.
+      * @param e dateTime to add
+     */
     public void addDateTime(LocalDateTime e)
     {
         if( dateTimes.size() < 10) {
@@ -129,5 +145,8 @@ public class Song {
     public Boolean get_is_favorited() { return is_favorited;}
     public void update_last_day(String day) {last_day = day;}
     public void update_last_time(String time)   {last_time = time;}
+
+    
+    
 
 }
