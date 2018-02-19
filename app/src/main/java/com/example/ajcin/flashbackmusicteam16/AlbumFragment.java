@@ -83,7 +83,7 @@ public class AlbumFragment extends ListFragment {
                         ((AlbumView)getActivity()).createMediaPlayer();
                     }
                     ((AlbumView)getActivity()).mediaPlayer.reset();
-                    ((AlbumView)getActivity()).album_playlist  = new ArrayList<Song>(selected_album.get_album_songs());
+                    ((AlbumView)getActivity()).album_playlist  = new LinkedList<>(selected_album.get_album_songs());
                     Song nowPlaying = ((AlbumView)getActivity()).album_playlist.get(0);
 
                     editor.putString("song_name", nowPlaying.get_title());
