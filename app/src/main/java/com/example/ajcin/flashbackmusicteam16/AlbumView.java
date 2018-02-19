@@ -251,7 +251,7 @@ public class AlbumView extends AppCompatActivity {
 
     public void createMediaPlayer() {  mediaPlayer = new MediaPlayer();}
 
-    public void loadMedia(Song selected_song) {
+    public void loadMedia(final Song selected_song) {
         if(mediaPlayer == null){
             mediaPlayer = new MediaPlayer();
         }
