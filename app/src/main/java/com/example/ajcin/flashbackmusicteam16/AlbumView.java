@@ -9,12 +9,14 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
+import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
+import android.media.PlaybackParams;
 import android.net.Uri;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -23,6 +25,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -34,6 +37,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.lang.reflect.Field;
@@ -41,12 +45,48 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
 
-public class AlbumView extends AppCompatActivity {
+public class AlbumView extends AppCompatActivity implements
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+
+    protected Location mLastLocation;
+    private AddressResultReceiver mResultReceiver;
+    private boolean mAddressRequested = false;
+    public static String mAddressOutput = "";
+
+
+    private class AddressResultReceiver extends ResultReceiver {
+        AddressResultReceiver(Handler handler) {
+            super(handler);
+        }
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+
+            // Display the address string
+            // or an error message sent from the intent service.
+            mAddressOutput = resultData.getString(Constants.RESULT_DATA_KEY);
+
+            // Show a toast message if an address was found.
+            if (resultCode == Constants.SUCCESS_RESULT) {
+                Toast.makeText(getApplicationContext(),getString(R.string.address_found), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    // ...
+
+    protected void startIntentService() {
+        Intent intent = new Intent(this, FetchAddressIntentService.class);
+        intent.putExtra(Constants.RECEIVER, mResultReceiver);
+        intent.putExtra(Constants.LOCATION_DATA_EXTRA, mLastLocation);
+        startService(intent);
+    }
 
     public PopulateMusic populateMusic;
     public MediaPlayer mediaPlayer;
-    public ArrayList<Song> album_playlist;
+    public LinkedList<Song> album_playlist;
     public Song currentlyPlaying;
     private static final int MEDIA_RES_ID = R.raw.after_the_storm;
     public BottomNavigationView navigation;
@@ -133,6 +173,7 @@ public class AlbumView extends AppCompatActivity {
         FlashbackMode flashbackMode = new FlashbackMode(currentLocationInfo.getLocation(), TimeMachine.now(),populateMusic);
         queuedSongs= flashbackMode.initiate();
         isFlashbackMode = true;
+        Toast.makeText(this, Integer.valueOf(queuedSongs.get(0).getScore()).toString(), Toast.LENGTH_SHORT).show();
         if(mediaPlayer == null){
             createMediaPlayer();
         }
@@ -141,7 +182,10 @@ public class AlbumView extends AppCompatActivity {
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("user_name", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("song_name",queuedSongs.get(0).get_title());
-        editor.putString("song_album",queuedSongs.get(0).get_album());
+        editor.putString("album_name",queuedSongs.get(0).get_album());
+        editor.putString("artist_name",queuedSongs.get(0).get_artist());
+        editor.putString("address", queuedSongs.get(0).get_last_played_address());
+        editor.putString("time", queuedSongs.get(0).get_last_time());
         editor.apply();
 
         sharedPreferences = getSharedPreferences("flash_back_mode", MODE_PRIVATE);
@@ -163,8 +207,12 @@ public class AlbumView extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
         populateMusic = new PopulateMusic(this);
-        intervalStart=LocalTime.parse("11:00:00");
-        intervalEnd= LocalTime.parse("16:00:00");
+       // intervalStart=LocalTime.parse("11:00:00");
+        //intervalEnd= LocalTime.parse("16:00:00");
+
+        LocalDateTime dummyTime = LocalDateTime.of(2017, 2, 7, 12, 00);
+        TimeMachine.useFixedClockAt(dummyTime);
+
 
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -208,6 +256,12 @@ public class AlbumView extends AppCompatActivity {
         }
         locationManger.requestLocationUpdates(locationProvider,3000,0,locationListener);
 
+        //Get location address
+        mResultReceiver = new AddressResultReceiver(new Handler());
+        mAddressRequested =false;
+        mAddressOutput = "";
+
+
         SharedPreferences sharedPreferences = getSharedPreferences("flash_back_mode", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -249,9 +303,13 @@ public class AlbumView extends AppCompatActivity {
         }
     }
 
-    public void createMediaPlayer() {  mediaPlayer = new MediaPlayer();}
+    public void createMediaPlayer() {
+        mediaPlayer = new MediaPlayer();
+        //float speed=3f;
+       // mediaPlayer.getPlaybackParams().setSpeed(speed);
+    }
 
-    public void loadMedia(Song selected_song) {
+    public void loadMedia(final Song selected_song) {
         if(mediaPlayer == null){
             mediaPlayer = new MediaPlayer();
         }
@@ -268,12 +326,28 @@ public class AlbumView extends AppCompatActivity {
                 Location currentLocation = currentLocationInfo.getLocation();
                 selected_song.addLocation(currentLocation);
                 selected_song.addDateTime(TimeMachine.now());
+
+                Log.d("long + lat", Double.valueOf(currentLocation.getLatitude()).toString() + " "+  Double.valueOf(currentLocation.getLongitude()).toString());
+
+                /* doesn't work, attempt to get address
+                new AsyncTaskAddress().execute(currentLocation.getLatitude(),currentLocation.getLongitude());
+                selected_song.set_last_played_address(mAddressOutput);
+                */
+
                 mediaPlayer.start();
 
                 if(isFlashbackMode){
                     Toast.makeText(getApplicationContext(), "song completed!", Toast.LENGTH_SHORT).show();
                     mediaPlayer.reset();
                     loadMedia(queuedSongs.get(0));
+                    SharedPreferences sharedPreferences = getSharedPreferences("user_name", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("song_name",queuedSongs.get(0).get_title());
+                    editor.putString("artist_name", queuedSongs.get(0).get_artist());
+                    editor.putString("album_name",queuedSongs.get(0).get_album());
+                    editor.putString("address", queuedSongs.get(0).get_last_played_address());
+                    editor.putString("time", queuedSongs.get(0).get_last_time());
+                    editor.apply();
                     queuedSongs.remove(0);
                 }
                 else {
@@ -306,7 +380,15 @@ public class AlbumView extends AppCompatActivity {
                 mediaPlayer = new MediaPlayer();
             }
             mediaPlayer.reset();
-            Song curr_song = album_playlist.remove(0);
+            Song curr_song = album_playlist.removeFirst();
+            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("user_name", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("song_name",curr_song.get_title());
+            editor.putString("album_name",curr_song.get_album());
+            editor.putString("artist_name",curr_song.get_artist());
+            editor.putString("time", curr_song.get_last_time());
+            editor.putString("address", curr_song.get_last_played_address());
+            editor.apply();
             loadMedia(curr_song);
         }
     }
@@ -325,5 +407,65 @@ public class AlbumView extends AppCompatActivity {
         moveTaskToBack(true);
     }
 
+    private class AsyncTaskAddress extends AsyncTask<Double,String,String > {
+
+        @Override
+        protected String doInBackground(Double ... p){
+            return getCompleteAddressString(Double.valueOf(p[0]), Double.valueOf(p[1]));
+        }
+        @Override
+        protected void onPreExecute(){
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(String s){
+            progressBar.setVisibility(View.GONE);
+            mAddressOutput = s;
+        }
+
+    }
+    private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
+        String strAdd = "";
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
+            if (addresses != null) {
+                Address returnedAddress = addresses.get(0);
+                StringBuilder strReturnedAddress = new StringBuilder("");
+
+                for (int i = 0; i <= returnedAddress.getMaxAddressLineIndex(); i++) {
+                    strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
+                }
+                strAdd = strReturnedAddress.toString();
+                Log.w("My Current loction address", strReturnedAddress.toString());
+            } else {
+                Log.w("My Current loction address", "No Address returned!");
+            }
+        } catch (Exception e) {
+
+           Log.w("exception: ", e.getClass().getName());
+           /* e.printStackTrace();
+            Log.w("My Current loction address", "Canont get Address!");
+            */
+        }
+        return strAdd;
+    }
     public PopulateMusic getPopulateMusic() { return populateMusic;}
+
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
 };

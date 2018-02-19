@@ -1,6 +1,7 @@
 package com.example.ajcin.flashbackmusicteam16;
 
 import android.location.Location;
+import android.util.Log;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -27,8 +28,7 @@ public class FlashbackMode {
     }
     public ArrayList<Song> initiate()
     {
-        songs=new ArrayList<Song>();
-        songs=populateMusic.getSongList();
+        songs=new ArrayList<Song>(populateMusic.getSongList());
         this.readyScores();
         return (ArrayList)this.songs;
 
@@ -40,17 +40,19 @@ public class FlashbackMode {
             int locationScore = Integer.MAX_VALUE;
             for (LocalDateTime p : s.getListOfLocalDateTimes()) {
                 int tmp = Math.abs(p.getHour() - localDateTime.getHour());
-                if (dateTimeScore < tmp) {
+                if (tmp<dateTimeScore) {
                     dateTimeScore = tmp;
                 }
             }
             for (Location p : s.getListOfLocations()) {
                 int tmp = (LocationInfo.getDistance(p, currentLocation));
-                if (locationScore < tmp) {
+                if (tmp<locationScore) {
                     locationScore = tmp;
                 }
             }
             s.setScore((int) (locationScore / 100) + (int) (dateTimeScore * 2));
+            //Log.d("Size of Song list",Integer.valueOf(songs.size()).toString());
+            Log.d("Number of locations",Integer.valueOf(s.getListOfLocations().size()).toString());
         }
 
         Collections.sort(songs, new Comparator<Song>() {

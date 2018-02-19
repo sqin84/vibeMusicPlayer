@@ -19,6 +19,7 @@ import android.widget.PopupMenu;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 
 public class AlbumFragment extends ListFragment {
@@ -76,7 +77,7 @@ public class AlbumFragment extends ListFragment {
                         ((AlbumView)getActivity()).createMediaPlayer();
                     }
                     ((AlbumView)getActivity()).mediaPlayer.reset();
-                    ((AlbumView)getActivity()).album_playlist  = new ArrayList<Song>(selected_album.get_album_songs());
+                    ((AlbumView)getActivity()).album_playlist  = new LinkedList<>(selected_album.get_album_songs());
                     ((AlbumView)getActivity()).nextAlbumTrack();
                 }
               
