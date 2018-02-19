@@ -64,6 +64,8 @@ public class Song {
         if(is_disliked) is_favorited = false;
     }
     public void addLocation(Location e){
+        if((e.distanceTo(locations.get(0)) < 100))
+            return;
         if(locations.size() < 10) {
             ((LinkedList) locations).addFirst(e);
         }else{
@@ -72,7 +74,8 @@ public class Song {
         }
     }
     public void addDateTime(LocalDateTime e)
-    {if(dateTimes.size() < 10) {
+    {
+        if(dateTimes.size() < 10) {
         ((LinkedList) dateTimes).addFirst(e);
     }else{
         ((LinkedList) dateTimes).addFirst(e);
