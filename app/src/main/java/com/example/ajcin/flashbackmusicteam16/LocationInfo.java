@@ -2,21 +2,25 @@ package com.example.ajcin.flashbackmusicteam16;
 
 import android.location.Location;
 
-/**
- * Created by ramanrpd on 17/02/18.
+/** LocationInfo class to get current location information.
+ * Author: CSE 110 - Team 16, Winter 2018
+ * Date: February 17, 2018
  */
-
 public class LocationInfo {
     private double currentLatitude;
     private double currentLongitude;
     private Location location;
 
-    public void setLocation(Location curr)
-    {
+    /** setLocation
+      * Record current location.
+      * @param curr current location
+     */
+    public void setLocation(Location curr) {
         currentLatitude=curr.getLatitude();
         currentLongitude=curr.getLongitude();
         location = curr;
     }
+
     public double getCurrentLatitude(){
         return currentLatitude;
     }

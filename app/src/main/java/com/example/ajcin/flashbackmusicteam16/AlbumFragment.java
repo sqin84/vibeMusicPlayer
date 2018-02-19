@@ -6,8 +6,6 @@ import android.app.ListFragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,24 +13,22 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.PopupMenu;
-
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
 
-
+/** AlbumFragment class to handle actions from the album list.
+  * Author: CSE 110 - Team 16, Winter 2018
+  * Date: February 7, 2018
+ */
 public class AlbumFragment extends ListFragment {
-
 
     private OnFragmentInteractionListener mListener;
     String[] album_list_string;
     Album selected_album;
 
-    public AlbumFragment() {
-        // Required empty public constructor
-    }
+    /** Required empty constructor */
+    public AlbumFragment() {}
 
-
+    /** Create the AlbumFragment */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -40,15 +36,18 @@ public class AlbumFragment extends ListFragment {
         album_list_string = bundle.getStringArray("albums");
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, album_list_string);
         setListAdapter(adapter);
+
         // Inflate the layout for this fragment
          View view = inflater.inflate(R.layout.fragment_album, container, false);
          view.findViewById(android.R.id.list).setScrollContainer(true);
          return view;
     }
 
+    /** onListItemClick
+      * When album is clicked, display popup to view album or play whole album.
+     */
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-
         super.onListItemClick(l, v, position, id);
         selected_album = ((AlbumView)getActivity()).populateMusic.getAlbum(album_list_string[position]);
         String[] album_song_list = ((AlbumView)getActivity()).populateMusic.getSongListInAlbumString(selected_album);
@@ -56,7 +55,6 @@ public class AlbumFragment extends ListFragment {
         album_song_bundle.putStringArray("album_songs",album_song_list);
         final albumsongsFragment album_songs_fragment = new albumsongsFragment();
         album_songs_fragment.setArguments(album_song_bundle);
-
 
         //Show pop up menu
         PopupMenu popup = new PopupMenu(getContext(), v);
@@ -87,12 +85,11 @@ public class AlbumFragment extends ListFragment {
         popup.show();//showing popup menu
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    /*public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
-    }
+    }*/
 
     @Override
     public void onAttach(Context context) {
@@ -111,16 +108,6 @@ public class AlbumFragment extends ListFragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
