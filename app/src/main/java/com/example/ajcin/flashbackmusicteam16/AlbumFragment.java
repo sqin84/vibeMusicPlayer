@@ -17,6 +17,9 @@ import android.widget.PopupMenu;
 import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 /** AlbumFragment class to handle actions from the album list.
   * Author: CSE 110 - Team 16, Winter 2018
@@ -86,6 +89,8 @@ public class AlbumFragment extends ListFragment {
                     editor.putString("song_name", nowPlaying.get_title());
                     editor.putString("artist_name", nowPlaying.get_artist());
                     editor.putString("album_name", nowPlaying.get_album());
+                    editor.putString("address", nowPlaying.get_last_played_address());
+                    editor.putString("time", nowPlaying.get_last_time());
                     editor.apply();
 
                     changeToNowPlaying(nowPlaying);

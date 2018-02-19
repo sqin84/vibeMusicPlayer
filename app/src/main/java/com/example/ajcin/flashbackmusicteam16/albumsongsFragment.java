@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import static android.content.Context.MODE_PRIVATE;
 
 /** albumsongsFragment class to handle playing songs from an album.
@@ -52,7 +53,7 @@ public class albumsongsFragment extends ListFragment {
         ((AlbumView)getActivity()).mediaPlayer.reset();
         Song selected_song = ((AlbumView)getActivity()).populateMusic.getSong(album_song_list_string[position]);
         ((AlbumView)getActivity()).loadMedia(selected_song);
-        ((AlbumView)getActivity()).album_playlist = new ArrayList<Song>(0);
+        ((AlbumView)getActivity()).album_playlist = new LinkedList<>();
         changeToNowPlaying(selected_song);
 
         //Store song name and album
@@ -61,6 +62,8 @@ public class albumsongsFragment extends ListFragment {
         editor.putString("song_name",selected_song.get_title());
         editor.putString("artist_name", selected_song.get_artist());
         editor.putString("album_name",selected_song.get_album());
+        editor.putString("address", selected_song.get_last_played_address());
+        editor.putString("time", selected_song.get_last_time());
         editor.apply();
     }
 

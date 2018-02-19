@@ -39,28 +39,44 @@ public class PopulateMusicTest {
 
     @Test
     public void getAlbum() throws Exception {
-
+        PopulateMusic populateMusic = new PopulateMusic(InstrumentationRegistry.getTargetContext());
+        Album testAlbum= populateMusic.getAlbum("Origins - The Best of Terry Oldfield");
+        assertEquals("Origins - The Best of Terry Oldfield",testAlbum.get_title());
 
     }
 
     @Test
     public void getAlbumList() throws Exception {
+        PopulateMusic populateMusic = new PopulateMusic(InstrumentationRegistry.getTargetContext());
+        String s = populateMusic.getAlbumList().get(0).get_title();
+        assertEquals("Origins - The Best of Terry Oldfield",s);
     }
 
     @Test
     public void getAlbumListString() throws Exception {
+        PopulateMusic populateMusic = new PopulateMusic(InstrumentationRegistry.getTargetContext());
+        String[] s = populateMusic.getAlbumListString();
+        assertEquals("Origins - The Best of Terry Oldfield",s[0]);
     }
 
     @Test
     public void getSongListInAlbum() throws Exception {
+        PopulateMusic populateMusic = new PopulateMusic(InstrumentationRegistry.getTargetContext());
+        Song s = populateMusic.getSongListInAlbum(populateMusic.getAlbumList().get(0)).get(0);
+        assertEquals("Flight of the Eagle",s.get_title());
+
     }
 
     @Test
     public void getSongListInAlbumString() throws Exception {
+        PopulateMusic populateMusic = new PopulateMusic(InstrumentationRegistry.getTargetContext());
+        String s =populateMusic.getSongListInAlbumString(populateMusic.getAlbumList().get(0))[0];
+        assertEquals("Flight of the Eagle",s);
     }
 
     @Test
     public void populateMusicList() throws Exception {
+
     }
 
 }
