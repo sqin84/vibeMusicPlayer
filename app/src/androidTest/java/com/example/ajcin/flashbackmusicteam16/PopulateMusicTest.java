@@ -1,0 +1,66 @@
+package com.example.ajcin.flashbackmusicteam16;
+
+import android.media.MediaMetadataRetriever;
+import android.net.Uri;
+import android.support.test.InstrumentationRegistry;
+
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+/**
+ * Created by shuo on 2/18/2018.
+ */
+public class PopulateMusicTest {
+    @Test
+    public void getSong() throws Exception {
+        int res = R.raw.after_the_storm;
+        PopulateMusic populateMusic =new PopulateMusic(InstrumentationRegistry.getTargetContext());
+        Song getSong=populateMusic.getSong("After The Storm");
+        assertEquals(res,getSong.get_id());
+    }
+
+    @Test
+    public void getSongList() throws Exception {
+        PopulateMusic populateMusic = new PopulateMusic(InstrumentationRegistry.getTargetContext());
+        Song testSong=populateMusic.getSongList().get(0);
+        Song testSong2 = populateMusic.getSongList().get(2);
+        assertEquals("After The Storm",testSong.get_title());
+        assertEquals("At Midnight",testSong2.get_title());
+    }
+
+    @Test
+    public void getSongListString() throws Exception {
+        PopulateMusic populateMusic = new PopulateMusic(InstrumentationRegistry.getTargetContext());
+        String[] songStringTest = populateMusic.getSongListString();
+        assertEquals("After The Storm",songStringTest[0]);
+        assertEquals("At Midnight",songStringTest[2]);
+    }
+
+    @Test
+    public void getAlbum() throws Exception {
+
+
+    }
+
+    @Test
+    public void getAlbumList() throws Exception {
+    }
+
+    @Test
+    public void getAlbumListString() throws Exception {
+    }
+
+    @Test
+    public void getSongListInAlbum() throws Exception {
+    }
+
+    @Test
+    public void getSongListInAlbumString() throws Exception {
+    }
+
+    @Test
+    public void populateMusicList() throws Exception {
+    }
+
+}
