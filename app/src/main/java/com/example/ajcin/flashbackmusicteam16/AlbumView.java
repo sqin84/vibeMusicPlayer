@@ -173,7 +173,7 @@ public class AlbumView extends AppCompatActivity implements
         FlashbackMode flashbackMode = new FlashbackMode(currentLocationInfo.getLocation(), TimeMachine.now(),populateMusic);
         queuedSongs= flashbackMode.initiate();
         isFlashbackMode = true;
-        Toast.makeText(this, Integer.valueOf(queuedSongs.get(0).getScore()).toString(), Toast.LENGTH_SHORT).show();
+       // Toast.makeText(this, Integer.valueOf(queuedSongs.get(0).getScore()).toString(), Toast.LENGTH_SHORT).show();
         if(mediaPlayer == null){
             createMediaPlayer();
         }

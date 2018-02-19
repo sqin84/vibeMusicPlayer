@@ -63,7 +63,7 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
         artist_name = (TextView) rootView.findViewById(R.id.artistName);
         album_name = (TextView) rootView.findViewById(R.id.albumName);
         time_textview = rootView.findViewById(R.id.time);
-        location_textview = rootView.findViewById(R.id.time);
+        location_textview = rootView.findViewById(R.id.location);
 
         //Display song name and album in NowPlaying
         if(((AlbumView)getActivity()).mediaPlayer != null) {
