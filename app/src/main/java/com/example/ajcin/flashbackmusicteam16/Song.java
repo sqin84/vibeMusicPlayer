@@ -43,20 +43,29 @@ public class Song {
         dateTimes=new LinkedList<LocalDateTime>();
     }
 
-    public String get_last_played_address(){
-        if(!locations.isEmpty()) {return ("Latitude: "+locations.get(0).getLatitude()+"\nLongitude: "+locations.get(0).getLongitude());
-    }
-    else
-        {
+    public String get_last_played_address() {
+        if(!locations.isEmpty()) {
+            return ("Latitude: "+locations.get(0).getLatitude()+"\nLongitude: "+locations.get(0).getLongitude());
+        }
+        else {
             return "";
         }
     }
+
     public void set_last_played_address(String l){
         last_played_address = l;
     }
-    public int getScore()
+    public int get_score()
     {
         return this.score;
+    }
+
+    public LinkedList<Location> getListOfLocations() {
+        return (LinkedList)this.locations;
+    }
+
+    public LinkedList<LocalDateTime> getListOfLocalDateTimes() {
+        return (LinkedList)this.dateTimes;
     }
 
     /** set_score
@@ -145,8 +154,4 @@ public class Song {
     public Boolean get_is_favorited() { return is_favorited;}
     public void update_last_day(String day) {last_day = day;}
     public void update_last_time(String time)   {last_time = time;}
-
-    
-    
-
 }
