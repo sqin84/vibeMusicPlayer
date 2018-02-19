@@ -1,23 +1,17 @@
 package com.example.ajcin.flashbackmusicteam16;
+
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaMetadataRetriever;
-import android.util.Log;
 
-import com.example.ajcin.flashbackmusicteam16.Album;
-import com.example.ajcin.flashbackmusicteam16.AlbumView;
-import com.example.ajcin.flashbackmusicteam16.R;
-import com.example.ajcin.flashbackmusicteam16.Song;
-
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-/**
- * Created by luke on 2/15/2018.
+/** PopulateMusic class to get albums and songs to be played.
+  * Author: CSE 110 - Team 16, Winter 2018
+  * Date: February 7, 2018
  */
-
 public class PopulateMusic {
 
     private Context context;
@@ -31,6 +25,11 @@ public class PopulateMusic {
         populateMusicList();
     }
 
+    /** getSong
+      * Find song with specified name.
+      * @param song name of the song to search for
+      * @return song object with matching name
+     */
     public Song getSong(String song){
         Song selected_song = new Song("NA","NA","NA",12);
         Iterator<Song> iter = song_list.iterator();
@@ -38,14 +37,19 @@ public class PopulateMusic {
             Song curr_song = iter.next();
             if(curr_song.get_title().equals(song)){
                 selected_song = curr_song;
+                break;
             }
         }
         return selected_song;
     }
 
-    public ArrayList<Song> getSongList(){return song_list;}
+    public ArrayList<Song> getSongList() {  return song_list; }
 
-    public String[] getSongListString(){
+    /** getSongListString
+      * Compile list of all local song's names.
+      * @return array of song names
+     */
+    public String[] getSongListString() {
         String[] song_list_string = new String[song_list.size()];
         Iterator<Song> iter = song_list.iterator();
         int index = 0;
@@ -57,6 +61,11 @@ public class PopulateMusic {
         return song_list_string;
     }
 
+    /** getAlbum
+      * Find album with specified name
+      * @param album name of the album to search for
+      * @return album object with matching name
+     */
     public Album getAlbum(String album){
         Album selected_album = new Album("NA","NA");
         Iterator<Album> iter = album_list.iterator();
@@ -64,13 +73,19 @@ public class PopulateMusic {
             Album curr_album = iter.next();
             if(curr_album.get_title().equals(album)){
                 selected_album = curr_album;
+                break;
             }
         }
+
         return selected_album;
     }
 
-    public ArrayList<Album> getAlbumList(){return album_list;}
+    public ArrayList<Album> getAlbumList() {    return album_list; }
 
+    /** getAlbumListString
+      * Compile list of all local album's names.
+      * @return array of album names
+     */
     public String[] getAlbumListString(){
         String[] album_list_string = new String[album_list.size()];
         Iterator<Album> iter = album_list.iterator();
@@ -83,6 +98,11 @@ public class PopulateMusic {
         return album_list_string;
     }
 
+    /** getSongListInAlbum
+      * Get all songs that belong to the specified album.
+      * @param album album to find songs within
+      * @return list of songs in album
+     */
     public ArrayList<Song> getSongListInAlbum(Album album){
         ArrayList<Song> album_songs = new ArrayList<Song>();
         int album_index = album_list.indexOf(album);
@@ -93,6 +113,11 @@ public class PopulateMusic {
         return album_songs;
     }
 
+    /** getSongListInAlbumString
+      * Get the names of all songs that belong to the specified album.
+      * @param album album to find songs within
+      * @return array of song names within album
+     */
     public String[] getSongListInAlbumString(Album album){
         ArrayList<Song> album_songs = getSongListInAlbum(album);
         String[] album_song_list_string = new String[album_songs.size()];
@@ -106,6 +131,9 @@ public class PopulateMusic {
         return album_song_list_string;
     }
 
+    /** populateMusicList
+      * Populate the list of songs and albums.
+     */
     public void populateMusicList() {
         Field[] fields = R.raw.class.getFields();
         int[] resArray = new int[fields.length];
