@@ -4,6 +4,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,10 +16,10 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import java.util.ArrayList;
 
+import static android.content.Context.MODE_PRIVATE;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
-
 
 /** AlbumFragment class to handle actions from the album list.
   * Author: CSE 110 - Team 16, Winter 2018
@@ -75,11 +76,24 @@ public class AlbumFragment extends ListFragment {
                     transaction.replace(R.id.musicItems,album_songs_fragment).commit();
                 }
                 else if(item.getItemId()==R.id.two){
+                    SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+
                     if(((AlbumView)getActivity()).mediaPlayer == null){
                         ((AlbumView)getActivity()).createMediaPlayer();
                     }
                     ((AlbumView)getActivity()).mediaPlayer.reset();
-                    ((AlbumView)getActivity()).album_playlist  = new LinkedList<>(selected_album.get_album_songs());
+                    ((AlbumView)getActivity()).album_playlist  = new ArrayList<Song>(selected_album.get_album_songs());
+                    Song nowPlaying = ((AlbumView)getActivity()).album_playlist.get(0);
+
+                    editor.putString("song_name", nowPlaying.get_title());
+                    editor.putString("artist_name", nowPlaying.get_artist());
+                    editor.putString("album_name", nowPlaying.get_album());
+                    editor.putString("address", nowPlaying.get_last_played_address());
+                    editor.putString("time", nowPlaying.get_last_time());
+                    editor.apply();
+
+                    changeToNowPlaying(nowPlaying);
                     ((AlbumView)getActivity()).nextAlbumTrack();
                 }
               
@@ -88,6 +102,23 @@ public class AlbumFragment extends ListFragment {
         });
 
         popup.show();//showing popup menu
+    }
+
+    /** changeToNowPlaying
+     * Change the view to Now Playing with the selected song's information.
+     * @param song current Song being played
+     */
+    public void changeToNowPlaying(Song song) {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        Bundle song_bundle = new Bundle();
+        String[] song_name = new String[1];
+        song_name[0] = song.get_title();
+        song_bundle.putStringArray("song", song_name);
+        NowPlayingFragment npFragment = new NowPlayingFragment();
+        npFragment.setArguments(song_bundle);
+        ((AlbumView)getActivity()).navigation.getMenu().getItem(2).setChecked(true);
+        transaction.replace(R.id.musicItems, npFragment).commit();
     }
 
     /*public void onButtonPressed(Uri uri) {
