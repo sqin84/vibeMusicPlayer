@@ -44,46 +44,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-public class AlbumView extends AppCompatActivity implements
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-
-    protected Location mLastLocation;
-    private AddressResultReceiver mResultReceiver;
-    private boolean mAddressRequested = false;
-    public static String mAddressOutput = "";
-
-
-    private class AddressResultReceiver extends ResultReceiver {
-        AddressResultReceiver(Handler handler) {
-            super(handler);
-        }
-        @Override
-        protected void onReceiveResult(int resultCode, Bundle resultData) {
-
-            // Display the address string
-            // or an error message sent from the intent service.
-            mAddressOutput = resultData.getString(Constants.RESULT_DATA_KEY);
-
-            // Show a toast message if an address was found.
-            if (resultCode == Constants.SUCCESS_RESULT) {
-                Toast.makeText(getApplicationContext(),getString(R.string.address_found), Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-    // ...
-
-    protected void startIntentService() {
-        Intent intent = new Intent(this, FetchAddressIntentService.class);
-        intent.putExtra(Constants.RECEIVER, mResultReceiver);
-        intent.putExtra(Constants.LOCATION_DATA_EXTRA, mLastLocation);
-        startService(intent);
-    }
-import java.time.LocalTime;
-import java.util.ArrayList;
-
 /** AlbumView class to handle logic associated with playing Songs from an album.
-  * Author: CSE 110 - Team 16, Winter 2018
-  * Date: February 7, 2018
+ * Author: CSE 110 - Team 16, Winter 2018
+ * Date: February 7, 2018
  */
 public class AlbumView extends AppCompatActivity {
 
@@ -254,10 +217,6 @@ public class AlbumView extends AppCompatActivity {
         }
         locationManger.requestLocationUpdates(locationProvider,3000,0,locationListener);
 
-        //Get location address
-        mResultReceiver = new AddressResultReceiver(new Handler());
-        mAddressRequested =false;
-        mAddressOutput = "";
 
 
         SharedPreferences sharedPreferences = getSharedPreferences("flash_back_mode", MODE_PRIVATE);
@@ -404,25 +363,6 @@ public class AlbumView extends AppCompatActivity {
     public void onBackPressed() {
         moveTaskToBack(true);
     }
-
-    private class AsyncTaskAddress extends AsyncTask<Double,String,String > {
-
-        @Override
-        protected String doInBackground(Double ... p){
-            return getCompleteAddressString(Double.valueOf(p[0]), Double.valueOf(p[1]));
-        }
-        @Override
-        protected void onPreExecute(){
-            progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected void onPostExecute(String s){
-            progressBar.setVisibility(View.GONE);
-            mAddressOutput = s;
-        }
-
-    }
     private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
         String strAdd = "";
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
@@ -452,18 +392,4 @@ public class AlbumView extends AppCompatActivity {
     public PopulateMusic getPopulateMusic() { return populateMusic;}
 
 
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
 };
