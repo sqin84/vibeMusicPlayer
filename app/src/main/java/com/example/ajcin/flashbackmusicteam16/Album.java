@@ -2,10 +2,10 @@ package com.example.ajcin.flashbackmusicteam16;
 
 import java.util.ArrayList;
 
-/**
- * Created by luke on 2/7/2018.
+/** Album class to store Songs belonging to an album.
+  * Author: CSE 110 - Team 16, Winter 2018
+  * Date: February 7, 2018
  */
-
 public class Album {
 
     private final String album_name;
