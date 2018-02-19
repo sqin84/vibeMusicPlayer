@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+
 import static android.content.Context.MODE_PRIVATE;
 
 
@@ -28,8 +30,6 @@ public class albumsongsFragment extends ListFragment {
     public albumsongsFragment() {
         // Required empty public constructor
     }
-
-    private String[] songs_in_an_album = {"song1", "song2", "heuheue"};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,8 +53,9 @@ public class albumsongsFragment extends ListFragment {
         ((AlbumView)getActivity()).mediaPlayer.reset();
         Song selected_song = ((AlbumView)getActivity()).populateMusic.getSong(album_song_list_string[position]);
         ((AlbumView)getActivity()).loadMedia(selected_song);
+        ((AlbumView)getActivity()).album_playlist = new ArrayList<Song>(0);
         changeToNowPlaying(selected_song);
-        ((AlbumView)getActivity()).mediaPlayer.start();
+        //((AlbumView)getActivity()).mediaPlayer.start();
 
         //Store song name and album
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", MODE_PRIVATE);
@@ -74,6 +75,7 @@ public class albumsongsFragment extends ListFragment {
         song_bundle.putStringArray("song", song_name);
         NowPlayingFragment npFragment = new NowPlayingFragment();
         npFragment.setArguments(song_bundle);
+        ((AlbumView)getActivity()).navigation.getMenu().getItem(2).setChecked(true);
         transaction.replace(R.id.musicItems, npFragment).commit();
     }
 
