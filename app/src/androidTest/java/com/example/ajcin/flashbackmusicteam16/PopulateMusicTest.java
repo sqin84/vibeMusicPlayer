@@ -1,7 +1,5 @@
 package com.example.ajcin.flashbackmusicteam16;
 
-import android.media.MediaMetadataRetriever;
-import android.net.Uri;
 import android.support.test.InstrumentationRegistry;
 
 import org.junit.Test;
@@ -16,7 +14,7 @@ public class PopulateMusicTest {
     public void getSong() throws Exception {
         int res = R.raw.after_the_storm;
         PopulateMusic populateMusic =new PopulateMusic(InstrumentationRegistry.getTargetContext());
-        Song getSong=populateMusic.getSong("After The Storm");
+        Song getSong = populateMusic.getSong("After The Storm");
         assertEquals(res,getSong.get_id());
     }
 

@@ -10,42 +10,33 @@ import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
-/** Song class to store resource id of file, along with various information about the Song.
-  * Author: CSE 110 - Team 16, Winter 2018
-  * Date: February 7, 2018
+/**
+ * Created by ajcin on 2/23/2018.
  */
 public class Song {
-
-    private final String song_title;
-    private final String song_artist;
-    private final String song_album;
-    private final int song_id;
+    protected int song_id;
+    protected final String song_title;
+    protected final String song_artist;
+    protected final String song_album;
+    protected String last_played_address;
+    protected int score;
+    protected List<Location> locations;
+    protected List<LocalDateTime> dateTimes;
     private String last_location;
     private String last_day;
     private String last_time;
-    private String last_played_address;
-
     private boolean is_disliked;
     private boolean is_favorited;
-    private int score;
-    private List<Location> locations;
-    private List<LocalDateTime> dateTimes;
 
-    /** Song constructor
-      * @param title title of the song
-      * @param artist name of song's artist
-      * @param album name of album the song belongs to
-      * @param id resource id of the song
-     */
-    public Song(String title,String artist, String album, int id){
-        song_title = title;
-        song_album = album;
-        song_artist = artist;
-        song_id = id;
-        score = Integer.MAX_VALUE;
-        last_played_address = "";
+    public Song(String title, String artist, String album, int id) {
         locations=new LinkedList<Location>();
+        score = Integer.MAX_VALUE;
+        song_title = title;
+        last_played_address = "";
         dateTimes=new LinkedList<LocalDateTime>();
+        song_artist = artist;
+        song_album = album;
+        this.song_id = id;
     }
 
     public String get_last_played_address() {
@@ -57,13 +48,38 @@ public class Song {
         }
     }
 
-    public void set_last_played_address(String l){
-        last_played_address = l;
+    public int get_score(){ return this.score; }
+
+    public int get_id() {   return song_id; }
+
+    public String get_title() {  return song_title;}
+
+    public String get_album() {  return song_album;}
+
+    public String get_artist() {    return song_artist;}
+
+    public String get_last_day() {   return last_day;}
+
+    public String get_last_time() {
+        if(!dateTimes.isEmpty()){
+            String str="Last Played: "+Integer.valueOf(dateTimes.get(0).getHour()).toString() + ":";
+            if(dateTimes.get(0).getMinute()>10)
+            {
+                str=str+Integer.valueOf(dateTimes.get(0).getMinute()).toString();
+            }
+            else
+            {
+                str=str+"0"+Integer.valueOf(dateTimes.get(0).getMinute()).toString();
+            }
+            str=str+"\n Day of the week: "+dateTimes.get(0).getDayOfWeek();
+            return str;
+        }
+        return "";
     }
-    public int get_score()
-    {
-        return this.score;
-    }
+
+    public Boolean get_is_disliked() {  return is_disliked;}
+
+    public Boolean get_is_favorited() { return is_favorited;}
 
     public LinkedList<Location> getListOfLocations() {
         return (LinkedList)this.locations;
@@ -73,13 +89,19 @@ public class Song {
         return (LinkedList)this.dateTimes;
     }
 
+    public void set_last_played_address(String l){
+        last_played_address = l;
+    }
+
     /** set_score
       * Update song's score with specified value.
       * @param score new score to assign to the song
      */
-    public void set_score(int score) {
-        this.score=score;
-    }
+    public void set_score(int score) {  this.score=score; }
+
+    public void set_last_day(String day) {  last_day = day; }
+
+    public void set_last_time(String time){ last_time = time; }
 
     /** favorite_song
       * Toggle whether the song is favorited or not.
@@ -121,7 +143,8 @@ public class Song {
             ((LinkedList) locations).removeLast();
         }
     }
-  /** addDateTime
+
+    /** addDateTime
       * Add dateTime to the list of dateTimes where the song was played.
       * @param e dateTime to add
      */
@@ -134,33 +157,7 @@ public class Song {
         ((LinkedList) dateTimes).removeLast();
     }}
 
-    public String get_title() {  return song_title;}
-    public String get_album() {  return song_album;}
-    public String get_artist() {    return song_artist;}
-    public int get_id() {   return song_id;}
-    public String get_last_day() {   return last_day;}
-    public String get_last_time() {
-        if(!dateTimes.isEmpty()){
-            String str="Last Played: "+Integer.valueOf(dateTimes.get(0).getHour()).toString() + ":";
-            if(dateTimes.get(0).getMinute()>10)
-            {
-                str=str+Integer.valueOf(dateTimes.get(0).getMinute()).toString();
-            }
-            else
-            {
-                str=str+"0"+Integer.valueOf(dateTimes.get(0).getMinute()).toString();
-            }
-            str=str+"\n Day of the week: "+dateTimes.get(0).getDayOfWeek();
-            return str;
-        }
-        return "";
-    }
-    public Boolean get_is_disliked() {  return is_disliked;}
-    public Boolean get_is_favorited() { return is_favorited;}
-    public void update_last_day(String day) {last_day = day;}
-    public void update_last_time(String time)   {last_time = time;}
-
-    void startPlayingSong(Activity activity, MediaPlayer mediaPlayer, AlbumView albumView) {
+    public void startPlayingSong(Activity activity, MediaPlayer mediaPlayer, AlbumView albumView) {
         int resourceId = get_id();
 
         AssetFileDescriptor assetFileDescriptor = activity.getResources().openRawResourceFd(resourceId);

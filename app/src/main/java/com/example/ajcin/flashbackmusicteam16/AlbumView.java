@@ -6,22 +6,14 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.AssetFileDescriptor;
-import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
-import android.media.PlaybackParams;
-import android.net.Uri;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -31,15 +23,9 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-
-import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -56,7 +42,7 @@ public class AlbumView extends AppCompatActivity {
     public Song currentlyPlaying;
     public BottomNavigationView navigation;
     public ProgressBar progressBar;
-    private LocationInfo currentLocationInfo;
+    private Location currentLocation;
     private int currentResource;
     private LocalTime intervalStart, intervalEnd;
     private TimeMachine timeMachine;
@@ -132,7 +118,7 @@ public class AlbumView extends AppCompatActivity {
     };
 
     private void setUpFlashBackMode(){
-        FlashbackMode flashbackMode = new FlashbackMode(currentLocationInfo.getLocation(), TimeMachine.now(),populateMusic);
+        FlashbackMode flashbackMode = new FlashbackMode(currentLocation, TimeMachine.now(),populateMusic);
         queuedSongs= flashbackMode.initiate();
         isFlashbackMode = true;
        // Toast.makeText(this, Integer.valueOf(queuedSongs.get(0).getScore()).toString(), Toast.LENGTH_SHORT).show();
@@ -179,13 +165,12 @@ public class AlbumView extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         // updating current location
-        currentLocationInfo=new LocationInfo();
         LocationListener locationListener=new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
 
-                currentLocationInfo.setLocation(location);
-                //Toast.makeText(getApplicationContext(), new Double(currentLocationInfo.getCurrentLatitude()).toString(),Toast.LENGTH_SHORT).show();
+                currentLocation = location;
+                //Toast.makeText(getApplicationContext(), new Double(currentLocation.getLatitude()).toString(),Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -280,7 +265,7 @@ public class AlbumView extends AppCompatActivity {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 Toast.makeText(getApplicationContext(), "song completed!", Toast.LENGTH_SHORT).show();
-                Location currentLocation = currentLocationInfo.getLocation();
+                Location currLocation = currentLocation;
                 selected_song.addLocation(currentLocation);
                 selected_song.addDateTime(TimeMachine.now());
 
@@ -312,22 +297,8 @@ public class AlbumView extends AppCompatActivity {
                 }
             }
         });
-        int resourceId = selected_song.get_id();
         currentlyPlaying = selected_song;
-
-        AssetFileDescriptor assetFileDescriptor = this.getResources().openRawResourceFd(resourceId);
-        try {
-            mediaPlayer.setDataSource(assetFileDescriptor);
-            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                public void onPrepared(MediaPlayer mp) {
-                    mp.start();
-                }
-            });
-            mediaPlayer.prepareAsync();
-        } catch (Exception e) {
-            Log.d("MediaPlayer", "did not prepare correctly");
-            System.out.println(e.toString());
-        }
+        selected_song.startPlayingSong(this, mediaPlayer, this);
     }
 
     //Test method
