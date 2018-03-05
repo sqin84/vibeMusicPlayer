@@ -40,13 +40,12 @@ public class Song {
     }
 
     public String get_last_played_address() {
-        if(!locations.isEmpty()) {
-            return ("Latitude: "+locations.get(0).getLatitude()+"\nLongitude: "+locations.get(0).getLongitude());
-        }
-        else {
-            return "";
-        }
+        return last_played_address;
     }
+    public void set_last_played_address(String l){
+        last_played_address = l;
+    }
+
 
     public int get_score(){ return this.score; }
 
@@ -89,9 +88,7 @@ public class Song {
         return (LinkedList)this.dateTimes;
     }
 
-    public void set_last_played_address(String l){
-        last_played_address = l;
-    }
+
 
     /** set_score
       * Update song's score with specified value.
@@ -134,8 +131,6 @@ public class Song {
       * @param e location to add
      */
     public void addLocation(Location e){
-       // if(!locations.isEmpty()&&(e.distanceTo(locations.get(0)) < 100))
-         //   return;
         if(locations.size() < 10) {
             ((LinkedList) locations).addFirst(e);
         }else{
