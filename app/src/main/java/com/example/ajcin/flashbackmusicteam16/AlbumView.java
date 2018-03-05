@@ -24,6 +24,9 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -44,10 +47,9 @@ public class AlbumView extends AppCompatActivity {
     public BottomNavigationView navigation;
     public ProgressBar progressBar;
     private Location currentLocation;
-    private int currentResource;
-    private LocalTime intervalStart, intervalEnd;
-    private TimeMachine timeMachine;
     ArrayList<Song> queuedSongs;
+    public FirebaseDatabase database = FirebaseDatabase.getInstance();
+    public DatabaseReference myRef = database.getReference();
     //private static final int MEDIA_RES_ID = R.raw.after_the_storm;
 
     public static boolean isFlashbackMode = false;
@@ -257,11 +259,20 @@ public class AlbumView extends AppCompatActivity {
     // needs to be done in this asyncTask
     private class locationAndAdressTask extends AsyncTask<Song, String, String>{
         protected String doInBackground(Song... s){
+
+
             s[0].addLocation(new Location(currentLocation));
-            s[0].set_last_played_address(getCompleteAddressString(s[0].getListOfLocations().get(0).getLatitude(), s[0].getListOfLocations().get(0).getLongitude()));
+            Double lat = s[0].getListOfLocations().get(0).getLatitude();
+            Double lon = s[0].getListOfLocations().get(0).getLongitude();
+            s[0].set_last_played_address(getCompleteAddressString(lat,lon));
 
             //TODO make a play object here
             //TODO can also update a songs last played time and location here
+            Play play = new Play();
+            play.setLatitude(lat).setLongitude(lon).setAddress(s[0].get_last_played_address())
+                    .setSongName(s[0].get_title()).setUser(null);
+            //remove all spaces and new lines
+            myRef.child(s[0].get_last_played_address().replaceAll("\\s+","")).child(s[0].get_title()).setValue(play);
             return "";
         }
         protected void onPreExecute(){
