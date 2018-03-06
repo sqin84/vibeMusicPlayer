@@ -12,6 +12,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -22,6 +23,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -43,10 +47,9 @@ public class AlbumView extends AppCompatActivity {
     public BottomNavigationView navigation;
     public ProgressBar progressBar;
     private Location currentLocation;
-    private int currentResource;
-    private LocalTime intervalStart, intervalEnd;
-    private TimeMachine timeMachine;
     ArrayList<Song> queuedSongs;
+    public FirebaseDatabase database = FirebaseDatabase.getInstance();
+    public DatabaseReference myRef = database.getReference();
     //private static final int MEDIA_RES_ID = R.raw.after_the_storm;
 
     public static boolean isFlashbackMode = false;
@@ -247,14 +250,45 @@ public class AlbumView extends AppCompatActivity {
 
     public void createMediaPlayer() {
         mediaPlayer = new MediaPlayer();
-        //float speed=3f;
-       // mediaPlayer.getPlaybackParams().setSpeed(speed);
+       // float speed=2.5f;
+        // mediaPlayer.getPlaybackParams().setSpeed(speed);
+
     }
 
+    // this is called in onCompletion of media player, anything that uses the current song's address field
+    // needs to be done in this asyncTask
+    private class locationAndAdressTask extends AsyncTask<Song, String, String>{
+        protected String doInBackground(Song... s){
+
+
+            s[0].addLocation(new Location(currentLocation));
+            Double lat = s[0].getListOfLocations().get(0).getLatitude();
+            Double lon = s[0].getListOfLocations().get(0).getLongitude();
+            s[0].set_last_played_address(getCompleteAddressString(lat,lon));
+
+            //TODO make a play object here
+            //TODO can also update a songs last played time and location here
+            Play play = new Play();
+            play.setLatitude(lat).setLongitude(lon).setAddress(s[0].get_last_played_address())
+                    .setSongName(s[0].get_title()).setUser(null);
+            //remove all spaces and new lines
+            myRef.child(s[0].get_last_played_address().replaceAll("\\s+","")).child(s[0].get_title()).setValue(play);
+            return "";
+        }
+        protected void onPreExecute(){
+            progressBar.setVisibility(View.VISIBLE);
+        }
+        protected void onPostExecute(String result){
+            progressBar.setVisibility(View.GONE);
+            Log.w("address:",  result);
+        }
+
+    }
     public void loadMedia(final Song selected_song) {
         if(mediaPlayer == null){
             mediaPlayer = new MediaPlayer();
         }
+
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
@@ -265,17 +299,11 @@ public class AlbumView extends AppCompatActivity {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 Toast.makeText(getApplicationContext(), "song completed!", Toast.LENGTH_SHORT).show();
-                Location currLocation = currentLocation;
-                selected_song.addLocation(currentLocation);
+                // anything that has to do with adress must be done in this AsyncTask
+                new locationAndAdressTask().execute(selected_song);
                 selected_song.addDateTime(TimeMachine.now());
 
                 Log.d("long + lat", Double.valueOf(currentLocation.getLatitude()).toString() + " "+  Double.valueOf(currentLocation.getLongitude()).toString());
-
-                /* doesn't work, attempt to get address
-                new AsyncTaskAddress().execute(currentLocation.getLatitude(),currentLocation.getLongitude());
-                selected_song.set_last_played_address(mAddressOutput);
-                */
-
                 mediaPlayer.start();
 
                 if(isFlashbackMode){
@@ -329,6 +357,7 @@ public class AlbumView extends AppCompatActivity {
         mediaPlayer.release();
     }
 
+
     // so that back button doesn't kill app
     @Override
     public void onBackPressed() {
@@ -336,17 +365,36 @@ public class AlbumView extends AppCompatActivity {
     }
     private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
         String strAdd = "";
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+
+        Geocoder geocoder;
+        //List<Address> addresses;
+        geocoder = new Geocoder(this, Locale.getDefault());
+
+        /*addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+
+        String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+        String city = addresses.get(0).getLocality();
+        String state = addresses.get(0).getAdminArea();
+        String country = addresses.get(0).getCountryName();
+        String postalCode = addresses.get(0).getPostalCode();
+        String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL*/
         try {
             List<Address> addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
             if (addresses != null) {
                 Address returnedAddress = addresses.get(0);
+
+                String knownName = addresses.get(0).getFeatureName();
                 StringBuilder strReturnedAddress = new StringBuilder("");
 
                 for (int i = 0; i <= returnedAddress.getMaxAddressLineIndex(); i++) {
                     strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
                 }
                 strAdd = strReturnedAddress.toString();
+                if( knownName != null){
+                    Log.w("current feature name", knownName);
+                }else{
+                    Log.w("now known feature name","sad");
+                }
                 Log.w("My Current loction address", strReturnedAddress.toString());
             } else {
                 Log.w("My Current loction address", "No Address returned!");
@@ -354,9 +402,9 @@ public class AlbumView extends AppCompatActivity {
         } catch (Exception e) {
 
            Log.w("exception: ", e.getClass().getName());
-           /* e.printStackTrace();
-            Log.w("My Current loction address", "Canont get Address!");
-            */
+           /* e.printStackTrace();*/
+           Log.w("My Current loction address", "Canont get Address!");
+
         }
         return strAdd;
     }
