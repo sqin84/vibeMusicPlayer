@@ -15,9 +15,9 @@ import java.util.List;
  */
 public class Song {
     protected int song_id;
-    protected final String song_title;
-    protected final String song_artist;
-    protected final String song_album;
+    protected String song_title;
+    protected String song_artist;
+    protected String song_album;
     protected String last_played_address;
     protected int score;
     protected List<Location> locations;

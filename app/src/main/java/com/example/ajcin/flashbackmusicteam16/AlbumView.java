@@ -272,7 +272,7 @@ public class AlbumView extends AppCompatActivity {
             play.setLatitude(lat).setLongitude(lon).setAddress(s[0].get_last_played_address())
                     .setSongName(s[0].get_title()).setUser(null);
             //remove all spaces and new lines
-            myRef.child(s[0].get_last_played_address().replaceAll("\\s+","")).child(s[0].get_title()).setValue(play);
+            myRef.child("Plays").child(s[0].get_last_played_address().replaceAll("\\s+","")).child(s[0].get_title()).setValue(play);
             return "";
         }
         protected void onPreExecute(){
