@@ -5,20 +5,17 @@
     <string name="title_nowPlaying">Now Playing</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="play">Play</string>
     <string name="pause">Pause</string>
     <string name="reset">Reset</string>
     <string name="favorite">Favorite</string>
     <string name="dislike">Dislike</string>
 
-    <string name="albumsName">albumsName</string>
-    <string name="songName">songName</string>
-
     <string name="address_found">ADDRESSFOUND</string>
     <string name="invalid_lat_long_used">INVALIDLLUSED</string>
     <string name="service_not_available">SERVICENOTAVAILABLE</string>
     <string name="no_address_found">NOADDRESSFOUND</string>
+    <string name="title_activity_google_people">GooglePeople</string>
 
 
 </resources>

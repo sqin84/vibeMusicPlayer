@@ -28,7 +28,12 @@
 
         <service
             android:name=".FetchAddressIntentService"
-            android:exported="false"></service>
+            android:exported="false" />
+
+        <activity
+            android:name=".GooglePeopleActivity"
+            android:label="@string/title_activity_google_people"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
