@@ -47,6 +47,7 @@ public class AlbumView extends AppCompatActivity {
     private LocalTime intervalStart, intervalEnd;
     private TimeMachine timeMachine;
     ArrayList<Song> queuedSongs;
+    public Context context;
     //private static final int MEDIA_RES_ID = R.raw.after_the_storm;
 
     public static boolean isFlashbackMode = false;
@@ -160,6 +161,11 @@ public class AlbumView extends AppCompatActivity {
         LocalDateTime dummyTime = LocalDateTime.of(2017, 2, 7, 12, 00);
         TimeMachine.useFixedClockAt(dummyTime);
 
+        // TODO remove this after testing
+        //context = getApplicationContext();
+        //DownloadHandler handler = new DownloadHandler(context);
+        //handler.downloadSong( context, "https://www.androidtutorialpoint.com/wp-content/uploads/2016/09/AndroidDownloadManager.mp3");
+        // TODO remove this after testing
 
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);

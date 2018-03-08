@@ -3,7 +3,9 @@ package com.example.ajcin.flashbackmusicteam16;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaMetadataRetriever;
+import android.os.Environment;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,16 +33,16 @@ public class PopulateMusic {
       * @return song object with matching name
      */
     public Song getSong(String song){
-        Song selected_song = new Song("NA","NA","NA",12);
+        Song selected_song;
         Iterator<Song> iter = song_list.iterator();
         while(iter.hasNext()){
             Song curr_song = iter.next();
             if(curr_song.get_title().equals(song)){
                 selected_song = curr_song;
-                break;
+                return selected_song;
             }
         }
-        return selected_song;
+        return null;
     }
 
     public ArrayList<Song> getSongList() {  return song_list; }
@@ -135,6 +137,22 @@ public class PopulateMusic {
       * Populate the list of songs and albums.
      */
     public void populateMusicList() {
+        /************************** AARON ******************************************/
+        /*File[] files = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).listFiles();
+        for(int i = 0; i < files.length; i++) {
+            if(files[i].getName().contains("mp3")) { //TODO
+                    AssetFileDescriptor assetFileDescriptor = context.getResources().;
+                    MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+                    mmr.setDataSource(assetFileDescriptor.getFileDescriptor(),assetFileDescriptor.getStartOffset(), assetFileDescriptor.getLength());
+                    String song_album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
+                    String song_artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST);
+                    String song_name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+                    UrlSong curr_song = new UrlSong(song_name, song_artist, song_album, 5, "test");
+                    song_list.add(curr_song);
+            }
+        }*/
+
+        /************************** AARON ******************************************/
         Field[] fields = R.raw.class.getFields();
         int[] resArray = new int[fields.length];
         for(int f=0; f < fields.length; f++){
@@ -147,7 +165,7 @@ public class PopulateMusic {
                 String song_album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
                 String song_artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST);
                 String song_name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-                Song curr_song = new Song(song_name, song_artist, song_album, res_id);
+                ResourceSong curr_song = new ResourceSong(song_name, song_artist, song_album, res_id);
                 song_list.add(curr_song);
                 Iterator<Album> itr = album_list.iterator();
                 boolean indexed = false;
