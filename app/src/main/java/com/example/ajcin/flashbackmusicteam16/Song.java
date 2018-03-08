@@ -13,7 +13,8 @@ import java.util.List;
 /**
  * Created by ajcin on 2/23/2018.
  */
-public class Song {
+
+abstract public class Song {
     protected int song_id;
     protected String song_title;
     protected String song_artist;
@@ -28,7 +29,7 @@ public class Song {
     private boolean is_disliked;
     private boolean is_favorited;
 
-    public Song(String title, String artist, String album, int id) {
+    public Song(String title, String artist, String album) {
         locations=new LinkedList<Location>();
         score = Integer.MAX_VALUE;
         song_title = title;
@@ -36,7 +37,6 @@ public class Song {
         dateTimes=new LinkedList<LocalDateTime>();
         song_artist = artist;
         song_album = album;
-        this.song_id = id;
     }
 
     public String get_last_played_address() {
@@ -48,8 +48,6 @@ public class Song {
 
 
     public int get_score(){ return this.score; }
-
-    public int get_id() {   return song_id; }
 
     public String get_title() {  return song_title;}
 
@@ -152,21 +150,5 @@ public class Song {
         ((LinkedList) dateTimes).removeLast();
     }}
 
-    public void startPlayingSong(Activity activity, MediaPlayer mediaPlayer, AlbumView albumView) {
-        int resourceId = get_id();
-
-        AssetFileDescriptor assetFileDescriptor = activity.getResources().openRawResourceFd(resourceId);
-        try {
-            mediaPlayer.setDataSource(assetFileDescriptor);
-            albumView.mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                public void onPrepared(MediaPlayer mp) {
-                    mp.start();
-                }
-            });
-            albumView.mediaPlayer.prepareAsync();
-        } catch (Exception e) {
-            Log.d("MediaPlayer", "did not prepare correctly");
-            System.out.println(e.toString());
-        }
-    }
+    abstract void startPlayingSong(Activity activity, MediaPlayer mediaPlayer, AlbumView albumView);
 }
