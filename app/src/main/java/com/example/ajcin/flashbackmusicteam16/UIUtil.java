@@ -7,9 +7,6 @@ package com.example.ajcin.flashbackmusicteam16;
         import android.view.View;
         import android.view.ViewAnimationUtils;
 
-/**
- * Created by Suleiman19 on 4/4/16.
- */
 public class UIUtil {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

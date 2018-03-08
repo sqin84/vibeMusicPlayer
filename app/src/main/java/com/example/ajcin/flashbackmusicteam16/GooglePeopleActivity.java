@@ -12,11 +12,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -30,11 +32,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.api.services.people.v1.People;
 import com.google.api.services.people.v1.PeopleScopes;
-import com.google.api.services.people.v1.model.EmailAddress;
 import com.google.api.services.people.v1.model.ListConnectionsResponse;
 import com.google.api.services.people.v1.model.Name;
 import com.google.api.services.people.v1.model.Person;
-import com.google.api.services.people.v1.model.PhoneNumber;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ import java.util.List;
 
 public class GooglePeopleActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, View.OnClickListener {
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "GoogleActivity";
 
     GoogleApiClient mGoogleApiClient;
 
@@ -54,8 +54,13 @@ public class GooglePeopleActivity extends AppCompatActivity implements GoogleApi
     Toolbar toolbar;
     ProgressBar progressBar;
 
-    RecyclerView recyclerView;
-    PeopleAdapter adapter;
+//    RecyclerView recyclerView;
+//    PeopleAdapter adapter;
+
+    // TODO register all friends in firebase
+    void firebaseUpdate(List<String> nameList){
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,18 +72,14 @@ public class GooglePeopleActivity extends AppCompatActivity implements GoogleApi
 
         frameLogin = (LinearLayout) findViewById(R.id.frame_login);
         toolbar = (Toolbar) findViewById(R.id.main_toolbar);
-        recyclerView = (RecyclerView) findViewById(R.id.main_recycler);
+//        recyclerView = (RecyclerView) findViewById(R.id.main_recycler);
         progressBar = (ProgressBar) findViewById(R.id.main_progress);
 
         GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                // The serverClientId is an OAuth 2.0 web client ID
                 .requestServerAuthCode(Constants.WEB_CLIENT_ID)
                 .requestEmail()
                 .requestScopes(new Scope(Scopes.PLUS_LOGIN),
-                        new Scope(PeopleScopes.CONTACTS_READONLY),
-                        new Scope(PeopleScopes.USER_EMAILS_READ),
-                        new Scope(PeopleScopes.USERINFO_EMAIL),
-                        new Scope(PeopleScopes.USER_PHONENUMBERS_READ))
+                        new Scope(PeopleScopes.CONTACTS_READONLY))
                 .build();
 
 
@@ -95,7 +96,6 @@ public class GooglePeopleActivity extends AppCompatActivity implements GoogleApi
     @Override
     protected void onStart() {
         super.onStart();
-
         mGoogleApiClient.connect();
     }
 
@@ -191,26 +191,13 @@ public class GooglePeopleActivity extends AppCompatActivity implements GoogleApi
 
                 ListConnectionsResponse response = peopleService.people().connections()
                         .list("people/me")
-                        // This line's really important! Here's why:
-                        // http://stackoverflow.com/questions/35604406/retrieving-information-about-a-contact-with-google-people-api-java
-                        .setRequestMaskIncludeField("person.names,person.emailAddresses,person.phoneNumbers")
+                        .setRequestMaskIncludeField("person.names")
                         .execute();
                 List<Person> connections = response.getConnections();
 
                 for (Person person : connections) {
                     if (!person.isEmpty()) {
                         List<Name> names = person.getNames();
-                        List<EmailAddress> emailAddresses = person.getEmailAddresses();
-                        List<PhoneNumber> phoneNumbers = person.getPhoneNumbers();
-
-                        if (phoneNumbers != null)
-                            for (PhoneNumber phoneNumber : phoneNumbers)
-                                Log.d(TAG, "phone: " + phoneNumber.getValue());
-
-                        if (emailAddresses != null)
-                            for (EmailAddress emailAddress : emailAddresses)
-                                Log.d(TAG, "email: " + emailAddress.getValue());
-
                         if (names != null)
                             for (Name name : names)
                                 nameList.add(name.getDisplayName());
@@ -232,23 +219,26 @@ public class GooglePeopleActivity extends AppCompatActivity implements GoogleApi
 
             progressBar.setVisibility(View.GONE);
 
-            recyclerView.setVisibility(View.VISIBLE);
-
-            adapter = new PeopleAdapter(nameList);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-            recyclerView.setAdapter(adapter);
-
+//            recyclerView.setVisibility(View.VISIBLE);
+//
+//            adapter = new PeopleAdapter(nameList);
+//            recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+//            recyclerView.setAdapter(adapter);
+            Toast toast = Toast.makeText(getApplicationContext(), "Friends Have Been Synced Successfully", Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+            firebaseUpdate(nameList);
+            finish();
         }
     }
-
 
     void updateUI() {
 
         progressBar.setVisibility(View.VISIBLE);
 
-        toolbar.setVisibility(View.INVISIBLE);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("People API");
+//        toolbar.setVisibility(View.INVISIBLE);
+//        setSupportActionBar(toolbar);
+//        getSupportActionBar().setTitle("Contacts");
 
         frameLogin.animate().alpha(0).setDuration(400).setInterpolator(new AccelerateInterpolator()).setListener(new Animator.AnimatorListener() {
             @Override

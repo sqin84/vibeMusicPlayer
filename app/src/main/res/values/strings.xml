@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">Flashback Music</string>
+    <string name="welcome_message">Welcome To\nFlashback Music</string>
     <string name="title_albums">Albums</string>
     <string name="title_songs">Songs</string>
     <string name="title_nowPlaying">Now Playing</string>
+    <string name="prompt_user_sign_in">Please Sign In To Continue</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="play">Play</string>

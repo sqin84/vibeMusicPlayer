@@ -12,12 +12,9 @@ package com.example.ajcin.flashbackmusicteam16;
 
         import java.io.IOException;
 
-/**
- * Created by Suleiman19 on 4/4/16.
- */
 public class PeopleHelper {
 
-    private static final String APPLICATION_NAME = "Peoples App";
+    private static final String APPLICATION_NAME = "Flashback App";
 
 
     public static People setUp(Context context, String serverAuthCode) throws IOException {

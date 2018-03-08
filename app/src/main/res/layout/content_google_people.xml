@@ -10,17 +10,18 @@
         android:id="@+id/frame_login"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="center">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="bottom"
+            android:layout_weight="2"
+            android:gravity="center"
             android:padding="32dp"
-            android:text="People API:\nAndroid Tutorial"
+            android:text="@string/welcome_message"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-            android:textColor="#9A9A9A" />
+            android:textColor="@color/cardview_dark_background" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -35,6 +36,16 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 app:buttonSize="wide" />
+
+            <TextView
+                android:id="@+id/prompt_sign_in"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/main_googlesigninbtn"
+                android:layout_gravity="top|center"
+                android:text="@string/prompt_user_sign_in"
+                android:textColor="@color/bg_light"
+                android:textSize="24sp" />
 
         </FrameLayout>
     </LinearLayout>
