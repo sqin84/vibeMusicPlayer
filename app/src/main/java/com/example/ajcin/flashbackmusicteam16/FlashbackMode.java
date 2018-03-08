@@ -29,8 +29,7 @@ public class FlashbackMode {
       * @return list of songs to play
      */
     public ArrayList<Song> initiate() {
-        songs = new ArrayList<Song>();
-        songs = populateMusic.getSongList();
+        songs = new ArrayList<Song>(populateMusic.getSongList());
         this.readyScores();
         return (ArrayList)this.songs;
     }
