@@ -1,49 +1,154 @@
 package com.example.ajcin.flashbackmusicteam16;
 
+import android.app.Activity;
+import android.content.res.AssetFileDescriptor;
+import android.location.Location;
+import android.media.MediaPlayer;
+import android.util.Log;
+
+import java.time.LocalDateTime;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
- * Created by luke on 2/7/2018.
+ * Created by ajcin on 2/23/2018.
  */
 
-public class Song {
-
-    private final String song_title;
-    private final String song_artist;
-    private final String song_album;
-    private final int song_id;
-
+abstract public class Song {
+    protected int song_id;
+    protected String song_title;
+    protected String song_artist;
+    protected String song_album;
+    protected String last_played_address;
+    protected int score;
+    protected List<Location> locations;
+    protected List<LocalDateTime> dateTimes;
     private String last_location;
     private String last_day;
     private String last_time;
     private boolean is_disliked;
     private boolean is_favorited;
 
-    public Song(String title,String artist, String album, int id){
+    public Song(String title, String artist, String album) {
+        locations=new LinkedList<Location>();
+        score = Integer.MAX_VALUE;
         song_title = title;
-        song_album = album;
+        last_played_address = "";
+        dateTimes=new LinkedList<LocalDateTime>();
         song_artist = artist;
-        song_id = id;
+        song_album = album;
     }
 
-    public void favorite_song() {
-        is_favorited = (is_favorited) ? false : true;
-        if(is_favorited)    is_disliked = false;
+    public String get_last_played_address() {
+        return last_played_address;
+    }
+    public void set_last_played_address(String l){
+        last_played_address = l;
     }
 
-    public void dislike_song() {
-        is_disliked = (get_is_disliked()) ? false : true;
-        if(is_disliked) is_favorited = false;
-    }
+
+    public int get_score(){ return this.score; }
 
     public String get_title() {  return song_title;}
+
     public String get_album() {  return song_album;}
+
     public String get_artist() {    return song_artist;}
-    public int get_id() {   return song_id;}
-    public String get_last_location() { return last_location;}
+
     public String get_last_day() {   return last_day;}
-    public String get_last_time() { return last_time;}
+
+    public String get_last_time() {
+        if(!dateTimes.isEmpty()){
+            String str="Last Played: "+Integer.valueOf(dateTimes.get(0).getHour()).toString() + ":";
+            if(dateTimes.get(0).getMinute()>10)
+            {
+                str=str+Integer.valueOf(dateTimes.get(0).getMinute()).toString();
+            }
+            else
+            {
+                str=str+"0"+Integer.valueOf(dateTimes.get(0).getMinute()).toString();
+            }
+            str=str+"\n Day of the week: "+dateTimes.get(0).getDayOfWeek();
+            return str;
+        }
+        return "";
+    }
+
     public Boolean get_is_disliked() {  return is_disliked;}
+
     public Boolean get_is_favorited() { return is_favorited;}
-    public void update_last_location(String location)   {last_location = location;}
-    public void update_last_day(String day) {last_day = day;}
-    public void update_last_time(String time)   {last_time = time;}
+
+    public LinkedList<Location> getListOfLocations() {
+        return (LinkedList)this.locations;
+    }
+
+    public LinkedList<LocalDateTime> getListOfLocalDateTimes() {
+        return (LinkedList)this.dateTimes;
+    }
+
+
+
+    /** set_score
+      * Update song's score with specified value.
+      * @param score new score to assign to the song
+     */
+    public void set_score(int score) {  this.score=score; }
+
+    public void set_last_day(String day) {  last_day = day; }
+
+    public void set_last_time(String time){ last_time = time; }
+
+    /** favorite_song
+      * Toggle whether the song is favorited or not.
+     */
+    public void favorite_song() {
+        if(get_is_favorited()) {
+            is_favorited = false;
+        }
+        else {
+            is_favorited = true;
+            is_disliked = false;
+        }
+    }
+
+    /** dislike_song
+      * Toggle whether the song is disliked or not.
+     */
+    public void dislike_song() {
+        if(get_is_disliked()) {
+            is_disliked = false;
+        }
+        else {
+            is_disliked = true;
+            is_favorited = false;
+        }
+    }
+
+    /** addLocation
+      * Add location to the list of locations where the song was played.
+      * @param e location to add
+     */
+    public void addLocation(Location e){
+        if(locations.size() < 10) {
+            ((LinkedList) locations).addFirst(e);
+        }else{
+            ((LinkedList) locations).addFirst(e);
+            ((LinkedList) locations).removeLast();
+        }
+    }
+
+    /** addDateTime
+      * Add dateTime to the list of dateTimes where the song was played.
+      * @param e dateTime to add
+     */
+    public void addDateTime(LocalDateTime e)
+    {
+        if( dateTimes.size() < 10) {
+        ((LinkedList) dateTimes).addFirst(e);
+    }else{
+        ((LinkedList) dateTimes).addFirst(e);
+        ((LinkedList) dateTimes).removeLast();
+    }}
+
+    abstract void startPlayingSong(Activity activity, MediaPlayer mediaPlayer, AlbumView albumView);
 }

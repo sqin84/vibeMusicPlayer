@@ -7,28 +7,29 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
 import java.util.ArrayList;
-
+import java.util.LinkedList;
 import static android.content.Context.MODE_PRIVATE;
 
-
+/** songListFragment class to store resource id of file, along with various information about the Song.
+  * Author: CSE 110 - Team 16, Winter 2018
+  * Date: February 7, 2018
+ */
 public class songListFragment extends ListFragment {
 
     private OnFragmentInteractionListener mListener;
     private String[] song_list_string;
 
+    /** Required empty constructor */
     public songListFragment() {
-        // Required empty public constructor
     }
 
+    /** Create the songListFragment */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -42,6 +43,9 @@ public class songListFragment extends ListFragment {
         return view;
     }
 
+    /** onListItemClick
+      * Create media player and begin playing song.
+     */
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
@@ -51,17 +55,25 @@ public class songListFragment extends ListFragment {
         ((AlbumView)getActivity()).mediaPlayer.reset();
         Song selected_song = ((AlbumView)getActivity()).populateMusic.getSong(song_list_string[position]);
         ((AlbumView)getActivity()).loadMedia(selected_song);
+        ((AlbumView)getActivity()).album_playlist = new LinkedList<>();
         changeToNowPlaying(selected_song);
-        ((AlbumView)getActivity()).mediaPlayer.start();
+        //((AlbumView)getActivity()).mediaPlayer.start();
 
         //Store song name and album
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("song_name",selected_song.get_title());
-        editor.putString("song_album",selected_song.get_album());
+        editor.putString("song_name", selected_song.get_title());
+        editor.putString("artist_name", selected_song.get_artist());
+        editor.putString("album_name", selected_song.get_album());
+        editor.putString("address", selected_song.get_last_played_address());
+        editor.putString("time", selected_song.get_last_time());
         editor.apply();
     }
 
+    /** changeToNowPlaying
+      * Change the view to Now Playing with the selected song's information.
+      * @param song current Song being played
+     */
     public void changeToNowPlaying(Song song) {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -71,21 +83,17 @@ public class songListFragment extends ListFragment {
         song_bundle.putStringArray("song", song_name);
         NowPlayingFragment npFragment = new NowPlayingFragment();
         npFragment.setArguments(song_bundle);
+        ((AlbumView)getActivity()).navigation.getMenu().getItem(2).setChecked(true);
         transaction.replace(R.id.musicItems, npFragment).commit();
     }
 
-
-
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -109,16 +117,6 @@ public class songListFragment extends ListFragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
