@@ -14,9 +14,9 @@ import java.util.List;
  * Created by ajcin on 2/23/2018.
  */
 abstract public class Song {
-    protected final String song_title;
-    protected final String song_artist;
-    protected final String song_album;
+    protected String song_title;
+    protected String song_artist;
+    protected String song_album;
     protected String last_played_address;
     protected int score;
     protected List<Location> locations;
