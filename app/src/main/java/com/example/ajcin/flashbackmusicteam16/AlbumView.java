@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -12,6 +13,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -23,8 +25,14 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,14 +51,14 @@ public class AlbumView extends AppCompatActivity {
     public BottomNavigationView navigation;
     public ProgressBar progressBar;
     private Location currentLocation;
-    private int currentResource;
-    private LocalTime intervalStart, intervalEnd;
-    private TimeMachine timeMachine;
     ArrayList<Song> queuedSongs;
     public Context context;
+    public FirebaseDatabase database = FirebaseDatabase.getInstance();
+    public DatabaseReference myRef = database.getReference();
     //private static final int MEDIA_RES_ID = R.raw.after_the_storm;
 
     public static boolean isFlashbackMode = false;
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -58,7 +66,7 @@ public class AlbumView extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            final FragmentTransaction transaction = fragmentManager.beginTransaction();
             switch (item.getItemId()) {
                 case R.id.navigation_albums:
                     if (!isFlashbackMode) {
@@ -98,9 +106,7 @@ public class AlbumView extends AppCompatActivity {
                     return false;
                 case R.id.navigation_flashbackMode:
                     if(!isFlashbackMode) {
-                        setUpFlashBackMode();
-                        transaction.replace(R.id.musicItems, new NowPlayingFragment()).commit();
-                        Toast.makeText(getApplicationContext(), "Flashback mode engaged", Toast.LENGTH_SHORT).show();
+                        queryPlays(transaction);
                         return true;
                     }else{
                         Toast.makeText(getApplicationContext(), "Standard mode", Toast.LENGTH_SHORT).show();
@@ -118,6 +124,54 @@ public class AlbumView extends AppCompatActivity {
 
     };
 
+    private void queryPlays(final FragmentTransaction transaction){
+        progressBar.setVisibility(View.VISIBLE);
+        Double lat = currentLocation.getLatitude();
+        Double lon = currentLocation.getLongitude();
+        Query queryRef = myRef.child("Plays").orderByKey().equalTo(getCompleteAddressString(lat,lon));
+        queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot == null || snapshot.getValue() == null){
+                    // TODO no song has been played in current location, what do?
+                }
+                else {
+                    int i = 0;
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        Play play = child.getValue(Play.class);
+                            /*TODO this is where you launch vibe mode, you can turn plays into songs
+                              TODO by having some map from song titles to songs (possibly in populat music
+                              TODO so that we'd have a list of songs to play/download*/
+                    }
+                }
+                new modeChangeTask(transaction).execute(currentLocation);
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Faile to read value
+                Log.w("TAG1", "Failed to read value.", error.toException());
+            }
+        });
+    }
+    private class modeChangeTask extends AsyncTask<Location, String, String>{
+        FragmentTransaction transaction;
+        modeChangeTask(FragmentTransaction transaction){
+            this.transaction = transaction;
+        }
+        protected String doInBackground(Location... l){
+            setUpFlashBackMode();
+            return "";
+        }
+        protected void onPreExecute(){
+            progressBar.setVisibility(View.VISIBLE);
+        }
+        protected void onPostExecute(String result){
+            progressBar.setVisibility(View.GONE);
+            transaction.replace(R.id.musicItems, new NowPlayingFragment()).commit();
+            Toast.makeText(getApplicationContext(), "Flashback mode engaged", Toast.LENGTH_SHORT).show();
+        }
+
+    }
     private void setUpFlashBackMode(){
         FlashbackMode flashbackMode = new FlashbackMode(currentLocation, TimeMachine.now(),populateMusic);
         queuedSongs= flashbackMode.initiate();
@@ -144,13 +198,16 @@ public class AlbumView extends AppCompatActivity {
 
         mediaPlayer.reset();
         loadMedia(queuedSongs.get(0));
-
         queuedSongs.remove(0);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = new Intent(this, GooglePeopleActivity.class);
+        startActivity(intent);
+
         setContentView(R.layout.activity_album_view);
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
@@ -253,14 +310,63 @@ public class AlbumView extends AppCompatActivity {
 
     public void createMediaPlayer() {
         mediaPlayer = new MediaPlayer();
-        //float speed=3f;
-       // mediaPlayer.getPlaybackParams().setSpeed(speed);
+       // float speed=2.5f;
+        // mediaPlayer.getPlaybackParams().setSpeed(speed);
+
     }
 
+    // this is called in onCompletion of media player, anything that uses the current song's address field
+    // needs to be done in this asyncTask
+    private class SongOnCompletionTask extends AsyncTask<Song, String, String>{
+        protected String doInBackground(Song... s){
+            s[0].addLocation(new Location(currentLocation));
+            Double lat = s[0].getListOfLocations().get(0).getLatitude();
+            Double lon = s[0].getListOfLocations().get(0).getLongitude();
+            s[0].set_last_played_address(getCompleteAddressString(lat,lon));
+
+            Play play = new Play();
+            play.setLatitude(lat).setLongitude(lon).setAddress(s[0].get_last_played_address())
+                    .setSongName(s[0].get_title()).setUser(null);
+            //remove all spaces and new lines
+            myRef.child("Plays").child(s[0].get_last_played_address().replaceAll("\\s+","")).child(s[0].get_title()).setValue(play);
+
+            s[0].addDateTime(TimeMachine.now());
+
+            Log.d("long + lat", Double.valueOf(currentLocation.getLatitude()).toString() + " "+  Double.valueOf(currentLocation.getLongitude()).toString());
+
+            if(isFlashbackMode){
+                mediaPlayer.reset();
+                loadMedia(queuedSongs.get(0));
+                SharedPreferences sharedPreferences = getSharedPreferences("user_name", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("song_name",queuedSongs.get(0).get_title());
+                editor.putString("artist_name", queuedSongs.get(0).get_artist());
+                editor.putString("album_name",queuedSongs.get(0).get_album());
+                editor.putString("address", queuedSongs.get(0).get_last_played_address());
+                editor.putString("time", queuedSongs.get(0).get_last_time());
+                editor.apply();
+                queuedSongs.remove(0);
+            }
+            else {
+                nextAlbumTrack();
+            }
+            return "";
+        }
+        protected void onPreExecute(){
+            progressBar.setVisibility(View.VISIBLE);
+        }
+        protected void onPostExecute(String result){
+            Toast.makeText(getApplicationContext(), "song completed!", Toast.LENGTH_SHORT).show();
+            progressBar.setVisibility(View.GONE);
+            Log.w("address:",  result);
+        }
+
+    }
     public void loadMedia(final Song selected_song) {
         if(mediaPlayer == null){
             mediaPlayer = new MediaPlayer();
         }
+
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
@@ -271,36 +377,8 @@ public class AlbumView extends AppCompatActivity {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 Toast.makeText(getApplicationContext(), "song completed!", Toast.LENGTH_SHORT).show();
-                Location currLocation = currentLocation;
-                selected_song.addLocation(currentLocation);
-                selected_song.addDateTime(TimeMachine.now());
-
-                Log.d("long + lat", Double.valueOf(currentLocation.getLatitude()).toString() + " "+  Double.valueOf(currentLocation.getLongitude()).toString());
-
-                /* doesn't work, attempt to get address
-                new AsyncTaskAddress().execute(currentLocation.getLatitude(),currentLocation.getLongitude());
-                selected_song.set_last_played_address(mAddressOutput);
-                */
-
-                mediaPlayer.start();
-
-                if(isFlashbackMode){
-                    Toast.makeText(getApplicationContext(), "song completed!", Toast.LENGTH_SHORT).show();
-                    mediaPlayer.reset();
-                    loadMedia(queuedSongs.get(0));
-                    SharedPreferences sharedPreferences = getSharedPreferences("user_name", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("song_name",queuedSongs.get(0).get_title());
-                    editor.putString("artist_name", queuedSongs.get(0).get_artist());
-                    editor.putString("album_name",queuedSongs.get(0).get_album());
-                    editor.putString("address", queuedSongs.get(0).get_last_played_address());
-                    editor.putString("time", queuedSongs.get(0).get_last_time());
-                    editor.apply();
-                    queuedSongs.remove(0);
-                }
-                else {
-                    nextAlbumTrack();
-                }
+                // anything that has to do after onComplete must be done in this AsyncTask
+                new SongOnCompletionTask().execute(selected_song);
             }
         });
         currentlyPlaying = selected_song;
@@ -335,6 +413,7 @@ public class AlbumView extends AppCompatActivity {
         mediaPlayer.release();
     }
 
+
     // so that back button doesn't kill app
     @Override
     public void onBackPressed() {
@@ -342,17 +421,36 @@ public class AlbumView extends AppCompatActivity {
     }
     private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
         String strAdd = "";
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+
+        Geocoder geocoder;
+        //List<Address> addresses;
+        geocoder = new Geocoder(this, Locale.getDefault());
+
+        /*addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+
+        String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+        String city = addresses.get(0).getLocality();
+        String state = addresses.get(0).getAdminArea();
+        String country = addresses.get(0).getCountryName();
+        String postalCode = addresses.get(0).getPostalCode();
+        String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL*/
         try {
             List<Address> addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
             if (addresses != null) {
                 Address returnedAddress = addresses.get(0);
+
+                String knownName = addresses.get(0).getFeatureName();
                 StringBuilder strReturnedAddress = new StringBuilder("");
 
                 for (int i = 0; i <= returnedAddress.getMaxAddressLineIndex(); i++) {
                     strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
                 }
                 strAdd = strReturnedAddress.toString();
+                if( knownName != null){
+                    Log.w("current feature name", knownName);
+                }else{
+                    Log.w("now known feature name","sad");
+                }
                 Log.w("My Current loction address", strReturnedAddress.toString());
             } else {
                 Log.w("My Current loction address", "No Address returned!");
@@ -360,9 +458,9 @@ public class AlbumView extends AppCompatActivity {
         } catch (Exception e) {
 
            Log.w("exception: ", e.getClass().getName());
-           /* e.printStackTrace();
-            Log.w("My Current loction address", "Canont get Address!");
-            */
+           /* e.printStackTrace();*/
+           Log.w("My Current loction address", "Canont get Address!");
+
         }
         return strAdd;
     }
