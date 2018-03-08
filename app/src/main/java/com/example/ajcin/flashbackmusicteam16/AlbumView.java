@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -51,6 +52,7 @@ public class AlbumView extends AppCompatActivity {
     public ProgressBar progressBar;
     private Location currentLocation;
     ArrayList<Song> queuedSongs;
+    public Context context;
     public FirebaseDatabase database = FirebaseDatabase.getInstance();
     public DatabaseReference myRef = database.getReference();
     //private static final int MEDIA_RES_ID = R.raw.after_the_storm;
@@ -202,6 +204,10 @@ public class AlbumView extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = new Intent(this, GooglePeopleActivity.class);
+        startActivity(intent);
+
         setContentView(R.layout.activity_album_view);
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
@@ -212,6 +218,11 @@ public class AlbumView extends AppCompatActivity {
         LocalDateTime dummyTime = LocalDateTime.of(2017, 2, 7, 12, 00);
         TimeMachine.useFixedClockAt(dummyTime);
 
+        // TODO remove this after testing
+        //context = getApplicationContext();
+        //DownloadHandler handler = new DownloadHandler(context);
+        //handler.downloadSong( context, "https://www.androidtutorialpoint.com/wp-content/uploads/2016/09/AndroidDownloadManager.mp3");
+        // TODO remove this after testing
 
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
