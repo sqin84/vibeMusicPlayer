@@ -1,6 +1,5 @@
 package com.example.ajcin.flashbackmusicteam16;
 
-import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.database.Cursor;
@@ -9,7 +8,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.StatFs;
 import android.util.Log;
-import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
