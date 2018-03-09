@@ -38,11 +38,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-/** AlbumView class to handle logic associated with playing Songs from an album.
+/** Main_Activity class to handle logic associated with playing Songs from an album.
  * Author: CSE 110 - Team 16, Winter 2018
  * Date: February 7, 2018
  */
-public class AlbumView extends AppCompatActivity {
+public class Main_Activity extends AppCompatActivity {
 
     public PopulateMusic populateMusic;
     public MediaPlayer mediaPlayer;
@@ -51,7 +51,7 @@ public class AlbumView extends AppCompatActivity {
     public BottomNavigationView navigation;
     public ProgressBar progressBar;
     private Location currentLocation;
-    ArrayList<Song> queuedSongs;
+    LinkedList<Song> queuedSongs;
     public Context context;
     public FirebaseDatabase database = FirebaseDatabase.getInstance();
     public DatabaseReference myRef = database.getReference();
@@ -173,8 +173,8 @@ public class AlbumView extends AppCompatActivity {
 
     }
     private void setUpFlashBackMode(){
-        FlashbackMode flashbackMode = new FlashbackMode(currentLocation, TimeMachine.now(),populateMusic);
-        queuedSongs= flashbackMode.initiate();
+        FlashbackPlayListBuilder flashbackPlayListBuilder = new FlashbackPlayListBuilder(currentLocation, TimeMachine.now(),populateMusic);
+        queuedSongs= flashbackPlayListBuilder.build();
         isFlashbackMode = true;
        // Toast.makeText(this, Integer.valueOf(queuedSongs.get(0).getScore()).toString(), Toast.LENGTH_SHORT).show();
         if(mediaPlayer == null){

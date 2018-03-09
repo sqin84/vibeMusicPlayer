@@ -10,7 +10,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 /** NowPlayingFragment class to handle actions within the Now Playing tab.
  * Author: CSE 110 - Team 16, Winter 2018
@@ -24,11 +29,14 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
     Button reset_btn;
     Button favorite_btn;
     Button dislike_btn;
+    Button setTime_btn;
     TextView song_name;
     TextView artist_name;
     TextView album_name;
     TextView time_textview;
     TextView location_textview;
+    EditText timeInput;
+
 
     /** Required empty contructor */
     public NowPlayingFragment() {}
@@ -45,15 +53,17 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
         reset_btn = (Button) rootView.findViewById(R.id.btn_reset);
         favorite_btn = (Button) rootView.findViewById(R.id.btn_favorite);
         dislike_btn = (Button) rootView.findViewById(R.id.btn_dislike);
+        setTime_btn = (Button) rootView.findViewById(R.id.setTime);
 
         song_name = (TextView) rootView.findViewById(R.id.songName);
         artist_name = (TextView) rootView.findViewById(R.id.artistName);
         album_name = (TextView) rootView.findViewById(R.id.albumName);
+        timeInput = rootView.findViewById(R.id.editText);
         time_textview = rootView.findViewById(R.id.time);
         location_textview = rootView.findViewById(R.id.location);
 
         //Display song name and album in NowPlaying
-        if(((AlbumView)getActivity()).mediaPlayer != null) {
+        if(((Main_Activity)getActivity()).mediaPlayer != null) {
             SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", Context.MODE_PRIVATE);
             String name = sharedPreferences.getString("song_name", "");
             String artist = sharedPreferences.getString("artist_name", "");
@@ -77,17 +87,17 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
         play_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(((AlbumView)getActivity()).mediaPlayer != null){
-                    ((AlbumView)getActivity()).mediaPlayer.start();
+                if(((Main_Activity)getActivity()).mediaPlayer != null){
+                    ((Main_Activity)getActivity()).mediaPlayer.start();
                 }
             }
         });
         pause_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(((AlbumView)getActivity()).mediaPlayer != null) {
-                    if (((AlbumView) getActivity()).mediaPlayer.isPlaying()) {
-                        ((AlbumView) getActivity()).mediaPlayer.pause();
+                if(((Main_Activity)getActivity()).mediaPlayer != null) {
+                    if (((Main_Activity) getActivity()).mediaPlayer.isPlaying()) {
+                        ((Main_Activity) getActivity()).mediaPlayer.pause();
                     }
                 }
             }
@@ -95,17 +105,17 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
         reset_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(((AlbumView)getActivity()).mediaPlayer != null) {
-                    ((AlbumView) getActivity()).mediaPlayer.seekTo(0);
-                    ((AlbumView) getActivity()).mediaPlayer.start();
+                if(((Main_Activity)getActivity()).mediaPlayer != null) {
+                    ((Main_Activity) getActivity()).mediaPlayer.seekTo(0);
+                    ((Main_Activity) getActivity()).mediaPlayer.start();
                 }
             }
         });
         favorite_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(((AlbumView)getActivity()).mediaPlayer != null) {
-                    Song currSong = ((AlbumView) getActivity()).currentlyPlaying;
+                if(((Main_Activity)getActivity()).mediaPlayer != null) {
+                    Song currSong = ((Main_Activity) getActivity()).currentlyPlaying;
                     currSong.favorite_song();
 
                     if (currSong.get_is_favorited()) {
@@ -121,8 +131,8 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
         dislike_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(((AlbumView)getActivity()).mediaPlayer != null) {
-                    Song currSong = ((AlbumView) getActivity()).currentlyPlaying;
+                if(((Main_Activity)getActivity()).mediaPlayer != null) {
+                    Song currSong = ((Main_Activity) getActivity()).currentlyPlaying;
                     currSong.dislike_song();
 
                     if (currSong.get_is_disliked()) {
@@ -132,6 +142,21 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
                         dislike_btn.setBackgroundColor(Color.LTGRAY);
                     }
                 }
+            }
+        });
+        setTime_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String input = timeInput.getText().toString();
+                String[] values = input.split(",");
+                int year = Integer.parseInt(values[0]);
+                int month = Integer.parseInt(values[1]);
+                int day = Integer.parseInt(values[2]);
+                int hour = Integer.parseInt(values[3]);
+                int minute = Integer.parseInt(values[4]);
+
+                LocalDateTime dummyTime = LocalDateTime.of(year, month, day, hour, minute);
+                TimeMachine.useFixedClockAt(dummyTime);
             }
         });
 

@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import java.util.ArrayList;
+
 import java.util.LinkedList;
 import static android.content.Context.MODE_PRIVATE;
 
@@ -49,15 +49,15 @@ public class songListFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        if(((AlbumView)getActivity()).mediaPlayer == null){
-            ((AlbumView)getActivity()).createMediaPlayer();
+        if(((Main_Activity)getActivity()).mediaPlayer == null){
+            ((Main_Activity)getActivity()).createMediaPlayer();
         }
-        ((AlbumView)getActivity()).mediaPlayer.reset();
-        Song selected_song = ((AlbumView)getActivity()).populateMusic.getSong(song_list_string[position]);
-        ((AlbumView)getActivity()).loadMedia(selected_song);
-        ((AlbumView)getActivity()).album_playlist = new LinkedList<>();
+        ((Main_Activity)getActivity()).mediaPlayer.reset();
+        Song selected_song = ((Main_Activity)getActivity()).populateMusic.getSong(song_list_string[position]);
+        ((Main_Activity)getActivity()).loadMedia(selected_song);
+        ((Main_Activity)getActivity()).album_playlist = new LinkedList<>();
         changeToNowPlaying(selected_song);
-        //((AlbumView)getActivity()).mediaPlayer.start();
+        //((Main_Activity)getActivity()).mediaPlayer.start();
 
         //Store song name and album
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", MODE_PRIVATE);
@@ -83,7 +83,7 @@ public class songListFragment extends ListFragment {
         song_bundle.putStringArray("song", song_name);
         NowPlayingFragment npFragment = new NowPlayingFragment();
         npFragment.setArguments(song_bundle);
-        ((AlbumView)getActivity()).navigation.getMenu().getItem(2).setChecked(true);
+        ((Main_Activity)getActivity()).navigation.getMenu().getItem(2).setChecked(true);
         transaction.replace(R.id.musicItems, npFragment).commit();
     }
 

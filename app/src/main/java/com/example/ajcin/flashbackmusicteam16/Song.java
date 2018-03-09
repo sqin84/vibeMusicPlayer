@@ -1,10 +1,8 @@
 package com.example.ajcin.flashbackmusicteam16;
 
 import android.app.Activity;
-import android.content.res.AssetFileDescriptor;
 import android.location.Location;
 import android.media.MediaPlayer;
-import android.util.Log;
 
 import java.time.LocalDateTime;
 import java.util.LinkedList;
@@ -150,5 +148,5 @@ abstract public class Song {
         ((LinkedList) dateTimes).removeLast();
     }}
 
-    abstract void startPlayingSong(Activity activity, MediaPlayer mediaPlayer, AlbumView albumView);
+    abstract void startPlayingSong(Activity activity, MediaPlayer mediaPlayer, Main_Activity mainActivity);
 }

@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 /**
  * Created by shuo on 2/18/2018.
  */
-public class FlashbackModeTest {
+public class FlashbackPlayListBuilderTest {
     @Test
     public void initiate() throws Exception {
     }
