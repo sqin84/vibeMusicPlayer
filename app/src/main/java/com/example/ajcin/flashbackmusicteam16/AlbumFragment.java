@@ -14,11 +14,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.PopupMenu;
-import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
-import java.util.Enumeration;
-import java.util.Iterator;
+
 import java.util.LinkedList;
 
 /** AlbumFragment class to handle actions from the album list.
@@ -55,8 +53,8 @@ public class AlbumFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        selected_album = ((AlbumView)getActivity()).populateMusic.getAlbum(album_list_string[position]);
-        String[] album_song_list = ((AlbumView)getActivity()).populateMusic.getSongListInAlbumString(selected_album);
+        selected_album = ((Main_Activity)getActivity()).populateMusic.getAlbum(album_list_string[position]);
+        String[] album_song_list = ((Main_Activity)getActivity()).populateMusic.getSongListInAlbumString(selected_album);
         Bundle album_song_bundle = new Bundle();
         album_song_bundle.putStringArray("album_songs",album_song_list);
         final albumsongsFragment album_songs_fragment = new albumsongsFragment();
@@ -79,12 +77,12 @@ public class AlbumFragment extends ListFragment {
                     SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
 
-                    if(((AlbumView)getActivity()).mediaPlayer == null){
-                        ((AlbumView)getActivity()).createMediaPlayer();
+                    if(((Main_Activity)getActivity()).mediaPlayer == null){
+                        ((Main_Activity)getActivity()).createMediaPlayer();
                     }
-                    ((AlbumView)getActivity()).mediaPlayer.reset();
-                    ((AlbumView)getActivity()).album_playlist  = new LinkedList<>(selected_album.get_album_songs());
-                    Song nowPlaying = ((AlbumView)getActivity()).album_playlist.get(0);
+                    ((Main_Activity)getActivity()).mediaPlayer.reset();
+                    ((Main_Activity)getActivity()).album_playlist  = new LinkedList<>(selected_album.get_album_songs());
+                    Song nowPlaying = ((Main_Activity)getActivity()).album_playlist.get(0);
 
                     editor.putString("song_name", nowPlaying.get_title());
                     editor.putString("artist_name", nowPlaying.get_artist());
@@ -94,7 +92,7 @@ public class AlbumFragment extends ListFragment {
                     editor.apply();
 
                     changeToNowPlaying(nowPlaying);
-                    ((AlbumView)getActivity()).nextAlbumTrack();
+                    ((Main_Activity)getActivity()).nextAlbumTrack();
                 }
               
                 return true;
@@ -117,7 +115,7 @@ public class AlbumFragment extends ListFragment {
         song_bundle.putStringArray("song", song_name);
         NowPlayingFragment npFragment = new NowPlayingFragment();
         npFragment.setArguments(song_bundle);
-        ((AlbumView)getActivity()).navigation.getMenu().getItem(2).setChecked(true);
+        ((Main_Activity)getActivity()).navigation.getMenu().getItem(2).setChecked(true);
         transaction.replace(R.id.musicItems, npFragment).commit();
     }
 

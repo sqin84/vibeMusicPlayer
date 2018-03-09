@@ -20,7 +20,7 @@ public class UrlSong extends Song {
     }
 
     @Override
-    public void startPlayingSong(Activity activity, MediaPlayer mediaPlayer, AlbumView albumView) {
+    public void startPlayingSong(Activity activity, MediaPlayer mediaPlayer, Main_Activity mainActivity) {
 
     }
 }

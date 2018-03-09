@@ -14,7 +14,7 @@ public class PopulateMusicTest {
     public void getSong() throws Exception {
         int res = R.raw.after_the_storm;
         PopulateMusic populateMusic =new PopulateMusic(InstrumentationRegistry.getTargetContext());
-        Song getSong = populateMusic.getSong("After The Storm");
+        ResourceSong getSong = (ResourceSong) populateMusic.getSong("After The Storm");
         assertEquals(res,getSong.get_id());
     }
 

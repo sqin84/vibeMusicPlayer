@@ -1,22 +1,17 @@
 package com.example.ajcin.flashbackmusicteam16;
 
-import android.provider.ContactsContract;
 import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-
-import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
@@ -27,7 +22,7 @@ import static org.junit.Assert.*;
 public class PlayFirebaseTest {
     DatabaseReference ref;
     @Rule
-    public ActivityTestRule<AlbumView> mainActivity = new ActivityTestRule<AlbumView>(AlbumView.class);
+    public ActivityTestRule<Main_Activity> mainActivity = new ActivityTestRule<Main_Activity>(Main_Activity.class);
 
     @Before
     public void setUp(){
@@ -43,8 +38,8 @@ public class PlayFirebaseTest {
 
     @Test
     public void test1(){
-        Song s1 = new Song("Fireworks","Katy", "A",0);
-        Song s2 = new Song("Hello", "Adele", "B", 1);
+        Song s1 = new ResourceSong("Fireworks","Katy", "A",0);
+        Song s2 = new ResourceSong("Hello", "Adele", "B", 1);
         final String[] names = new String[2];
         names[0] = "Fireworks";
         names[1] = "Hello";

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:orientation="vertical"
-    tools:context="com.example.ajcin.flashbackmusicteam16.AlbumView">
+    tools:context="com.example.ajcin.flashbackmusicteam16.Main_Activity">
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"

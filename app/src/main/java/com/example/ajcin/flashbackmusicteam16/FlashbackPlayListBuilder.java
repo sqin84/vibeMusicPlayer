@@ -6,32 +6,33 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
-/** FlashbackMode class to perform scoring calculations.
+/** FlashbackPlayListBuilder class to perform scoring calculations.
   * Author: CSE 110 - Team 16, Winter 2018
   * Date: February 17, 2018
   */
-public class FlashbackMode {
+public class FlashbackPlayListBuilder {
     Location currentLocation;
     LocalDateTime localDateTime;
     List<Song> songs;
     PopulateMusic populateMusic;
 
-    public FlashbackMode(Location currentLocation, LocalDateTime localDateTime,PopulateMusic populateMusic) {
+    public FlashbackPlayListBuilder(Location currentLocation, LocalDateTime localDateTime, PopulateMusic populateMusic) {
         this.populateMusic=populateMusic;
         this.currentLocation=currentLocation;
         this.localDateTime=localDateTime;
     }
 
-    /** initiate
+    /** build
       * Gets a list of relevant songs to play in Flashback Mode.
       * @return list of songs to play
      */
-    public ArrayList<Song> initiate() {
-        songs = new ArrayList<Song>(populateMusic.getSongList());
+    public LinkedList<Song> build() {
+        songs = new LinkedList<>(populateMusic.getSongList());
         this.readyScores();
-        return (ArrayList)this.songs;
+        return (LinkedList)this.songs;
     }
 
     /** readyScores

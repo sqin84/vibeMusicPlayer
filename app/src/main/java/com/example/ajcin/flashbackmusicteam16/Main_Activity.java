@@ -38,11 +38,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-/** AlbumView class to handle logic associated with playing Songs from an album.
+/** Main_Activity class to handle logic associated with playing Songs from an album.
  * Author: CSE 110 - Team 16, Winter 2018
  * Date: February 7, 2018
  */
-public class AlbumView extends AppCompatActivity {
+public class Main_Activity extends AppCompatActivity {
 
     public PopulateMusic populateMusic;
     public MediaPlayer mediaPlayer;
@@ -51,7 +51,7 @@ public class AlbumView extends AppCompatActivity {
     public BottomNavigationView navigation;
     public ProgressBar progressBar;
     private Location currentLocation;
-    ArrayList<Song> queuedSongs;
+    LinkedList<Song> queuedSongs;
     public Context context;
     public FirebaseDatabase database = FirebaseDatabase.getInstance();
     public DatabaseReference myRef = database.getReference();
@@ -139,9 +139,10 @@ public class AlbumView extends AppCompatActivity {
                     int i = 0;
                     for (DataSnapshot child : snapshot.getChildren()) {
                         Play play = child.getValue(Play.class);
-                            /*TODO this is where you launch vibe mode, you can turn plays into songs
-                              TODO by having some map from song titles to songs (possibly in populat music
-                              TODO so that we'd have a list of songs to play/download*/
+                            /*TODO this is where you launch vibe mode, where you generate a playlist
+                             * TODO by sorting the plays wit scoring algorithm and generating a list of
+                             *  Todo songs to play/download
+                             */
                     }
                 }
                 new modeChangeTask(transaction).execute(currentLocation);
@@ -173,8 +174,8 @@ public class AlbumView extends AppCompatActivity {
 
     }
     private void setUpFlashBackMode(){
-        FlashbackMode flashbackMode = new FlashbackMode(currentLocation, TimeMachine.now(),populateMusic);
-        queuedSongs= flashbackMode.initiate();
+        FlashbackPlayListBuilder flashbackPlayListBuilder = new FlashbackPlayListBuilder(currentLocation, TimeMachine.now(),populateMusic);
+        queuedSongs= flashbackPlayListBuilder.build();
         isFlashbackMode = true;
        // Toast.makeText(this, Integer.valueOf(queuedSongs.get(0).getScore()).toString(), Toast.LENGTH_SHORT).show();
         if(mediaPlayer == null){
@@ -328,7 +329,7 @@ public class AlbumView extends AppCompatActivity {
             play.setLatitude(lat).setLongitude(lon).setAddress(s[0].get_last_played_address())
                     .setSongName(s[0].get_title()).setUser(null);
             //remove all spaces and new lines
-            myRef.child("Plays").child(s[0].get_last_played_address().replaceAll("\\s+","")).child(s[0].get_title()).setValue(play);
+            myRef.child("Plays").child(s[0].get_last_played_address().replaceAll("\\s+","")).push().setValue(play);
 
             s[0].addDateTime(TimeMachine.now());
 
