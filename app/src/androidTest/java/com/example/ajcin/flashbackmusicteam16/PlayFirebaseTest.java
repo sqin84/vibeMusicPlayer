@@ -45,6 +45,9 @@ public class PlayFirebaseTest {
         names[1] = "Hello";
         s1.set_last_played_address("123 UCSD");
         s2.set_last_played_address("123 UCSD");
+        s1.set_user_name("Juke Lervis");
+        s2.set_user_name("Juke Lervis");
+
 
         pushPlay(mainActivity.getActivity().myRef,s1);
         pushPlay(mainActivity.getActivity().myRef,s2);
@@ -61,6 +64,7 @@ public class PlayFirebaseTest {
                         Play play = child.getValue(Play.class);
                         assertTrue(play.getAddress().equals("123 UCSD"));
                         assertTrue(play.getSongName().equals(names[i]));
+                        assertTrue(play.getUser().equals("Juke Lervis"));
                         i++;
                     }
                 }

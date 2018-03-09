@@ -2,6 +2,7 @@ package com.example.ajcin.flashbackmusicteam16;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -61,6 +62,7 @@ public class GooglePeopleActivity extends AppCompatActivity implements GoogleApi
     void firebaseUpdate(List<String> nameList){
 
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +125,10 @@ public class GooglePeopleActivity extends AppCompatActivity implements GoogleApi
                     Log.d(TAG, "onActivityResult:GET_TOKEN:success:" + result.getStatus().isSuccess());
                     // This is what we need to exchange with the server.
                     Log.d(TAG, "auth Code:" + acct.getServerAuthCode());
-
+                    String personName = acct.getDisplayName();
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("user_name", personName);
+                    setResult(Activity.RESULT_OK, resultIntent);
                     new PeoplesAsync().execute(acct.getServerAuthCode());
 
                 } else {
