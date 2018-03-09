@@ -57,7 +57,10 @@ public class Main_Activity extends AppCompatActivity {
     public FirebaseDatabase database = FirebaseDatabase.getInstance();
     public DatabaseReference myRef = database.getReference();
     public String user;
-    private static final int PEOPLE_RESULT_CODE = 114;
+    public List<String> contactList;
+    private static final int PEOPLE_RESULT_CODE = 100;
+    private static final int CONTACT_RESULT_CODE = 200;
+
     //private static final int MEDIA_RES_ID = R.raw.after_the_storm;
 
     public static boolean isFlashbackMode = false;
@@ -212,10 +215,15 @@ public class Main_Activity extends AppCompatActivity {
                 if (resultCode == Activity.RESULT_OK) {
                     // TODO Extract the data returned from the child Activity.
                     user = data.getStringExtra("user_name");
+                    contactList = data.getStringArrayListExtra("contact_names");
+                    Log.d("Main_Activity", "User name returned successfully");
+                    Log.d("Main_Activity", "Contact list returned successfully");
                 }
                 else{
                     user = null;
-                    Log.d("Main_Activity", "Intent returned null");
+                    contactList = null;
+                    Log.d("Main_Activity", "User name returned null");
+                    Log.d("Main_Activity", "Contact list returned null");
                 }
                 break;
             }

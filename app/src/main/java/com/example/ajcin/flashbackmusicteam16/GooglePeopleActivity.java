@@ -54,14 +54,10 @@ public class GooglePeopleActivity extends AppCompatActivity implements GoogleApi
     LinearLayout frameLogin;
     Toolbar toolbar;
     ProgressBar progressBar;
+    Intent resultIntent;
 
 //    RecyclerView recyclerView;
 //    PeopleAdapter adapter;
-
-    // TODO register all friends in firebase
-    void firebaseUpdate(List<String> nameList){
-
-    }
 
 
     @Override
@@ -126,9 +122,8 @@ public class GooglePeopleActivity extends AppCompatActivity implements GoogleApi
                     // This is what we need to exchange with the server.
                     Log.d(TAG, "auth Code:" + acct.getServerAuthCode());
                     String personName = acct.getDisplayName();
-                    Intent resultIntent = new Intent();
+                    resultIntent = new Intent();
                     resultIntent.putExtra("user_name", personName);
-                    setResult(Activity.RESULT_OK, resultIntent);
                     new PeoplesAsync().execute(acct.getServerAuthCode());
 
                 } else {
@@ -175,7 +170,7 @@ public class GooglePeopleActivity extends AppCompatActivity implements GoogleApi
     }
 
 
-    class PeoplesAsync extends AsyncTask<String, Void, List<String>> {
+    class PeoplesAsync extends AsyncTask<String, Void, ArrayList<String>> {
 
 
         @Override
@@ -187,9 +182,9 @@ public class GooglePeopleActivity extends AppCompatActivity implements GoogleApi
         }
 
         @Override
-        protected List<String> doInBackground(String... params) {
+        protected ArrayList<String> doInBackground(String... params) {
 
-            List<String> nameList = new ArrayList<>();
+            ArrayList<String> nameList = new ArrayList<>();
 
             try {
                 People peopleService = PeopleHelper.setUp(getApplicationContext(), params[0]);
@@ -219,7 +214,7 @@ public class GooglePeopleActivity extends AppCompatActivity implements GoogleApi
 
 
         @Override
-        protected void onPostExecute(List<String> nameList) {
+        protected void onPostExecute(ArrayList<String> nameList) {
             super.onPostExecute(nameList);
 
             progressBar.setVisibility(View.GONE);
@@ -232,7 +227,8 @@ public class GooglePeopleActivity extends AppCompatActivity implements GoogleApi
             Toast toast = Toast.makeText(getApplicationContext(), "Friends Have Been Synced Successfully", Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
-            firebaseUpdate(nameList);
+            resultIntent.putStringArrayListExtra("contact_names",nameList);
+            setResult(Activity.RESULT_OK, resultIntent);
             finish();
         }
     }
