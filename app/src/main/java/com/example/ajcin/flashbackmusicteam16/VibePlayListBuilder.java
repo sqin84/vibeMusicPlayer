@@ -8,7 +8,7 @@ import java.util.List;
  */
 
 public class VibePlayListBuilder implements PlayListBuilder {
-    LinkedList<Song> playlist;
+    LinkedList<Play> plays;
     public void readyScores() {
 
         // Priority is given to a track based on first (a) whether it was played
@@ -18,18 +18,23 @@ public class VibePlayListBuilder implements PlayListBuilder {
         // Ties are broken according to the (a)-to-(c) ordering of the preceding criteria.
 
         // so, each play/song will have a score out of 3. a,b,c will each contribute one point.
-        // when there is a tied score between two songs, then we break ties according
+        // when there is a tied score between two songs, then we break ties accordingly. i.e ab outweighs bc.
+        // if a track was played in the last week and played by a friend (3), then we choose the most recently played.
+
+
 
         // criteria a is already taken care, so all songs queried from firebase will have score of 1 already
+
     }
 
     private void isPlayedLastWeek(){};
     private void isPlayedByFriend(){};
 
-    public void addSong(Song s){
-        playlist.add(s);
+    public void addSong(Play s){
+        plays.add(s);
     }
     public LinkedList<Song> build() {
+        // we will need to remove the duplicates to produce song list with unique elements
         return null;
     }
 }

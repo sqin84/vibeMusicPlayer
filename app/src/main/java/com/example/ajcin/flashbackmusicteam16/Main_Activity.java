@@ -139,9 +139,10 @@ public class Main_Activity extends AppCompatActivity {
                     int i = 0;
                     for (DataSnapshot child : snapshot.getChildren()) {
                         Play play = child.getValue(Play.class);
-                            /*TODO this is where you launch vibe mode, you can turn plays into songs
-                              TODO by having some map from song titles to songs (possibly in populat music
-                              TODO so that we'd have a list of songs to play/download*/
+                            /*TODO this is where you launch vibe mode, where you generate a playlist
+                             * TODO by sorting the plays wit scoring algorithm and generating a list of
+                             *  Todo songs to play/download
+                             */
                     }
                 }
                 new modeChangeTask(transaction).execute(currentLocation);
@@ -328,7 +329,7 @@ public class Main_Activity extends AppCompatActivity {
             play.setLatitude(lat).setLongitude(lon).setAddress(s[0].get_last_played_address())
                     .setSongName(s[0].get_title()).setUser(null);
             //remove all spaces and new lines
-            myRef.child("Plays").child(s[0].get_last_played_address().replaceAll("\\s+","")).child(s[0].get_title()).setValue(play);
+            myRef.child("Plays").child(s[0].get_last_played_address().replaceAll("\\s+","")).push().setValue(play);
 
             s[0].addDateTime(TimeMachine.now());
 
