@@ -48,7 +48,7 @@ public class AlbumFragment extends ListFragment {
     }
 
     /** onListItemClick
-      * When album is clicked, display popup to view album or play whole album.
+      * When album is clicked, display popup_album to view album or play whole album.
      */
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
@@ -63,9 +63,9 @@ public class AlbumFragment extends ListFragment {
         //Show pop up menu
         PopupMenu popup = new PopupMenu(getContext(), v);
         //Inflating the Popup using xml file
-        popup.getMenuInflater().inflate(R.menu.popup, popup.getMenu());
+        popup.getMenuInflater().inflate(R.menu.popup_album, popup.getMenu());
 
-        //registering popup with OnMenuItemClickListener
+        //registering popup_album with OnMenuItemClickListener
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 if(item.getItemId()==R.id.one){
@@ -99,7 +99,7 @@ public class AlbumFragment extends ListFragment {
             }
         });
 
-        popup.show();//showing popup menu
+        popup.show();//showing popup_album menu
     }
 
     /** changeToNowPlaying

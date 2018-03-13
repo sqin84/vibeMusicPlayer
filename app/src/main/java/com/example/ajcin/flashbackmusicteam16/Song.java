@@ -151,5 +151,9 @@ abstract public class Song {
         ((LinkedList) dateTimes).removeLast();
     }}
 
+    public String toString(){
+        return get_title() + " by " + get_artist();
+    }
+
     abstract void startPlayingSong(Activity activity, MediaPlayer mediaPlayer, Main_Activity mainActivity);
 }

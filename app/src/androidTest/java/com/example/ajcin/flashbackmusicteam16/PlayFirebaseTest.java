@@ -16,7 +16,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Created by sqin8 on 3/7/2018.
+ *  Tests for firebase upload and downloads of play objects
  */
 
 public class PlayFirebaseTest {
@@ -33,7 +33,7 @@ public class PlayFirebaseTest {
         Play play = new Play();
         play.setAddress(s.get_last_played_address()).setSongName(s.get_title());
         //remove all spaces and new lines
-        myRef.child("Testing").child(s.get_last_played_address().replaceAll("\\s+","")).child(s.get_title()).setValue(play);
+        myRef.child("Testing").child(s.get_last_played_address().replaceAll("\\s+","")).push().setValue(play);
     }
 
     @Test
