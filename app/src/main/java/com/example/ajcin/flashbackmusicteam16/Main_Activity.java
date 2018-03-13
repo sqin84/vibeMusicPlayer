@@ -1,6 +1,7 @@
 package com.example.ajcin.flashbackmusicteam16;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -55,6 +56,11 @@ public class Main_Activity extends AppCompatActivity {
     public Context context;
     public FirebaseDatabase database = FirebaseDatabase.getInstance();
     public DatabaseReference myRef = database.getReference();
+    public String user;
+    public List<String> contactList;
+    private static final int PEOPLE_RESULT_CODE = 100;
+    private static final int CONTACT_RESULT_CODE = 200;
+
     //private static final int MEDIA_RES_ID = R.raw.after_the_storm;
 
     public static boolean isFlashbackMode = false;
@@ -201,13 +207,34 @@ public class Main_Activity extends AppCompatActivity {
         loadMedia(queuedSongs.get(0));
         queuedSongs.remove(0);
     }
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode) {
+            case (PEOPLE_RESULT_CODE) : {
+                if (resultCode == Activity.RESULT_OK) {
+                    // TODO Extract the data returned from the child Activity.
+                    user = data.getStringExtra("user_name");
+                    contactList = data.getStringArrayListExtra("contact_names");
+                    Log.d("Main_Activity", "User name returned successfully");
+                    Log.d("Main_Activity", "Contact list returned successfully");
+                }
+                else{
+                    user = null;
+                    contactList = null;
+                    Log.d("Main_Activity", "User name returned null");
+                    Log.d("Main_Activity", "Contact list returned null");
+                }
+                break;
+            }
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Intent intent = new Intent(this, GooglePeopleActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent,PEOPLE_RESULT_CODE);
 
         setContentView(R.layout.activity_album_view);
         progressBar = findViewById(R.id.progressBar);
@@ -313,7 +340,6 @@ public class Main_Activity extends AppCompatActivity {
         mediaPlayer = new MediaPlayer();
        // float speed=2.5f;
         // mediaPlayer.getPlaybackParams().setSpeed(speed);
-
     }
 
     // this is called in onCompletion of media player, anything that uses the current song's address field
@@ -327,7 +353,7 @@ public class Main_Activity extends AppCompatActivity {
 
             Play play = new Play();
             play.setLatitude(lat).setLongitude(lon).setAddress(s[0].get_last_played_address())
-                    .setSongName(s[0].get_title()).setUser(null);
+                    .setSongName(s[0].get_title()).setUser(user);
             //remove all spaces and new lines
             myRef.child("Plays").child(s[0].get_last_played_address().replaceAll("\\s+","")).push().setValue(play);
 

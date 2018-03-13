@@ -26,6 +26,7 @@ abstract public class Song {
     private String last_time;
     private boolean is_disliked;
     private boolean is_favorited;
+    private String user;
 
     public Song(String title, String artist, String album) {
         locations=new LinkedList<Location>();
@@ -91,6 +92,8 @@ abstract public class Song {
       * @param score new score to assign to the song
      */
     public void set_score(int score) {  this.score=score; }
+
+    public void set_user_name(String user){ this.user=user;}
 
     public void set_last_day(String day) {  last_day = day; }
 
