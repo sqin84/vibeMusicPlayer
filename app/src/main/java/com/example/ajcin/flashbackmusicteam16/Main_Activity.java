@@ -85,12 +85,12 @@ public class Main_Activity extends AppCompatActivity {
                 case R.id.navigation_songs:
                     if (!isFlashbackMode) {
                         String[] song_list_string = populateMusic.getSongListString();
-                        Bundle song_bundle = new Bundle();
-                        song_bundle.putStringArray("songs", song_list_string);
+                        //Bundle song_bundle = new Bundle();
+                      //  song_bundle.putStringArray("songs", song_list_string);
 
                         // launch new fragment
                         songListFragment song_fragment = new songListFragment();
-                        song_fragment.setArguments(song_bundle);
+                       // song_fragment.setArguments(song_bundle);
                         transaction.replace(R.id.musicItems, song_fragment).commit();
                         return true;
                     }
@@ -216,7 +216,7 @@ public class Main_Activity extends AppCompatActivity {
        // intervalStart=LocalTime.parse("11:00:00");
         //intervalEnd= LocalTime.parse("16:00:00");
 
-        LocalDateTime dummyTime = LocalDateTime.of(2017, 2, 7, 12, 00);
+        LocalDateTime dummyTime = LocalDateTime.of(2017, 2, 7, 12, 0);
         TimeMachine.useFixedClockAt(dummyTime);
 
         // TODO remove this after testing
