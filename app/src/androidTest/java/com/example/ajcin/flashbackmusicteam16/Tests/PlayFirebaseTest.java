@@ -1,10 +1,13 @@
-package com.example.ajcin.flashbackmusicteam16;
+package com.example.ajcin.flashbackmusicteam16.Tests;
 
 import android.provider.ContactsContract;
 import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.ajcin.flashbackmusicteam16.AlbumView;
+import com.example.ajcin.flashbackmusicteam16.Play;
+import com.example.ajcin.flashbackmusicteam16.Song;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

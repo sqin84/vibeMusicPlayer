@@ -12,11 +12,13 @@ import android.util.Log;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
@@ -53,6 +55,8 @@ public class DownloadHandler {
         request.setDestinationInExternalFilesDir(context, download_path, "Test.mp3");
         long download_ref = manager.enqueue(request);
 
+        //TODO check if download is album
+
         return download_ref;
     }
 
@@ -64,13 +68,40 @@ public class DownloadHandler {
             String file_name;
             instream = new FileInputStream(path + zipname);
             zip_instream = new ZipInputStream(new BufferedInputStream(instream));
+            ZipEntry zip_entry;
+            byte[] buffer = new byte[1024];
+            int count;
 
-        } catch(IOException e) {
+            while ((zip_entry = zip_instream.getNextEntry()) != null)
+            {
+                file_name = zip_entry.getName();
+
+                if (zip_entry.isDirectory()) {
+                    File fmd = new File(path + file_name);
+                    fmd.mkdirs();
+                    continue;
+                }
+
+                FileOutputStream fout = new FileOutputStream(path + file_name);
+
+                while ((count = zip_instream.read(buffer)) != -1)
+                {
+                    fout.write(buffer, 0, count);
+                }
+
+                fout.close();
+                zip_instream.closeEntry();
+            }
+
+            zip_instream.close();
+        }
+        catch(IOException e)
+        {
             e.printStackTrace();
             return false;
         }
 
-        return false;
+        return true;
     }
 
     public void check_status(long download_ref) {
@@ -183,7 +214,7 @@ public class DownloadHandler {
             StatFs stat = new StatFs(music.getPath());
             long  bytes_available = stat.getBlockSizeLong() * stat.getAvailableBlocksLong();
 
-            return (file_size < bytes_available) ? true : false;
+            return (file_size < bytes_available);
         } catch(MalformedURLException e) {
             e.printStackTrace();
             return false;

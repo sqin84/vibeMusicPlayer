@@ -1,8 +1,13 @@
-package com.example.ajcin.flashbackmusicteam16;
+package com.example.ajcin.flashbackmusicteam16.Tests;
 
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.support.test.InstrumentationRegistry;
+
+import com.example.ajcin.flashbackmusicteam16.Album;
+import com.example.ajcin.flashbackmusicteam16.PopulateMusic;
+import com.example.ajcin.flashbackmusicteam16.R;
+import com.example.ajcin.flashbackmusicteam16.Song;
 
 import org.junit.Test;
 
@@ -17,7 +22,7 @@ public class AlbumTest {
     @Test
     public void add_song() throws Exception {
         PopulateMusic populateMusic = new PopulateMusic(InstrumentationRegistry.getTargetContext());
-        Uri mediaPath = Uri.parse("android.resource://com.example.ajcin.flashbackmusicteam16/"+R.raw.after_the_storm);
+        Uri mediaPath = Uri.parse("android.resource://com.example.ajcin.flashbackmusicteam16/"+ R.raw.after_the_storm);
         MediaMetadataRetriever mmr = new MediaMetadataRetriever();
         mmr.setDataSource(InstrumentationRegistry.getTargetContext(),mediaPath);
         String name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
