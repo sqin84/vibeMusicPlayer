@@ -13,7 +13,6 @@ import java.util.List;
  */
 
 abstract public class Song {
-    protected int song_id;
     protected String song_title;
     protected String song_artist;
     protected String song_album;
