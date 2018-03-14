@@ -1,16 +1,31 @@
 package com.example.ajcin.flashbackmusicteam16;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 /** NowPlayingFragment class to handle actions within the Now Playing tab.
  * Author: CSE 110 - Team 16, Winter 2018
@@ -24,11 +39,21 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
     Button reset_btn;
     Button favorite_btn;
     Button dislike_btn;
+    Button setTime_btn;
     TextView song_name;
     TextView artist_name;
     TextView album_name;
     TextView time_textview;
     TextView location_textview;
+    EditText timeInput;
+    String songName;
+
+    String artist = "";
+    String album = "";
+    String time = "";
+    String address = "";
+
+
 
     /** Required empty contructor */
     public NowPlayingFragment() {}
@@ -45,27 +70,37 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
         reset_btn = (Button) rootView.findViewById(R.id.btn_reset);
         favorite_btn = (Button) rootView.findViewById(R.id.btn_favorite);
         dislike_btn = (Button) rootView.findViewById(R.id.btn_dislike);
+        setTime_btn = (Button) rootView.findViewById(R.id.setTime);
 
         song_name = (TextView) rootView.findViewById(R.id.songName);
         artist_name = (TextView) rootView.findViewById(R.id.artistName);
         album_name = (TextView) rootView.findViewById(R.id.albumName);
+        timeInput = rootView.findViewById(R.id.editText);
         time_textview = rootView.findViewById(R.id.time);
         location_textview = rootView.findViewById(R.id.location);
 
-        //Display song name and album in NowPlaying
-        if(((AlbumView)getActivity()).mediaPlayer != null) {
-            SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", Context.MODE_PRIVATE);
-            String name = sharedPreferences.getString("song_name", "");
-            String artist = sharedPreferences.getString("artist_name", "");
-            String album = sharedPreferences.getString("album_name", "");
-            String time = sharedPreferences.getString("time", "");
-            String location = sharedPreferences.getString("address", "");
 
-            song_name.setText(name);
-            artist_name.setText(artist);
-            album_name.setText(album);
-            time_textview.setText(time);
-            location_textview.setText(location);
+
+
+
+        //Display song name and album in NowPlaying
+        if(((Main_Activity)getActivity()).mediaPlayer != null && getArguments() != null ) {
+            SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", Context.MODE_PRIVATE);
+
+
+            // first, grab local data, mainly to display local songs that is played for the firstime/not in firebase
+            song_name.setText(sharedPreferences.getString("song_name",""));
+            artist_name.setText(sharedPreferences.getString("artist_name", ""));
+            album_name.setText(sharedPreferences.getString("album_name", ""));
+
+            // the two can be deleted ?!
+            time_textview.setText(sharedPreferences.getString("time", ""));
+            location_textview.setText(sharedPreferences.getString("address", ""));
+
+            // update with firebase data
+            songName = getArguments().getString("song");
+            querySong();
+
 
         }else{
             //if there is nothing playing at the moment
@@ -77,17 +112,17 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
         play_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(((AlbumView)getActivity()).mediaPlayer != null){
-                    ((AlbumView)getActivity()).mediaPlayer.start();
+                if(((Main_Activity)getActivity()).mediaPlayer != null){
+                    ((Main_Activity)getActivity()).mediaPlayer.start();
                 }
             }
         });
         pause_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(((AlbumView)getActivity()).mediaPlayer != null) {
-                    if (((AlbumView) getActivity()).mediaPlayer.isPlaying()) {
-                        ((AlbumView) getActivity()).mediaPlayer.pause();
+                if(((Main_Activity)getActivity()).mediaPlayer != null) {
+                    if (((Main_Activity) getActivity()).mediaPlayer.isPlaying()) {
+                        ((Main_Activity) getActivity()).mediaPlayer.pause();
                     }
                 }
             }
@@ -95,17 +130,17 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
         reset_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(((AlbumView)getActivity()).mediaPlayer != null) {
-                    ((AlbumView) getActivity()).mediaPlayer.seekTo(0);
-                    ((AlbumView) getActivity()).mediaPlayer.start();
+                if(((Main_Activity)getActivity()).mediaPlayer != null) {
+                    ((Main_Activity) getActivity()).mediaPlayer.seekTo(0);
+                    ((Main_Activity) getActivity()).mediaPlayer.start();
                 }
             }
         });
         favorite_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(((AlbumView)getActivity()).mediaPlayer != null) {
-                    Song currSong = ((AlbumView) getActivity()).currentlyPlaying;
+                if(((Main_Activity)getActivity()).mediaPlayer != null) {
+                    Song currSong = ((Main_Activity) getActivity()).currentlyPlaying;
                     currSong.favorite_song();
 
                     if (currSong.get_is_favorited()) {
@@ -121,8 +156,8 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
         dislike_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(((AlbumView)getActivity()).mediaPlayer != null) {
-                    Song currSong = ((AlbumView) getActivity()).currentlyPlaying;
+                if(((Main_Activity)getActivity()).mediaPlayer != null) {
+                    Song currSong = ((Main_Activity) getActivity()).currentlyPlaying;
                     currSong.dislike_song();
 
                     if (currSong.get_is_disliked()) {
@@ -134,10 +169,58 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
                 }
             }
         });
+        setTime_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String input = timeInput.getText().toString();
+                String[] values = input.split(",");
+                int year = Integer.parseInt(values[0]);
+                int month = Integer.parseInt(values[1]);
+                int day = Integer.parseInt(values[2]);
+                int hour = Integer.parseInt(values[3]);
+                int minute = Integer.parseInt(values[4]);
+
+                LocalDateTime dummyTime = LocalDateTime.of(year, month, day, hour, minute);
+                TimeMachine.useFixedClockAt(dummyTime);
+            }
+        });
 
         return rootView;
     }
 
+    private void querySong(){
+        ((Main_Activity)getActivity()).progressBar.setVisibility(View.VISIBLE);
+        Log.w("song name", songName);
+        Query queryRef = ((Main_Activity)getActivity()).myRef.child("Songs").child(songName).orderByKey();
+        queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot == null || snapshot.getValue() == null){
+                    Log.w("query failed","failed");
+                }
+                else {
+                    Log.w("query success","success");
+                    //TODO grab user name the same way here!
+                    time = (String) snapshot.child("last_played_date_time").getValue();
+                    artist = (String) snapshot.child("artist").getValue();
+                    album = (String) snapshot.child ("album").getValue();
+                    address = (String)snapshot.child("last_played_address").getValue();
+
+                    song_name.setText(songName);
+                    artist_name.setText(artist);
+                    album_name.setText(album);
+                    time_textview.setText(time);
+                    location_textview.setText(address);
+                }
+                ((Main_Activity)getActivity()).progressBar.setVisibility(View.GONE);
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Faile to read value
+                Log.w("TAG1", "Failed to read value.", error.toException());
+            }
+        });
+    }
     @Override
     public void onClick(View v){
 

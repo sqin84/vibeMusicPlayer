@@ -20,18 +20,18 @@ public class ResourceSong extends Song {
     public int get_id() {   return song_id; }
 
     @Override
-    public void startPlayingSong(Activity activity, MediaPlayer mediaPlayer, AlbumView albumView) {
+    public void startPlayingSong(Activity activity, MediaPlayer mediaPlayer, Main_Activity mainActivity) {
         int resourceId = get_id();
 
         AssetFileDescriptor assetFileDescriptor = activity.getResources().openRawResourceFd(resourceId);
         try {
             mediaPlayer.setDataSource(assetFileDescriptor);
-            albumView.mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            mainActivity.mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 public void onPrepared(MediaPlayer mp) {
                     mp.start();
                 }
             });
-            albumView.mediaPlayer.prepareAsync();
+            mainActivity.mediaPlayer.prepareAsync();
         } catch (Exception e) {
             Log.d("MediaPlayer", "did not prepare correctly");
             System.out.println(e.toString());

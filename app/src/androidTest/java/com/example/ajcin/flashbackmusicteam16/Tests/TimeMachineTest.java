@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import static org.junit.Assert.*;
 
 /**
- * Created by shuo on 2/18/2018.
+ * Tests for user inputs that mocks current time
  */
 public class TimeMachineTest {
     @Test

@@ -1,10 +1,8 @@
 package com.example.ajcin.flashbackmusicteam16;
 
 import android.app.Activity;
-import android.content.res.AssetFileDescriptor;
 import android.location.Location;
 import android.media.MediaPlayer;
-import android.util.Log;
 
 import java.time.LocalDateTime;
 import java.util.LinkedList;
@@ -27,6 +25,7 @@ abstract public class Song {
     private String last_time;
     private boolean is_disliked;
     private boolean is_favorited;
+    private String user;
 
     public Song(String title, String artist, String album) {
         locations=new LinkedList<Location>();
@@ -54,23 +53,26 @@ abstract public class Song {
 
     public String get_artist() {    return song_artist;}
 
-    public String get_last_day() {   return last_day;}
-
-    public String get_last_time() {
-        if(!dateTimes.isEmpty()){
-            String str="Last Played: "+Integer.valueOf(dateTimes.get(0).getHour()).toString() + ":";
-            if(dateTimes.get(0).getMinute()>10)
-            {
-                str=str+Integer.valueOf(dateTimes.get(0).getMinute()).toString();
+    public String get_last_day() {
+        if(!dateTimes.isEmpty())return dateTimes.get(0).getMonth() +" " + dateTimes.get(0).getDayOfMonth();
+        else return "";
+    }
+    public String get_last_time(){
+        if(!dateTimes.isEmpty()) {
+            String str = Integer.valueOf(dateTimes.get(0).getHour()).toString() + ":";
+            if (dateTimes.get(0).getMinute() > 10) {
+                str = str + Integer.valueOf(dateTimes.get(0).getMinute()).toString();
+            } else {
+                str = str + "0" + Integer.valueOf(dateTimes.get(0).getMinute()).toString();
             }
-            else
-            {
-                str=str+"0"+Integer.valueOf(dateTimes.get(0).getMinute()).toString();
-            }
-            str=str+"\n Day of the week: "+dateTimes.get(0).getDayOfWeek();
             return str;
+        }else{
+            return "";
         }
-        return "";
+    }
+
+    public String get_last_time_string() {
+       return "Last Played: " + get_last_day()+"\n" +get_last_time();
     }
 
     public Boolean get_is_disliked() {  return is_disliked;}
@@ -92,6 +94,9 @@ abstract public class Song {
       * @param score new score to assign to the song
      */
     public void set_score(int score) {  this.score=score; }
+
+    public void set_user_name(String user){ this.user=user;}
+    public String get_user_name(){return user;}
 
     public void set_last_day(String day) {  last_day = day; }
 
@@ -149,5 +154,9 @@ abstract public class Song {
         ((LinkedList) dateTimes).removeLast();
     }}
 
-    abstract void startPlayingSong(Activity activity, MediaPlayer mediaPlayer, AlbumView albumView);
+    public String toString(){
+        return get_title() + " by " + get_artist();
+    }
+
+    abstract void startPlayingSong(Activity activity, MediaPlayer mediaPlayer, Main_Activity mainActivity);
 }

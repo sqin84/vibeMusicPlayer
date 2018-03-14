@@ -8,10 +8,14 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.PopupMenu;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import static android.content.Context.MODE_PRIVATE;
@@ -23,7 +27,8 @@ import static android.content.Context.MODE_PRIVATE;
 public class songListFragment extends ListFragment {
 
     private OnFragmentInteractionListener mListener;
-    private String[] song_list_string;
+    private ArrayList<Song> songs;
+    ArrayAdapter<Song> adapter;
 
     /** Required empty constructor */
     public songListFragment() {
@@ -33,13 +38,23 @@ public class songListFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Bundle bundle = getArguments();
-        song_list_string = bundle.getStringArray("songs");
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, song_list_string);
+        songs = ((Main_Activity)getActivity()).populateMusic.getSongList();
+        SongListSorter sorter = new SongListSorterRecent(songs);
+        sorter.sort();
+
+        adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_list_item_1, songs);
         setListAdapter(adapter);
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_album, container, false);
+        View view = inflater.inflate(R.layout.fragment_song_list, container, false);
         view.findViewById(android.R.id.list).setScrollContainer(true);
+
+        Button sb = view.findViewById(R.id.button4);
+        sb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sortButton(view);
+            }
+        });
         return view;
     }
 
@@ -49,15 +64,15 @@ public class songListFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        if(((AlbumView)getActivity()).mediaPlayer == null){
-            ((AlbumView)getActivity()).createMediaPlayer();
+        if(((Main_Activity)getActivity()).mediaPlayer == null){
+            ((Main_Activity)getActivity()).createMediaPlayer();
         }
-        ((AlbumView)getActivity()).mediaPlayer.reset();
-        Song selected_song = ((AlbumView)getActivity()).populateMusic.getSong(song_list_string[position]);
-        ((AlbumView)getActivity()).loadMedia(selected_song);
-        ((AlbumView)getActivity()).album_playlist = new LinkedList<>();
+        ((Main_Activity)getActivity()).mediaPlayer.reset();
+        Song selected_song = songs.get(position);
+        ((Main_Activity)getActivity()).loadMedia(selected_song);
+        ((Main_Activity)getActivity()).album_playlist = new LinkedList<>();
         changeToNowPlaying(selected_song);
-        //((AlbumView)getActivity()).mediaPlayer.start();
+        //((Main_Activity)getActivity()).mediaPlayer.start();
 
         //Store song name and album
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", MODE_PRIVATE);
@@ -66,7 +81,7 @@ public class songListFragment extends ListFragment {
         editor.putString("artist_name", selected_song.get_artist());
         editor.putString("album_name", selected_song.get_album());
         editor.putString("address", selected_song.get_last_played_address());
-        editor.putString("time", selected_song.get_last_time());
+        editor.putString("time", selected_song.get_last_time_string());
         editor.apply();
     }
 
@@ -78,27 +93,53 @@ public class songListFragment extends ListFragment {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         Bundle song_bundle = new Bundle();
-        String[] song_name = new String[1];
-        song_name[0] = song.get_title();
-        song_bundle.putStringArray("song", song_name);
+        //String[] song_name = new String[1];
+        String song_name = song.get_title();
+        song_bundle.putString("song", song_name);
         NowPlayingFragment npFragment = new NowPlayingFragment();
         npFragment.setArguments(song_bundle);
-        ((AlbumView)getActivity()).navigation.getMenu().getItem(2).setChecked(true);
+        ((Main_Activity)getActivity()).navigation.getMenu().getItem(2).setChecked(true);
         transaction.replace(R.id.musicItems, npFragment).commit();
     }
 
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    public void sortButton(View view){
+        //Show pop up menu
+        PopupMenu popup = new PopupMenu(getContext(), view);
+        //Inflating the Popup using xml file
+        popup.getMenuInflater().inflate(R.menu.popup_sort, popup.getMenu());
 
-    private String mParam1;
-    private String mParam2;
+        //registering popup_album with OnMenuItemClickListener
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                SongListSorter sorter;
+               switch(item.getItemId()){
+                   case R.id.one:
+                       sorter = new SongListSorterTitle(songs);
+                       break;
+                   case R.id.two:
+                       sorter = new SongListSorterArtist(songs);
+                       break;
+                   case R.id.three:
+                       sorter = new SongListSorterAlbum(songs);
+                       break;
+                   case R.id.four:
+                       sorter = new SongListSorterFavs(songs);
+                       break;
+                   default:
+                       sorter = new SongListSorterRecent(songs);
+                }
+                sorter.sort();
+                adapter.notifyDataSetChanged();
+                //adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_list_item_1, songs);
+                //setListAdapter(adapter);
+                return true;
+            }
+        });
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+        popup.show();//showing popup_album menu
     }
+
+
 
     @Override
     public void onAttach(Context context) {

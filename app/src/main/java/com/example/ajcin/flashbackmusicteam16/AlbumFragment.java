@@ -14,11 +14,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.PopupMenu;
-import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
-import java.util.Enumeration;
-import java.util.Iterator;
+
 import java.util.LinkedList;
 
 /** AlbumFragment class to handle actions from the album list.
@@ -50,13 +48,13 @@ public class AlbumFragment extends ListFragment {
     }
 
     /** onListItemClick
-      * When album is clicked, display popup to view album or play whole album.
+      * When album is clicked, display popup_album to view album or play whole album.
      */
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        selected_album = ((AlbumView)getActivity()).populateMusic.getAlbum(album_list_string[position]);
-        String[] album_song_list = ((AlbumView)getActivity()).populateMusic.getSongListInAlbumString(selected_album);
+        selected_album = ((Main_Activity)getActivity()).populateMusic.getAlbum(album_list_string[position]);
+        String[] album_song_list = ((Main_Activity)getActivity()).populateMusic.getSongListInAlbumString(selected_album);
         Bundle album_song_bundle = new Bundle();
         album_song_bundle.putStringArray("album_songs",album_song_list);
         final albumsongsFragment album_songs_fragment = new albumsongsFragment();
@@ -65,9 +63,9 @@ public class AlbumFragment extends ListFragment {
         //Show pop up menu
         PopupMenu popup = new PopupMenu(getContext(), v);
         //Inflating the Popup using xml file
-        popup.getMenuInflater().inflate(R.menu.popup, popup.getMenu());
+        popup.getMenuInflater().inflate(R.menu.popup_album, popup.getMenu());
 
-        //registering popup with OnMenuItemClickListener
+        //registering popup_album with OnMenuItemClickListener
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 if(item.getItemId()==R.id.one){
@@ -79,29 +77,29 @@ public class AlbumFragment extends ListFragment {
                     SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
 
-                    if(((AlbumView)getActivity()).mediaPlayer == null){
-                        ((AlbumView)getActivity()).createMediaPlayer();
+                    if(((Main_Activity)getActivity()).mediaPlayer == null){
+                        ((Main_Activity)getActivity()).createMediaPlayer();
                     }
-                    ((AlbumView)getActivity()).mediaPlayer.reset();
-                    ((AlbumView)getActivity()).album_playlist  = new LinkedList<>(selected_album.get_album_songs());
-                    Song nowPlaying = ((AlbumView)getActivity()).album_playlist.get(0);
+                    ((Main_Activity)getActivity()).mediaPlayer.reset();
+                    ((Main_Activity)getActivity()).album_playlist  = new LinkedList<>(selected_album.get_album_songs());
+                    Song nowPlaying = ((Main_Activity)getActivity()).album_playlist.get(0);
 
                     editor.putString("song_name", nowPlaying.get_title());
                     editor.putString("artist_name", nowPlaying.get_artist());
                     editor.putString("album_name", nowPlaying.get_album());
                     editor.putString("address", nowPlaying.get_last_played_address());
-                    editor.putString("time", nowPlaying.get_last_time());
+                    editor.putString("time", nowPlaying.get_last_time_string());
                     editor.apply();
 
                     changeToNowPlaying(nowPlaying);
-                    ((AlbumView)getActivity()).nextAlbumTrack();
+                    ((Main_Activity)getActivity()).nextAlbumTrack();
                 }
               
                 return true;
             }
         });
 
-        popup.show();//showing popup menu
+        popup.show();//showing popup_album menu
     }
 
     /** changeToNowPlaying
@@ -117,7 +115,7 @@ public class AlbumFragment extends ListFragment {
         song_bundle.putStringArray("song", song_name);
         NowPlayingFragment npFragment = new NowPlayingFragment();
         npFragment.setArguments(song_bundle);
-        ((AlbumView)getActivity()).navigation.getMenu().getItem(2).setChecked(true);
+        ((Main_Activity)getActivity()).navigation.getMenu().getItem(2).setChecked(true);
         transaction.replace(R.id.musicItems, npFragment).commit();
     }
 
