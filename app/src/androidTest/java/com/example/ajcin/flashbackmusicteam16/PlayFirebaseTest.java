@@ -31,7 +31,8 @@ public class PlayFirebaseTest {
     }
     public void pushPlay(DatabaseReference myRef, Song s){
         Play play = new Play();
-        play.setAddress(s.get_last_played_address()).setSongName(s.get_title());
+        play.setAddress(s.get_last_played_address()).setSongName(s.get_title()).setUser(s.get_user_name());
+
         //remove all spaces and new lines
         myRef.child("Testing").child(s.get_last_played_address().replaceAll("\\s+","")).push().setValue(play);
     }
@@ -53,20 +54,24 @@ public class PlayFirebaseTest {
         pushPlay(mainActivity.getActivity().myRef,s2);
 
         // How to Query, will call vibe mode functions in onDataChange
-        Query queryRef = ref.child("Testing").orderByKey().equalTo("123 UCSD");
+        Query queryRef = ref.child("Testing").child("123UCSD").orderByKey();
         queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                if (snapshot == null || snapshot.getValue() == null){}
+                if (snapshot == null || snapshot.getValue() == null){
+                    Log.w("where am i",snapshot.getKey());
+                }
                 else {
                     int i = 0;
                     for (DataSnapshot child : snapshot.getChildren()) {
+                        Log.w("child where am i",child.getKey());
                         Play play = child.getValue(Play.class);
                         assertTrue(play.getAddress().equals("123 UCSD"));
                         assertTrue(play.getSongName().equals(names[i]));
                         assertTrue(play.getUser().equals("Juke Lervis"));
                         i++;
                     }
+                    Log.w("what is i", String.valueOf(i));
                 }
             }
 
