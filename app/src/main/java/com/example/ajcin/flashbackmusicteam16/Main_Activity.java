@@ -420,6 +420,10 @@ public class Main_Activity extends AppCompatActivity {
             }
             mediaPlayer.reset();
             Song curr_song = album_playlist.removeFirst();
+            while(curr_song.get_is_disliked())
+            {
+                curr_song=album_playlist.removeFirst();
+            }
             SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("user_name", MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("song_name",curr_song.get_title());
