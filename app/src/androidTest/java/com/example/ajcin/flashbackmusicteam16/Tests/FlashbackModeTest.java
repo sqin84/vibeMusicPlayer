@@ -1,4 +1,4 @@
-package com.example.ajcin.flashbackmusicteam16;
+package com.example.ajcin.flashbackmusicteam16.Tests;
 
 import org.junit.Test;
 

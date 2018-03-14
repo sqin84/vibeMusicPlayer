@@ -1,6 +1,12 @@
-package com.example.ajcin.flashbackmusicteam16;
+package com.example.ajcin.flashbackmusicteam16.Tests;
 
 import android.support.test.InstrumentationRegistry;
+
+import com.example.ajcin.flashbackmusicteam16.Album;
+import com.example.ajcin.flashbackmusicteam16.PopulateMusic;
+import com.example.ajcin.flashbackmusicteam16.R;
+import com.example.ajcin.flashbackmusicteam16.ResourceSong;
+import com.example.ajcin.flashbackmusicteam16.Song;
 
 import org.junit.Test;
 
@@ -14,7 +20,7 @@ public class PopulateMusicTest {
     public void getSong() throws Exception {
         int res = R.raw.after_the_storm;
         PopulateMusic populateMusic =new PopulateMusic(InstrumentationRegistry.getTargetContext());
-        Song getSong = populateMusic.getSong("After The Storm");
+        ResourceSong getSong = (ResourceSong) populateMusic.getSong("After The Storm");
         assertEquals(res,getSong.get_id());
     }
 

@@ -3,20 +3,22 @@ package com.example.ajcin.flashbackmusicteam16;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.database.Cursor;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.StatFs;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
@@ -35,25 +37,34 @@ public class DownloadHandler {
     }
 
     public long download_file(Context context, String download_url) {
-        //if(!check_available_space(download_url)) {
-        //    Toast.makeText(context, "Not enough space available", Toast.LENGTH_SHORT);
-         //   return 0;
-        //}
+        try {
+            URL url = new URL(download_url);
+            Uri song_uri = Uri.parse(download_url);
+            DownloadManager manager = (DownloadManager)context.getSystemService(DOWNLOAD_SERVICE);
+            DownloadManager.Request request = new DownloadManager.Request(song_uri);
 
-        Uri song_uri = Uri.parse(download_url);
-        DownloadManager manager = (DownloadManager)context.getSystemService(DOWNLOAD_SERVICE);
-        DownloadManager.Request request = new DownloadManager.Request(song_uri);
-        request.setTitle("Song Download");
-        request.setDescription("Url is " + download_url);
+            //MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+            //mmr.setDataSource(download_url);
+            //String song_name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+            //Log.d("DownloadHandler", "song name is: " + song_name);
 
-        File music = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
-        String download_path = music.getAbsolutePath();
-        Log.d("DownloadHandler", "target dir: " + download_path);
-        Log.d("DownloadHandler", "context: " + context);
-        request.setDestinationInExternalFilesDir(context, download_path, "Test.mp3");
-        long download_ref = manager.enqueue(request);
+            request.setTitle("Test Song");
+            request.setDescription("Url is " + download_url);
 
-        return download_ref;
+            File music = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
+            String download_path = music.getAbsolutePath();
+            //request.setDestinationInExternalFilesDir(context, download_path, song_name);
+            request.setDestinationInExternalFilesDir(context, download_path, "Test.mp3");
+            long download_ref = manager.enqueue(request);
+
+            //TODO check if download is album
+
+            return download_ref;
+        } catch(MalformedURLException e) {
+            Toast.makeText(context, "Error downloading from specified URL.", Toast.LENGTH_SHORT);
+            e.printStackTrace();
+            return -1;
+        }
     }
 
     public boolean unpack_zip(String path, String zipname) {
@@ -64,13 +75,36 @@ public class DownloadHandler {
             String file_name;
             instream = new FileInputStream(path + zipname);
             zip_instream = new ZipInputStream(new BufferedInputStream(instream));
+            ZipEntry zip_entry;
+            byte[] buffer = new byte[1024];
+            int count;
 
+            while((zip_entry = zip_instream.getNextEntry()) != null) {
+                file_name = zip_entry.getName();
+
+                if(zip_entry.isDirectory()) {
+                    File fmd = new File(path + file_name);
+                    fmd.mkdirs();
+                    continue;
+                }
+
+                FileOutputStream fout = new FileOutputStream(path + file_name);
+
+                while((count = zip_instream.read(buffer)) != -1) {
+                    fout.write(buffer, 0, count);
+                }
+
+                fout.close();
+                zip_instream.closeEntry();
+            }
+
+            zip_instream.close();
         } catch(IOException e) {
             e.printStackTrace();
             return false;
         }
 
-        return false;
+        return true;
     }
 
     public void check_status(long download_ref) {
@@ -169,7 +203,8 @@ public class DownloadHandler {
         }, 3000);
     }
 
-    public boolean check_available_space(String url) {
+    /* NO LONGER A REQUIREMENT ****/
+    /*public boolean check_available_space(String url) {
         URL song_url;
         URLConnection connection;
 
@@ -183,7 +218,7 @@ public class DownloadHandler {
             StatFs stat = new StatFs(music.getPath());
             long  bytes_available = stat.getBlockSizeLong() * stat.getAvailableBlocksLong();
 
-            return (file_size < bytes_available) ? true : false;
+            return (file_size < bytes_available);
         } catch(MalformedURLException e) {
             e.printStackTrace();
             return false;
@@ -191,5 +226,5 @@ public class DownloadHandler {
             e.printStackTrace();
             return false;
         }
-    }
+    } */
 }

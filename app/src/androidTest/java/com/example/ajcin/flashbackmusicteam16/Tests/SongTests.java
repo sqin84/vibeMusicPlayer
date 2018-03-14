@@ -1,5 +1,6 @@
-package Tests;
+package com.example.ajcin.flashbackmusicteam16.Tests;
 
+import com.example.ajcin.flashbackmusicteam16.ResourceSong;
 import com.example.ajcin.flashbackmusicteam16.Song;
 
 import org.junit.Test;
@@ -14,7 +15,7 @@ public class SongTests {
 
     @Test
     public void testConstructorAndGetters() {
-        Song song = new Song("Sample Song", "Test Artist", "Best of Song Tests", 5);
+        Song song = new ResourceSong("Sample Song", "Test Artist", "Best of Song Tests", 5);
         assertEquals("Sample Song", song.get_title());
         assertEquals("Test Artist", song.get_artist());
         assertEquals("Best of Song Tests", song.get_album());
@@ -23,14 +24,14 @@ public class SongTests {
 
     @Test
     public void testUpdateScore() {
-        Song song = new Song("Sample Song", "Test Artist", "Best of Song Tests", 5);
+        Song song = new ResourceSong("Sample Song", "Test Artist", "Best of Song Tests", 5);
         song.set_score(12);
         assertEquals(12, song.get_score());
     }
 
     @Test
     public void testFavoriteSong() {
-        Song song = new Song("Sample Song", "Test Artist", "Best of Song Tests", 5);
+        Song song = new ResourceSong("Sample Song", "Test Artist", "Best of Song Tests", 5);
         song.favorite_song();
         assertEquals(true, (boolean) song.get_is_favorited());
         song.favorite_song();
@@ -39,7 +40,7 @@ public class SongTests {
 
     @Test
     public void testDislikeSong() {
-        Song song = new Song("Sample Song", "Test Artist", "Best of Song Tests", 5);
+        Song song = new ResourceSong("Sample Song", "Test Artist", "Best of Song Tests", 5);
         song.dislike_song();
         assertEquals(true, (boolean) song.get_is_disliked());
         song.dislike_song();
@@ -48,7 +49,7 @@ public class SongTests {
 
     @Test
     public void testToggleToNeutral() {
-        Song song = new Song("Sample Song", "Test Artist", "Best of Song Tests", 5);
+        Song song = new ResourceSong("Sample Song", "Test Artist", "Best of Song Tests", 5);
         song.dislike_song();
         assertEquals(true, (boolean) song.get_is_disliked());
         assertEquals(false, (boolean) song.get_is_favorited());
