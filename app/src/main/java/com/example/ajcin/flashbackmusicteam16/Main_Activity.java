@@ -1,6 +1,7 @@
 package com.example.ajcin.flashbackmusicteam16;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -38,11 +39,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-/** AlbumView class to handle logic associated with playing Songs from an album.
+/** Main_Activity class to handle logic associated with playing Songs from an album.
  * Author: CSE 110 - Team 16, Winter 2018
  * Date: February 7, 2018
  */
-public class AlbumView extends AppCompatActivity {
+public class Main_Activity extends AppCompatActivity {
 
     public PopulateMusic populateMusic;
     public MediaPlayer mediaPlayer;
@@ -51,10 +52,15 @@ public class AlbumView extends AppCompatActivity {
     public BottomNavigationView navigation;
     public ProgressBar progressBar;
     private Location currentLocation;
-    ArrayList<Song> queuedSongs;
+    LinkedList<Song> queuedSongs;
     public Context context;
     public FirebaseDatabase database = FirebaseDatabase.getInstance();
     public DatabaseReference myRef = database.getReference();
+    public String user;
+    public List<String> contactList;
+    private static final int PEOPLE_RESULT_CODE = 100;
+    private static final int CONTACT_RESULT_CODE = 200;
+
     //private static final int MEDIA_RES_ID = R.raw.after_the_storm;
 
     public static boolean isFlashbackMode = false;
@@ -85,12 +91,12 @@ public class AlbumView extends AppCompatActivity {
                 case R.id.navigation_songs:
                     if (!isFlashbackMode) {
                         String[] song_list_string = populateMusic.getSongListString();
-                        Bundle song_bundle = new Bundle();
-                        song_bundle.putStringArray("songs", song_list_string);
+                        //Bundle song_bundle = new Bundle();
+                      //  song_bundle.putStringArray("songs", song_list_string);
 
                         // launch new fragment
                         songListFragment song_fragment = new songListFragment();
-                        song_fragment.setArguments(song_bundle);
+                       // song_fragment.setArguments(song_bundle);
                         transaction.replace(R.id.musicItems, song_fragment).commit();
                         return true;
                     }
@@ -139,9 +145,10 @@ public class AlbumView extends AppCompatActivity {
                     int i = 0;
                     for (DataSnapshot child : snapshot.getChildren()) {
                         Play play = child.getValue(Play.class);
-                            /*TODO this is where you launch vibe mode, you can turn plays into songs
-                              TODO by having some map from song titles to songs (possibly in populat music
-                              TODO so that we'd have a list of songs to play/download*/
+                            /*TODO this is where you launch vibe mode, where you generate a playlist
+                             * TODO by sorting the plays wit scoring algorithm and generating a list of
+                             *  Todo songs to play/download
+                             */
                     }
                 }
                 new modeChangeTask(transaction).execute(currentLocation);
@@ -173,8 +180,8 @@ public class AlbumView extends AppCompatActivity {
 
     }
     private void setUpFlashBackMode(){
-        FlashbackMode flashbackMode = new FlashbackMode(currentLocation, TimeMachine.now(),populateMusic);
-        queuedSongs= flashbackMode.initiate();
+        FlashbackPlayListBuilder flashbackPlayListBuilder = new FlashbackPlayListBuilder(currentLocation, TimeMachine.now(),populateMusic);
+        queuedSongs= flashbackPlayListBuilder.build();
         isFlashbackMode = true;
        // Toast.makeText(this, Integer.valueOf(queuedSongs.get(0).getScore()).toString(), Toast.LENGTH_SHORT).show();
         if(mediaPlayer == null){
@@ -200,13 +207,34 @@ public class AlbumView extends AppCompatActivity {
         loadMedia(queuedSongs.get(0));
         queuedSongs.remove(0);
     }
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode) {
+            case (PEOPLE_RESULT_CODE) : {
+                if (resultCode == Activity.RESULT_OK) {
+                    // TODO Extract the data returned from the child Activity.
+                    user = data.getStringExtra("user_name");
+                    contactList = data.getStringArrayListExtra("contact_names");
+                    Log.d("Main_Activity", "User name returned successfully");
+                    Log.d("Main_Activity", "Contact list returned successfully");
+                }
+                else{
+                    user = null;
+                    contactList = null;
+                    Log.d("Main_Activity", "User name returned null");
+                    Log.d("Main_Activity", "Contact list returned null");
+                }
+                break;
+            }
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Intent intent = new Intent(this, GooglePeopleActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent,PEOPLE_RESULT_CODE);
 
         setContentView(R.layout.activity_album_view);
         progressBar = findViewById(R.id.progressBar);
@@ -215,7 +243,7 @@ public class AlbumView extends AppCompatActivity {
        // intervalStart=LocalTime.parse("11:00:00");
         //intervalEnd= LocalTime.parse("16:00:00");
 
-        LocalDateTime dummyTime = LocalDateTime.of(2017, 2, 7, 12, 00);
+        LocalDateTime dummyTime = LocalDateTime.of(2017, 2, 7, 12, 0);
         TimeMachine.useFixedClockAt(dummyTime);
 
         // TODO remove this after testing
@@ -312,7 +340,6 @@ public class AlbumView extends AppCompatActivity {
         mediaPlayer = new MediaPlayer();
        // float speed=2.5f;
         // mediaPlayer.getPlaybackParams().setSpeed(speed);
-
     }
 
     // this is called in onCompletion of media player, anything that uses the current song's address field
@@ -326,9 +353,9 @@ public class AlbumView extends AppCompatActivity {
 
             Play play = new Play();
             play.setLatitude(lat).setLongitude(lon).setAddress(s[0].get_last_played_address())
-                    .setSongName(s[0].get_title()).setUser(null);
+                    .setSongName(s[0].get_title()).setUser(user);
             //remove all spaces and new lines
-            myRef.child("Plays").child(s[0].get_last_played_address().replaceAll("\\s+","")).child(s[0].get_title()).setValue(play);
+            myRef.child("Plays").child(s[0].get_last_played_address().replaceAll("\\s+","")).push().setValue(play);
 
             s[0].addDateTime(TimeMachine.now());
 

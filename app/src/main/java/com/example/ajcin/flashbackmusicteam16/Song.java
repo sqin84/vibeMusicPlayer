@@ -1,10 +1,8 @@
 package com.example.ajcin.flashbackmusicteam16;
 
 import android.app.Activity;
-import android.content.res.AssetFileDescriptor;
 import android.location.Location;
 import android.media.MediaPlayer;
-import android.util.Log;
 
 import java.time.LocalDateTime;
 import java.util.LinkedList;
@@ -28,6 +26,7 @@ abstract public class Song {
     private String last_time;
     private boolean is_disliked;
     private boolean is_favorited;
+    private String user;
 
     public Song(String title, String artist, String album) {
         locations=new LinkedList<Location>();
@@ -94,6 +93,8 @@ abstract public class Song {
      */
     public void set_score(int score) {  this.score=score; }
 
+    public void set_user_name(String user){ this.user=user;}
+
     public void set_last_day(String day) {  last_day = day; }
 
     public void set_last_time(String time){ last_time = time; }
@@ -150,5 +151,9 @@ abstract public class Song {
         ((LinkedList) dateTimes).removeLast();
     }}
 
-    abstract void startPlayingSong(Activity activity, MediaPlayer mediaPlayer, AlbumView albumView);
+    public String toString(){
+        return get_title() + " by " + get_artist();
+    }
+
+    abstract void startPlayingSong(Activity activity, MediaPlayer mediaPlayer, Main_Activity mainActivity);
 }

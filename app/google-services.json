@@ -33,6 +33,7 @@
             "package_name": "com.example.ajcin.flashbackmusicteam16",
             "certificate_hash": "159cd9937fc6e13f2fd8ea983e23775c725882b1"
           }
+
         }
       ],
       "api_key": [
@@ -48,7 +49,8 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "547311235205-n27k1cs4nnl9k821rvdqstuvifucopa8.apps.googleusercontent.com",
+     "client_id": "547311235205-n27k1cs4nnl9k821rvdqstuvifucopa8.apps.googleusercontent.com",
+
               "client_type": 3
             }
           ]
