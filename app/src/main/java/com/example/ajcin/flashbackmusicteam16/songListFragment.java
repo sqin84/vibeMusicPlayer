@@ -81,7 +81,7 @@ public class songListFragment extends ListFragment {
         editor.putString("artist_name", selected_song.get_artist());
         editor.putString("album_name", selected_song.get_album());
         editor.putString("address", selected_song.get_last_played_address());
-        editor.putString("time", selected_song.get_last_time());
+        editor.putString("time", selected_song.get_last_time_string());
         editor.apply();
     }
 
@@ -93,9 +93,9 @@ public class songListFragment extends ListFragment {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         Bundle song_bundle = new Bundle();
-        String[] song_name = new String[1];
-        song_name[0] = song.get_title();
-        song_bundle.putStringArray("song", song_name);
+        //String[] song_name = new String[1];
+        String song_name = song.get_title();
+        song_bundle.putString("song", song_name);
         NowPlayingFragment npFragment = new NowPlayingFragment();
         npFragment.setArguments(song_bundle);
         ((Main_Activity)getActivity()).navigation.getMenu().getItem(2).setChecked(true);
@@ -138,13 +138,6 @@ public class songListFragment extends ListFragment {
 
         popup.show();//showing popup_album menu
     }
-
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    private String mParam1;
-    private String mParam2;
 
 
 
