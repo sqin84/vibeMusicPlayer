@@ -1,0 +1,65 @@
+{
+  "project_info": {
+    "project_number": "547311235205",
+    "firebase_url": "https://cse-110-team-project-team-16.firebaseio.com",
+    "project_id": "cse-110-team-project-team-16",
+    "storage_bucket": "cse-110-team-project-team-16.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:547311235205:android:da4cd108ff3c9f88",
+        "android_client_info": {
+          "package_name": "com.example.ajcin.flashbackmusicteam16"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "547311235205-n27k1cs4nnl9k821rvdqstuvifucopa8.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "547311235205-u4seuq92o3f10tkb43c4hgp16dvqhdnv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ajcin.flashbackmusicteam16",
+            "certificate_hash": "a5e1f902521ea49ec9bda344961d26ba32b737d9"
+          }
+        },
+        {
+          "client_id": "547311235205-ced1vnl26ie2cgahpqihm4lsmnarlud3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ajcin.flashbackmusicteam16",
+            "certificate_hash": "159cd9937fc6e13f2fd8ea983e23775c725882b1"
+          }
+
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBy8ZREiil2f-EiNqOhdnw3KNLUyxGsWBg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+     "client_id": "547311235205-n27k1cs4nnl9k821rvdqstuvifucopa8.apps.googleusercontent.com",
+
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

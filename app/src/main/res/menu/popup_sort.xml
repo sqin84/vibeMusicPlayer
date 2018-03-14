@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/one"
+        android:title="title"/>
+
+    <item
+        android:id="@+id/two"
+        android:title="artist" />
+
+    <item
+        android:id="@+id/three"
+        android:title="album"/>
+
+    <item
+        android:id="@+id/four"
+        android:title="favorite" />
+
+    <item
+        android:id="@+id/five"
+        android:title="recent" />
+
+
+
+
+
+
+</menu>
