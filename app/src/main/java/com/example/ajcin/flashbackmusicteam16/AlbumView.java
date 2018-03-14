@@ -219,9 +219,9 @@ public class AlbumView extends AppCompatActivity {
         TimeMachine.useFixedClockAt(dummyTime);
 
         // TODO remove this after testing
-        /*context = getApplicationContext();
+        context = getApplicationContext();
         DownloadHandler handler = new DownloadHandler(context);
-        handler.download_file( context, "https://www.androidtutorialpoint.com/wp-content/uploads/2016/09/AndroidDownloadManager.mp3");*/
+        handler.download_file( context, "https://www.androidtutorialpoint.com/wp-content/uploads/2016/09/AndroidDownloadManager.mp3");
         // TODO remove this after testing
 
         navigation = (BottomNavigationView) findViewById(R.id.navigation);

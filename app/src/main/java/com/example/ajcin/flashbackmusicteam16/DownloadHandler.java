@@ -42,16 +42,19 @@ public class DownloadHandler {
             Uri song_uri = Uri.parse(download_url);
             DownloadManager manager = (DownloadManager)context.getSystemService(DOWNLOAD_SERVICE);
             DownloadManager.Request request = new DownloadManager.Request(song_uri);
-            request.setTitle("Song Download");
+
+            //MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+            //mmr.setDataSource(download_url);
+            //String song_name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+            //Log.d("DownloadHandler", "song name is: " + song_name);
+
+            request.setTitle("Test Song");
             request.setDescription("Url is " + download_url);
 
             File music = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
             String download_path = music.getAbsolutePath();
-
-            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-            mmr.setDataSource(download_url);
-            String song_name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-            request.setDestinationInExternalFilesDir(context, download_path, song_name);
+            //request.setDestinationInExternalFilesDir(context, download_path, song_name);
+            request.setDestinationInExternalFilesDir(context, download_path, "Test.mp3");
             long download_ref = manager.enqueue(request);
 
             //TODO check if download is album

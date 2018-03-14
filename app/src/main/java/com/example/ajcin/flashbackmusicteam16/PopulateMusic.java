@@ -141,7 +141,7 @@ public class PopulateMusic {
     public void populateMusicList() {
         /************************** AARON ******************************************/
         //File[] files = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).listFiles();
-        File[] files = context.getExternalFilesDirs(Environment.DIRECTORY_MUSIC);
+        /*File[] files = context.getExternalFilesDirs(Environment.DIRECTORY_MUSIC);
 
         Log.d("PopulateMusic", "got list of files");
         MediaMetadataRetriever mmr = new MediaMetadataRetriever();
@@ -173,10 +173,10 @@ public class PopulateMusic {
             catch(Exception e) {
                 e.printStackTrace();
             }
-        }
+        }*/
         /************************** AARON ******************************************/
 
-        /*Field[] fields = R.raw.class.getFields();
+        Field[] fields = R.raw.class.getFields();
         int[] resArray = new int[fields.length];
         for(int f=0; f < fields.length; f++){
             try {
@@ -206,7 +206,7 @@ public class PopulateMusic {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-        }*/
+        }
     }
 }
 
