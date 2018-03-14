@@ -4,10 +4,9 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,22 +15,24 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
+import static android.content.Context.MODE_PRIVATE;
 
+import java.util.LinkedList;
 
+/** AlbumFragment class to handle actions from the album list.
+  * Author: CSE 110 - Team 16, Winter 2018
+  * Date: February 7, 2018
+ */
 public class AlbumFragment extends ListFragment {
-
 
     private OnFragmentInteractionListener mListener;
     String[] album_list_string;
+    Album selected_album;
 
-    public AlbumFragment() {
-        // Required empty public constructor
-    }
+    /** Required empty constructor */
+    public AlbumFragment() {}
 
-
+    /** Create the AlbumFragment */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -39,62 +40,90 @@ public class AlbumFragment extends ListFragment {
         album_list_string = bundle.getStringArray("albums");
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, album_list_string);
         setListAdapter(adapter);
+
         // Inflate the layout for this fragment
          View view = inflater.inflate(R.layout.fragment_album, container, false);
          view.findViewById(android.R.id.list).setScrollContainer(true);
          return view;
     }
 
+    /** onListItemClick
+      * When album is clicked, display popup_album to view album or play whole album.
+     */
     @Override
     public void onListItemClick(ListView l, View v, final int position, long id) {
         super.onListItemClick(l, v, position, id);
-        FragmentManager fragmentManager = getFragmentManager();
-        final FragmentTransaction transaction = fragmentManager.beginTransaction();
-        Album selected_album = ((AlbumView)getActivity()).populateMusic.getAlbum(album_list_string[position]);
-        String[] album_song_list = ((AlbumView)getActivity()).populateMusic.getSongListInAlbumString(selected_album);
-        final Bundle album_song_bundle = new Bundle();
+        selected_album = ((Main_Activity)getActivity()).populateMusic.getAlbum(album_list_string[position]);
+        String[] album_song_list = ((Main_Activity)getActivity()).populateMusic.getSongListInAlbumString(selected_album);
+        Bundle album_song_bundle = new Bundle();
         album_song_bundle.putStringArray("album_songs",album_song_list);
         final albumsongsFragment album_songs_fragment = new albumsongsFragment();
         album_songs_fragment.setArguments(album_song_bundle);
 
-
         //Show pop up menu
         PopupMenu popup = new PopupMenu(getContext(), v);
         //Inflating the Popup using xml file
-        popup.getMenuInflater().inflate(R.menu.popup, popup.getMenu());
+        popup.getMenuInflater().inflate(R.menu.popup_album, popup.getMenu());
 
-        //registering popup with OnMenuItemClickListener
+        //registering popup_album with OnMenuItemClickListener
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 if(item.getItemId()==R.id.one){
-                transaction.replace(R.id.musicItems,album_songs_fragment).commit();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    transaction.replace(R.id.musicItems,album_songs_fragment).commit();
                 }
-                if(item.getItemId()==R.id.two){
-                    /*Bundle bundle = getArguments();
-                    String[] album_song_list_string;
-                    album_song_list_string = bundle.getStringArray("album_songs");
-                    if(((AlbumView)getActivity()).mediaPlayer == null){
-                        ((AlbumView)getActivity()).createMediaPlayer();
-                    }
-                    ((AlbumView)getActivity()).mediaPlayer.reset();
-                    Song selected_song = ((AlbumView)getActivity()).populateMusic.getSong(album_song_list_string[]);
-                    ((AlbumView)getActivity()).loadMedia(selected_song);
-                    ((AlbumView)getActivity()).mediaPlayer.start();*/
+                else if(item.getItemId()==R.id.two){
+                    SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
 
+                    if(((Main_Activity)getActivity()).mediaPlayer == null){
+                        ((Main_Activity)getActivity()).createMediaPlayer();
+                    }
+                    ((Main_Activity)getActivity()).mediaPlayer.reset();
+                    ((Main_Activity)getActivity()).album_playlist  = new LinkedList<>(selected_album.get_album_songs());
+                    Song nowPlaying = ((Main_Activity)getActivity()).album_playlist.get(0);
+
+                    editor.putString("song_name", nowPlaying.get_title());
+                    editor.putString("artist_name", nowPlaying.get_artist());
+                    editor.putString("album_name", nowPlaying.get_album());
+                    editor.putString("address", nowPlaying.get_last_played_address());
+                    editor.putString("time", nowPlaying.get_last_time_string());
+                    editor.apply();
+
+                    changeToNowPlaying(nowPlaying);
+                    ((Main_Activity)getActivity()).nextAlbumTrack();
                 }
+
                 return true;
             }
         });
 
-        popup.show();//showing popup menu
+        popup.show();//showing popup_album menu
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    /** changeToNowPlaying
+     * Change the view to Now Playing with the selected song's information.
+     * @param song current Song being played
+     */
+    public void changeToNowPlaying(Song song) {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        Bundle song_bundle = new Bundle();
+        String[] song_name = new String[1];
+        song_name[0] = song.get_title();
+        song_bundle.putStringArray("song", song_name);
+        NowPlayingFragment npFragment = new NowPlayingFragment();
+        npFragment.setArguments(song_bundle);
+        ((Main_Activity)getActivity()).navigation.getMenu().getItem(2).setChecked(true);
+        transaction.replace(R.id.musicItems, npFragment).commit();
+    }
+
+    /*public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
-    }
+    }*/
 
     @Override
     public void onAttach(Context context) {
@@ -113,16 +142,6 @@ public class AlbumFragment extends ListFragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

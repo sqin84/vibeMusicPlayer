@@ -6,25 +6,33 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:orientation="vertical"
-    tools:context="com.example.ajcin.flashbackmusicteam16.AlbumView">
-
-    <FrameLayout
-        android:id="@+id/musicItems"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="false"
-        android:layout_alignParentTop="false">
-
-    </FrameLayout>
+    tools:context="com.example.ajcin.flashbackmusicteam16.Main_Activity">
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="452dp"
+        android:layout_alignParentBottom="true"
         android:background="?android:attr/windowBackground"
         app:menu="@menu/navigation">
 
     </android.support.design.widget.BottomNavigationView>
+
+    <RelativeLayout
+        android:id="@+id/musicItems"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/progressBar"
+        android:layout_alignParentStart="true">
+
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/navigation"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>
 
