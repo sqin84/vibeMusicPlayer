@@ -13,7 +13,7 @@ import java.util.List;
   * Author: CSE 110 - Team 16, Winter 2018
   * Date: February 17, 2018
   */
-public class FlashbackPlayListBuilder {
+public class FlashbackPlayListBuilder implements PlayListBuilder{
     Location currentLocation;
     LocalDateTime localDateTime;
     List<Song> songs;
