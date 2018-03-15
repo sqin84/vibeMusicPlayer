@@ -83,7 +83,7 @@ public class VibePlayListBuilder implements PlayListBuilder {
         // we will need to remove the duplicates to produce song list with unique elements
         for(int i =0; i < plays.size(); i++){
             for(int j = i + 1; j < plays.size()-1; j++){
-                if(plays.get(i) == plays.get(j)){
+                if(plays.get(i).getSongName() .equals(plays.get(j).getSongName())){
                     plays.remove(j);
                     j--;
                 }
