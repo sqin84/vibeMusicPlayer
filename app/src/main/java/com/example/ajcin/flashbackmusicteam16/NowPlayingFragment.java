@@ -45,6 +45,7 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
     TextView album_name;
     TextView time_textview;
     TextView location_textview;
+    TextView next_Track;
     EditText timeInput;
     String songName;
 
@@ -52,6 +53,7 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
     String album = "";
     String time = "";
     String address = "";
+    String nextTrack_name = "";
 
 
 
@@ -75,11 +77,16 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
         song_name = (TextView) rootView.findViewById(R.id.songName);
         artist_name = (TextView) rootView.findViewById(R.id.artistName);
         album_name = (TextView) rootView.findViewById(R.id.albumName);
+        next_Track = (TextView) rootView.findViewById(R.id.nextTrack);
         timeInput = rootView.findViewById(R.id.editText);
         time_textview = rootView.findViewById(R.id.time);
         location_textview = rootView.findViewById(R.id.location);
 
-
+        //if(!((Main_Activity)getActivity()).queuedSongs.isEmpty()){
+          //  nextTrack_name = "text";//((Main_Activity)getActivity()).queuedSongs.get(0).get_title();
+        //}
+        //nextTrack_name = ((Main_Activity)getActivity()).queuedSongs.get(0).get_title();
+        next_Track.setText(nextTrack_name);
 
 
 
