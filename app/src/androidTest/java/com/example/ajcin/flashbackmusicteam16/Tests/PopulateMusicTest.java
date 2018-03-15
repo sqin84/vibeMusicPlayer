@@ -1,6 +1,12 @@
-package com.example.ajcin.flashbackmusicteam16;
+package com.example.ajcin.flashbackmusicteam16.Tests;
 
 import android.support.test.InstrumentationRegistry;
+
+import com.example.ajcin.flashbackmusicteam16.Album;
+import com.example.ajcin.flashbackmusicteam16.PopulateMusic;
+import com.example.ajcin.flashbackmusicteam16.R;
+import com.example.ajcin.flashbackmusicteam16.ResourceSong;
+import com.example.ajcin.flashbackmusicteam16.Song;
 
 import org.junit.Test;
 

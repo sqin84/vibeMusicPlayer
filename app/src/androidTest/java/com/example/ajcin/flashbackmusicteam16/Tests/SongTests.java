@@ -1,4 +1,4 @@
-package Tests;
+package com.example.ajcin.flashbackmusicteam16.Tests;
 
 import com.example.ajcin.flashbackmusicteam16.ResourceSong;
 import com.example.ajcin.flashbackmusicteam16.Song;

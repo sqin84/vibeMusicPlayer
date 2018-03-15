@@ -1,4 +1,4 @@
-package com.example.ajcin.flashbackmusicteam16;
+package com.example.ajcin.flashbackmusicteam16.Tests;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

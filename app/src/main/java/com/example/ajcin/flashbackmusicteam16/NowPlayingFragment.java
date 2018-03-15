@@ -1,17 +1,27 @@
 package com.example.ajcin.flashbackmusicteam16;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -36,6 +46,13 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
     TextView time_textview;
     TextView location_textview;
     EditText timeInput;
+    String songName;
+
+    String artist = "";
+    String album = "";
+    String time = "";
+    String address = "";
+
 
 
     /** Required empty contructor */
@@ -62,20 +79,28 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
         time_textview = rootView.findViewById(R.id.time);
         location_textview = rootView.findViewById(R.id.location);
 
-        //Display song name and album in NowPlaying
-        if(((Main_Activity)getActivity()).mediaPlayer != null) {
-            SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", Context.MODE_PRIVATE);
-            String name = sharedPreferences.getString("song_name", "");
-            String artist = sharedPreferences.getString("artist_name", "");
-            String album = sharedPreferences.getString("album_name", "");
-            String time = sharedPreferences.getString("time", "");
-            String location = sharedPreferences.getString("address", "");
 
-            song_name.setText(name);
-            artist_name.setText(artist);
-            album_name.setText(album);
-            time_textview.setText(time);
-            location_textview.setText(location);
+
+
+
+        //Display song name and album in NowPlaying
+        if(((Main_Activity)getActivity()).mediaPlayer != null && getArguments() != null ) {
+            SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", Context.MODE_PRIVATE);
+
+
+            // first, grab local data, mainly to display local songs that is played for the firstime/not in firebase
+            song_name.setText(sharedPreferences.getString("song_name",""));
+            artist_name.setText(sharedPreferences.getString("artist_name", ""));
+            album_name.setText(sharedPreferences.getString("album_name", ""));
+
+            // the two can be deleted ?!
+            time_textview.setText(sharedPreferences.getString("time", ""));
+            location_textview.setText(sharedPreferences.getString("address", ""));
+
+            // update with firebase data
+            songName = getArguments().getString("song");
+            querySong();
+
 
         }else{
             //if there is nothing playing at the moment
@@ -163,6 +188,39 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
         return rootView;
     }
 
+    private void querySong(){
+        ((Main_Activity)getActivity()).progressBar.setVisibility(View.VISIBLE);
+        Log.w("song name", songName);
+        Query queryRef = ((Main_Activity)getActivity()).myRef.child("Songs").child(songName).orderByKey();
+        queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot == null || snapshot.getValue() == null){
+                    Log.w("query failed","failed");
+                }
+                else {
+                    Log.w("query success","success");
+                    //TODO grab user name the same way here!
+                    time = (String) snapshot.child("last_played_date_time").getValue();
+                    artist = (String) snapshot.child("artist").getValue();
+                    album = (String) snapshot.child ("album").getValue();
+                    address = (String)snapshot.child("last_played_address").getValue();
+
+                    song_name.setText(songName);
+                    artist_name.setText(artist);
+                    album_name.setText(album);
+                    time_textview.setText(time);
+                    location_textview.setText(address);
+                }
+                ((Main_Activity)getActivity()).progressBar.setVisibility(View.GONE);
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Faile to read value
+                Log.w("TAG1", "Failed to read value.", error.toException());
+            }
+        });
+    }
     @Override
     public void onClick(View v){
 

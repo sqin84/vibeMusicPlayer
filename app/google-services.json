@@ -15,6 +15,17 @@
       },
       "oauth_client": [
         {
+<<<<<<< HEAD
+=======
+          "client_id": "547311235205-0iu0c960ov1k5cni7mu67083s7a1r0ka.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ajcin.flashbackmusicteam16",
+            "certificate_hash": "5a4a0104be79f7f1e08042113604cd4ac3b52690"
+          }
+        },
+        {
+>>>>>>> 55d2fd7ae6a52238e91264b1c2c1bf5d4b16e867
           "client_id": "547311235205-k9iu2nh75cd9v1is4jj82iq75h6fnbb7.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -31,16 +42,24 @@
           }
         },
         {
+<<<<<<< HEAD
           "client_id": "547311235205-u4seuq92o3f10tkb43c4hgp16dvqhdnv.apps.googleusercontent.com",
           "client_type": 1,
+=======
+          "client_id": "547311235205-n27k1cs4nnl9k821rvdqstuvifucopa8.apps.googleusercontent.com",
+          "client_type": 3,
+>>>>>>> 55d2fd7ae6a52238e91264b1c2c1bf5d4b16e867
           "android_info": {
             "package_name": "com.example.ajcin.flashbackmusicteam16",
             "certificate_hash": "a5e1f902521ea49ec9bda344961d26ba32b737d9"
           }
+<<<<<<< HEAD
         },
         {
           "client_id": "547311235205-n27k1cs4nnl9k821rvdqstuvifucopa8.apps.googleusercontent.com",
           "client_type": 3
+=======
+>>>>>>> 55d2fd7ae6a52238e91264b1c2c1bf5d4b16e867
         }
       ],
       "api_key": [

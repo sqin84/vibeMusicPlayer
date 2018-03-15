@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaMetadataRetriever;
 import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.Log;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -138,21 +140,42 @@ public class PopulateMusic {
      */
     public void populateMusicList() {
         /************************** AARON ******************************************/
-        /*File[] files = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).listFiles();
+        //File[] files = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).listFiles();
+        /*File[] files = context.getExternalFilesDirs(Environment.DIRECTORY_MUSIC);
+
+        Log.d("PopulateMusic", "got list of files");
+        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
         for(int i = 0; i < files.length; i++) {
-            if(files[i].getName().contains("mp3")) { //TODO
-                    AssetFileDescriptor assetFileDescriptor = context.getResources().;
-                    MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-                    mmr.setDataSource(assetFileDescriptor.getFileDescriptor(),assetFileDescriptor.getStartOffset(), assetFileDescriptor.getLength());
-                    String song_album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
-                    String song_artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST);
-                    String song_name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-                    UrlSong curr_song = new UrlSong(song_name, song_artist, song_album, 5, "test");
-                    song_list.add(curr_song);
+            try {
+                mmr.setDataSource(files[i].getAbsolutePath());
+                Log.d("PopulateMusic", "set up mmr data source");
+                String song_name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+                String song_artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST);
+                String song_album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
+                //String url = mmr.extractMetadata(MediaMetadataRetriever.METADATA_URL);
+                Song curr_song = new UrlSong(song_name, song_artist, song_album, 1, "test");
+                song_list.add(curr_song);
+                Log.d("PopulateMusic", "extracted metadata and added to song_list");
+
+                Iterator<Album> itr = album_list.iterator();
+                boolean indexed = false;
+                while(itr.hasNext()){
+                    Album curr_album = itr.next();
+                    if(song_album.equals(curr_album.get_title())){
+                        curr_album.add_song(curr_song);
+                        indexed = true;
+                    }
+                }
+                if(!indexed){
+                    album_list.add(new Album(song_album, song_artist));
+                }
+            }
+            catch(Exception e) {
+                e.printStackTrace();
             }
         }*/
-
         /************************** AARON ******************************************/
+
         Field[] fields = R.raw.class.getFields();
         int[] resArray = new int[fields.length];
         for(int f=0; f < fields.length; f++){

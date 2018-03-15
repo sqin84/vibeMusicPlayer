@@ -88,7 +88,7 @@ public class AlbumFragment extends ListFragment {
                     editor.putString("artist_name", nowPlaying.get_artist());
                     editor.putString("album_name", nowPlaying.get_album());
                     editor.putString("address", nowPlaying.get_last_played_address());
-                    editor.putString("time", nowPlaying.get_last_time());
+                    editor.putString("time", nowPlaying.get_last_time_string());
                     editor.apply();
 
                     changeToNowPlaying(nowPlaying);
