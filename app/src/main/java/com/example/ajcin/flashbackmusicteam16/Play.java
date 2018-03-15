@@ -22,6 +22,8 @@ public class Play {
     String user;
     String url;
 
+
+
     public Play setAddress(String a){address = a; return this;}
     public String getAddress(){return address;}
     public Play setSongName(String s){songName = s; return this;}
