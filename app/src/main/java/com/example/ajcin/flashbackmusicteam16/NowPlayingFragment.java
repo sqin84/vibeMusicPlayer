@@ -128,8 +128,8 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
             album_name.setText(sharedPreferences.getString("album_name", ""));
 
             // the two can be deleted ?!
-            time_textview.setText(sharedPreferences.getString("time", ""));
-            location_textview.setText(sharedPreferences.getString("address", ""));
+//            time_textview.setText(sharedPreferences.getString("time", ""));
+//            location_textview.setText(sharedPreferences.getString("address", ""));
 
             // update with firebase data
             querySong();
@@ -309,7 +309,7 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
                             editor.putString(user_name,proxy_name);
                             editor.apply();
                         }
-                        user_name_textview.setText(proxy_name);
+                        user_name_textview.setText("anonymous " + proxy_name);
                     }
 
                     song_name.setText(songName);
