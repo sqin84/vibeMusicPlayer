@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.PopupMenu;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /** AlbumFragment class to handle actions from the album list.
@@ -88,7 +90,7 @@ public class AlbumFragment extends ListFragment {
                     editor.putString("artist_name", nowPlaying.get_artist());
                     editor.putString("album_name", nowPlaying.get_album());
                     editor.putString("address", nowPlaying.get_last_played_address());
-                    editor.putString("time", nowPlaying.get_last_time());
+                    editor.putString("time", nowPlaying.get_last_time_string());
                     editor.apply();
 
                     changeToNowPlaying(nowPlaying);
@@ -110,9 +112,9 @@ public class AlbumFragment extends ListFragment {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         Bundle song_bundle = new Bundle();
-        String[] song_name = new String[1];
-        song_name[0] = song.get_title();
-        song_bundle.putStringArray("song", song_name);
+        String song_name = song.get_title();
+        song_bundle.putString("song",song_name);
+        song_bundle.putSerializable("song_list",new ArrayList<Song>(((Main_Activity)getActivity()).album_playlist));
         NowPlayingFragment npFragment = new NowPlayingFragment();
         npFragment.setArguments(song_bundle);
         ((Main_Activity)getActivity()).navigation.getMenu().getItem(2).setChecked(true);

@@ -13,7 +13,6 @@ import java.util.List;
  */
 
 abstract public class Song {
-    protected int song_id;
     protected String song_title;
     protected String song_artist;
     protected String song_album;
@@ -54,23 +53,26 @@ abstract public class Song {
 
     public String get_artist() {    return song_artist;}
 
-    public String get_last_day() {   return last_day;}
-
-    public String get_last_time() {
-        if(!dateTimes.isEmpty()){
-            String str="Last Played: "+Integer.valueOf(dateTimes.get(0).getHour()).toString() + ":";
-            if(dateTimes.get(0).getMinute()>10)
-            {
-                str=str+Integer.valueOf(dateTimes.get(0).getMinute()).toString();
+    public String get_last_day() {
+        if(!dateTimes.isEmpty())return dateTimes.get(0).getMonth() +" " + dateTimes.get(0).getDayOfMonth();
+        else return "";
+    }
+    public String get_last_time(){
+        if(!dateTimes.isEmpty()) {
+            String str = Integer.valueOf(dateTimes.get(0).getHour()).toString() + ":";
+            if (dateTimes.get(0).getMinute() > 10) {
+                str = str + Integer.valueOf(dateTimes.get(0).getMinute()).toString();
+            } else {
+                str = str + "0" + Integer.valueOf(dateTimes.get(0).getMinute()).toString();
             }
-            else
-            {
-                str=str+"0"+Integer.valueOf(dateTimes.get(0).getMinute()).toString();
-            }
-            str=str+"\n Day of the week: "+dateTimes.get(0).getDayOfWeek();
             return str;
+        }else{
+            return "";
         }
-        return "";
+    }
+
+    public String get_last_time_string() {
+       return "Last Played: " + get_last_day()+"\n" +get_last_time();
     }
 
     public Boolean get_is_disliked() {  return is_disliked;}
@@ -94,6 +96,7 @@ abstract public class Song {
     public void set_score(int score) {  this.score=score; }
 
     public void set_user_name(String user){ this.user=user;}
+    public String get_user_name(){return user;}
 
     public void set_last_day(String day) {  last_day = day; }
 

@@ -26,6 +26,9 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,7 +42,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-/** Main_Activity class to handle logic associated with playing Songs from an album.
+/** Main_Activity moderator of everything.
  * Author: CSE 110 - Team 16, Winter 2018
  * Date: February 7, 2018
  */
@@ -58,8 +61,12 @@ public class Main_Activity extends AppCompatActivity {
     public DatabaseReference myRef = database.getReference();
     public String user;
     public List<String> contactList;
-    private static final int PEOPLE_RESULT_CODE = 100;
-    private static final int CONTACT_RESULT_CODE = 200;
+    PlayListBuilder playListBuilder;
+
+    // for getting last known lcation when the app starts
+    private FusedLocationProviderClient mFusedLocationClient;
+
+    private static final int PEOPLE_RESULT_CODE = 300;
 
     //private static final int MEDIA_RES_ID = R.raw.after_the_storm;
 
@@ -112,6 +119,8 @@ public class Main_Activity extends AppCompatActivity {
                     return false;
                 case R.id.navigation_flashbackMode:
                     if(!isFlashbackMode) {
+                        //queryplays launches new mode as well
+                        playListBuilder = new VibePlayListBuilder(populateMusic,contactList);
                         queryPlays(transaction);
                         return true;
                     }else{
@@ -134,23 +143,22 @@ public class Main_Activity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         Double lat = currentLocation.getLatitude();
         Double lon = currentLocation.getLongitude();
-        Query queryRef = myRef.child("Plays").orderByKey().equalTo(getCompleteAddressString(lat,lon));
+        Query queryRef = myRef.child("Plays").child(getCompleteAddressString(lat,lon).replaceAll("\\s+","")).orderByKey();
         queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
+                Log.w("where am i", snapshot.getKey());
                 if (snapshot == null || snapshot.getValue() == null){
                     // TODO no song has been played in current location, what do?
                 }
                 else {
-                    int i = 0;
                     for (DataSnapshot child : snapshot.getChildren()) {
                         Play play = child.getValue(Play.class);
-                            /*TODO this is where you launch vibe mode, where you generate a playlist
-                             * TODO by sorting the plays wit scoring algorithm and generating a list of
-                             *  Todo songs to play/download
-                             */
+                        ((VibePlayListBuilder)playListBuilder).addPlay(play);
                     }
                 }
+
+                // change mode once all songs are queried
                 new modeChangeTask(transaction).execute(currentLocation);
             }
             @Override
@@ -166,22 +174,35 @@ public class Main_Activity extends AppCompatActivity {
             this.transaction = transaction;
         }
         protected String doInBackground(Location... l){
-            setUpFlashBackMode();
-            return "";
+            return setUpFlashBackMode();
         }
         protected void onPreExecute(){
             progressBar.setVisibility(View.VISIBLE);
         }
         protected void onPostExecute(String result){
             progressBar.setVisibility(View.GONE);
-            transaction.replace(R.id.musicItems, new NowPlayingFragment()).commit();
+            Bundle song_bundle = new Bundle();
+            String song_name = result;
+            song_bundle.putString("song", song_name);
+            song_bundle.putSerializable("song_list",new ArrayList<Song>(queuedSongs));
+            NowPlayingFragment npFragment = new NowPlayingFragment();
+            npFragment.setArguments(song_bundle);
+            transaction.replace(R.id.musicItems, npFragment).commit();
             Toast.makeText(getApplicationContext(), "Flashback mode engaged", Toast.LENGTH_SHORT).show();
         }
 
     }
-    private void setUpFlashBackMode(){
-        FlashbackPlayListBuilder flashbackPlayListBuilder = new FlashbackPlayListBuilder(currentLocation, TimeMachine.now(),populateMusic);
-        queuedSongs= flashbackPlayListBuilder.build();
+    /*
+     * Set up vibe mode. Get playlist and start song.
+     * returns the song name of the first song of the playlist.
+     */
+    private String setUpFlashBackMode(){
+
+        playListBuilder.readyScores();
+        queuedSongs= playListBuilder.build();
+        if(queuedSongs.isEmpty()){
+            return "";
+        }
         isFlashbackMode = true;
        // Toast.makeText(this, Integer.valueOf(queuedSongs.get(0).getScore()).toString(), Toast.LENGTH_SHORT).show();
         if(mediaPlayer == null){
@@ -195,7 +216,7 @@ public class Main_Activity extends AppCompatActivity {
         editor.putString("album_name",queuedSongs.get(0).get_album());
         editor.putString("artist_name",queuedSongs.get(0).get_artist());
         editor.putString("address", queuedSongs.get(0).get_last_played_address());
-        editor.putString("time", queuedSongs.get(0).get_last_time());
+        editor.putString("time", queuedSongs.get(0).get_last_time_string());
         editor.apply();
 
         sharedPreferences = getSharedPreferences("flash_back_mode", MODE_PRIVATE);
@@ -204,8 +225,10 @@ public class Main_Activity extends AppCompatActivity {
         editor.apply();
 
         mediaPlayer.reset();
+        Song toBePlayed = queuedSongs.get(0);
         loadMedia(queuedSongs.get(0));
         queuedSongs.remove(0);
+        return toBePlayed.get_title();
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
@@ -246,10 +269,12 @@ public class Main_Activity extends AppCompatActivity {
         LocalDateTime dummyTime = LocalDateTime.of(2017, 2, 7, 12, 0);
         TimeMachine.useFixedClockAt(dummyTime);
 
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
         // TODO remove this after testing
         //context = getApplicationContext();
         //DownloadHandler handler = new DownloadHandler(context);
-        //handler.downloadSong( context, "https://www.androidtutorialpoint.com/wp-content/uploads/2016/09/AndroidDownloadManager.mp3");
+        //handler.download_file( context, "https://www.androidtutorialpoint.com/wp-content/uploads/2016/09/AndroidDownloadManager.mp3");
         // TODO remove this after testing
 
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
@@ -299,8 +324,12 @@ public class Main_Activity extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         String flashback_mode = sharedPreferences.getString("isFlashBackMode", "");
+        /***********Luke***********/
+        flashback_mode = "";
+        /***********Luke***********/
         FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        final FragmentTransaction transaction = fragmentManager.beginTransaction();
+
         if(flashback_mode.equals("")) {
             editor.putString("isFlashBackMode", "false");
             editor.apply();
@@ -316,10 +345,21 @@ public class Main_Activity extends AppCompatActivity {
         }
         else if(flashback_mode.equals("true")) {
             isFlashbackMode = true;
-            setUpFlashBackMode();
-            transaction.replace(R.id.musicItems, new NowPlayingFragment()).commit();
-            navigation.getMenu().getItem(2).setChecked(true);
-            Toast.makeText(getApplicationContext(), "Flashback mode engaged", Toast.LENGTH_SHORT).show();
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                // Logic to handle location object
+                                playListBuilder = new VibePlayListBuilder(populateMusic,contactList);
+                                queryPlays(transaction);
+                                navigation.getMenu().getItem(2).setChecked(true);
+                                Toast.makeText(getApplicationContext(), "Flashback mode engaged", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
         } 
         else if(flashback_mode.equals("false")) {
             String[] album_list_string = populateMusic.getAlbumListString();
@@ -347,32 +387,43 @@ public class Main_Activity extends AppCompatActivity {
     private class SongOnCompletionTask extends AsyncTask<Song, String, String>{
         protected String doInBackground(Song... s){
             s[0].addLocation(new Location(currentLocation));
+            s[0].addDateTime(TimeMachine.now());
             Double lat = s[0].getListOfLocations().get(0).getLatitude();
             Double lon = s[0].getListOfLocations().get(0).getLongitude();
-            s[0].set_last_played_address(getCompleteAddressString(lat,lon));
+            String address = getCompleteAddressString(lat,lon);
+            s[0].set_last_played_address(address);
+            s[0].set_user_name(user);
 
             Play play = new Play();
             play.setLatitude(lat).setLongitude(lon).setAddress(s[0].get_last_played_address())
-                    .setSongName(s[0].get_title()).setUser(user);
+                    .setSongName(s[0].get_title()).setUser(user).setTime(TimeMachine.now().toString());
             //remove all spaces and new lines
             myRef.child("Plays").child(s[0].get_last_played_address().replaceAll("\\s+","")).push().setValue(play);
 
-            s[0].addDateTime(TimeMachine.now());
+            myRef.child("Songs").child(s[0].get_title()).child("last_played_date_time").setValue(s[0].get_last_time_string());
+            myRef.child("Songs").child(s[0].get_title()).child("last_played_user").setValue(user);
+            myRef.child("Songs").child(s[0].get_title()).child("last_played_address").setValue(address);
+            myRef.child("Songs").child(s[0].get_title()).child("name").setValue(s[0].get_title());
+            myRef.child("Songs").child(s[0].get_title()).child("artist").setValue(s[0].get_artist());
+            myRef.child("Songs").child(s[0].get_title()).child("album").setValue(s[0].get_album());
+
 
             Log.d("long + lat", Double.valueOf(currentLocation.getLatitude()).toString() + " "+  Double.valueOf(currentLocation.getLongitude()).toString());
 
-            if(isFlashbackMode){
-                mediaPlayer.reset();
+            if(isFlashbackMode) {
+                if (!queuedSongs.isEmpty()){
+                    mediaPlayer.reset();
                 loadMedia(queuedSongs.get(0));
                 SharedPreferences sharedPreferences = getSharedPreferences("user_name", MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("song_name",queuedSongs.get(0).get_title());
+                editor.putString("song_name", queuedSongs.get(0).get_title());
                 editor.putString("artist_name", queuedSongs.get(0).get_artist());
-                editor.putString("album_name",queuedSongs.get(0).get_album());
+                editor.putString("album_name", queuedSongs.get(0).get_album());
                 editor.putString("address", queuedSongs.get(0).get_last_played_address());
-                editor.putString("time", queuedSongs.get(0).get_last_time());
+                editor.putString("time", queuedSongs.get(0).get_last_time_string());
                 editor.apply();
                 queuedSongs.remove(0);
+            }
             }
             else {
                 nextAlbumTrack();
@@ -425,7 +476,7 @@ public class Main_Activity extends AppCompatActivity {
             editor.putString("song_name",curr_song.get_title());
             editor.putString("album_name",curr_song.get_album());
             editor.putString("artist_name",curr_song.get_artist());
-            editor.putString("time", curr_song.get_last_time());
+            editor.putString("time", curr_song.get_last_time_string());
             editor.putString("address", curr_song.get_last_played_address());
             editor.apply();
             loadMedia(curr_song);
