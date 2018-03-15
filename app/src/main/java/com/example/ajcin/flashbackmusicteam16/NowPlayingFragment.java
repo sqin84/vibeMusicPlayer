@@ -33,10 +33,18 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import org.mortbay.jetty.Main;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /** NowPlayingFragment class to handle actions within the Now Playing tab.
  * Author: CSE 110 - Team 16, Winter 2018
@@ -57,6 +65,7 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
     TextView album_name;
     TextView time_textview;
     TextView location_textview;
+    TextView user_name_textview;
     EditText timeInput;
     String songName;
     ArrayList<Song> upcoming_songs_list;
@@ -66,6 +75,7 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
     String album = "";
     String time = "";
     String address = "";
+    String user_name = "";
 
 
 
@@ -93,6 +103,7 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
         timeInput = rootView.findViewById(R.id.editText);
         time_textview = rootView.findViewById(R.id.time);
         location_textview = rootView.findViewById(R.id.location);
+        user_name_textview = (TextView) rootView.findViewById(R.id.last_user);
 
         if(getArguments() != null){
             songName = getArguments().getString("song");
@@ -108,7 +119,7 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
 
         //Display song name and album in NowPlaying
         if(((Main_Activity)getActivity()).mediaPlayer != null && getArguments() != null ) {
-            SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", Context.MODE_PRIVATE);
+            SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", MODE_PRIVATE);
 
 
             // first, grab local data, mainly to display local songs that is played for the firstime/not in firebase
@@ -239,6 +250,35 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
         return rootView;
     }
 
+    private String assignName(String user_name){
+        String[] proxyNames = new String[]{"alligator", "anteater", "armadillo", "auroch", "axolotl", "badger", "bat",
+                "beaver", "buffalo", "camel", "chameleon", "cheetah", "chipmunk", "chinchilla", "chupacabra", "cormorant",
+                "coyote", "crow", "dingo", "dinosaur", "dolphin", "duck", "elephant", "ferret", "fox", "frog", "giraffe", "gopher",
+                "grizzly", "hedgehog", "hippo", "hyena", "jackal", "ibex", "ifrit", "iguana", "koala", "kraken", "lemur", "leopard",
+                "liger", "llama", "manatee", "mink", "monkey", "narwhal", "nyan cat", "orangutan", "otter", "panda", "penguin",
+                "platypus", "python", "pumpkin", "quagga", "rabbit", "raccoon", "rhino", "sheep", "shrew", "skunk", "slow loris",
+                "squirrel", "turtle", "walrus", "wolf", "wolverine", "wombat"};
+        String proxyName;
+        Random randomgenerator = new Random();
+        SharedPreferences sp= getContext().getSharedPreferences("proxy_contacts", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        Set used_names = (HashSet<String>)sp.getStringSet("used_names",null);
+        String pn = proxyNames[randomgenerator.nextInt(proxyNames.length)];
+        if(used_names == null){
+            used_names = new HashSet<String>();
+            used_names.add(pn);
+        }
+        else{
+            while(used_names.contains(pn)){
+                pn = proxyNames[randomgenerator.nextInt(proxyNames.length)];
+            }
+            used_names.add(pn);
+        }
+        editor.putStringSet("used_names",used_names);
+        editor.apply();
+        return pn;
+    }
+
     private void querySong(){
         ((Main_Activity)getActivity()).progressBar.setVisibility(View.VISIBLE);
         Log.w("song name", songName);
@@ -256,12 +296,28 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
                     artist = (String) snapshot.child("artist").getValue();
                     album = (String) snapshot.child ("album").getValue();
                     address = (String)snapshot.child("last_played_address").getValue();
+                    user_name = (String)snapshot.child("last_played_user").getValue();
+                    if(((Main_Activity)getActivity()).contactList.contains(user_name)){
+                        user_name_textview.setText(user_name);
+                    }
+                    else{
+                        SharedPreferences sharedPreferences = getContext().getSharedPreferences("proxy_contacts", MODE_PRIVATE);
+                        String proxy_name = sharedPreferences.getString(user_name,null);
+                        if(proxy_name == null){
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            proxy_name = assignName(user_name);
+                            editor.putString(user_name,proxy_name);
+                            editor.apply();
+                        }
+                        user_name_textview.setText(proxy_name);
+                    }
 
                     song_name.setText(songName);
                     artist_name.setText(artist);
                     album_name.setText(album);
                     time_textview.setText(time);
                     location_textview.setText(address);
+
                 }
                 ((Main_Activity)getActivity()).progressBar.setVisibility(View.GONE);
             }
