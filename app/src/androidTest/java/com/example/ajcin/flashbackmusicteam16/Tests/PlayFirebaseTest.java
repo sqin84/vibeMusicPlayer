@@ -1,6 +1,13 @@
 
-package com.example.ajcin.flashbackmusicteam16;
+package com.example.ajcin.flashbackmusicteam16.Tests;
 
+import com.example.ajcin.flashbackmusicteam16.Main_Activity;
+import com.example.ajcin.flashbackmusicteam16.Play;
+import com.example.ajcin.flashbackmusicteam16.ResourceSong;
+import com.example.ajcin.flashbackmusicteam16.Song;
+import com.google.firebase.database.DatabaseReference;
+
+import org.junit.Rule;
 import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
 
