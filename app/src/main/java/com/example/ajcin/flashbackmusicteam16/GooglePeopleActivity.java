@@ -56,10 +56,6 @@ public class GooglePeopleActivity extends AppCompatActivity implements GoogleApi
     ProgressBar progressBar;
     Intent resultIntent;
 
-//    RecyclerView recyclerView;
-//    PeopleAdapter adapter;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +66,6 @@ public class GooglePeopleActivity extends AppCompatActivity implements GoogleApi
 
         frameLogin = (LinearLayout) findViewById(R.id.frame_login);
         toolbar = (Toolbar) findViewById(R.id.main_toolbar);
-//        recyclerView = (RecyclerView) findViewById(R.id.main_recycler);
         progressBar = (ProgressBar) findViewById(R.id.main_progress);
 
         GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -81,7 +76,6 @@ public class GooglePeopleActivity extends AppCompatActivity implements GoogleApi
                 .build();
 
 
-        // To connect with Google Play Services and Sign In
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
                 .addOnConnectionFailedListener(this)
@@ -97,11 +91,7 @@ public class GooglePeopleActivity extends AppCompatActivity implements GoogleApi
         mGoogleApiClient.connect();
     }
 
-    // Performed on Google Sign in click
     private void getIdToken() {
-        // Show an account picker to let the user choose a Google account from the device.
-        // If the GoogleSignInOptions only asks for IDToken and/or profile and/or email then no
-        // consent screen will be shown here.
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_INTENT);
     }
@@ -219,11 +209,6 @@ public class GooglePeopleActivity extends AppCompatActivity implements GoogleApi
 
             progressBar.setVisibility(View.GONE);
 
-//            recyclerView.setVisibility(View.VISIBLE);
-//
-//            adapter = new PeopleAdapter(nameList);
-//            recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-//            recyclerView.setAdapter(adapter);
             Toast toast = Toast.makeText(getApplicationContext(), "Friends Have Been Synced Successfully", Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
@@ -237,9 +222,6 @@ public class GooglePeopleActivity extends AppCompatActivity implements GoogleApi
 
         progressBar.setVisibility(View.VISIBLE);
 
-//        toolbar.setVisibility(View.INVISIBLE);
-//        setSupportActionBar(toolbar);
-//        getSupportActionBar().setTitle("Contacts");
 
         frameLogin.animate().alpha(0).setDuration(400).setInterpolator(new AccelerateInterpolator()).setListener(new Animator.AnimatorListener() {
             @Override
