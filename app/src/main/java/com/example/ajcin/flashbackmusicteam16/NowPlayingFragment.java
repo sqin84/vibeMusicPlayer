@@ -27,14 +27,11 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
 import org.mortbay.jetty.Main;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,8 +74,6 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
     String address = "";
     String user_name = "";
 
-
-
     /** Required empty contructor */
     public NowPlayingFragment() {}
 
@@ -116,10 +111,11 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
             upcoming_btn.setVisibility(View.INVISIBLE);
         }
 
-
         //Display song name and album in NowPlaying
         if(((Main_Activity)getActivity()).mediaPlayer != null && getArguments() != null ) {
             SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", MODE_PRIVATE);
+            //SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_name", Context.MODE_PRIVATE);
+
 
 
             // first, grab local data, mainly to display local songs that is played for the firstime/not in firebase
@@ -132,6 +128,11 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
 //            location_textview.setText(sharedPreferences.getString("address", ""));
 
             // update with firebase data
+            time_textview.setText(sharedPreferences.getString("time", ""));
+            location_textview.setText(sharedPreferences.getString("address", ""));
+
+            // update with firebase data
+            songName = getArguments().getString("song");
             querySong();
 
 
@@ -317,7 +318,6 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
                     album_name.setText(album);
                     time_textview.setText(time);
                     location_textview.setText(address);
-
                 }
                 ((Main_Activity)getActivity()).progressBar.setVisibility(View.GONE);
             }
