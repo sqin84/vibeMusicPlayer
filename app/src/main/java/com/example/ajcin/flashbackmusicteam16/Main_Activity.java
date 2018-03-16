@@ -37,6 +37,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -65,8 +66,7 @@ public class Main_Activity extends AppCompatActivity {
     // for getting last known lcation when the app starts
     private FusedLocationProviderClient mFusedLocationClient;
 
-    private static final int PEOPLE_RESULT_CODE = 100;
-    private static final int CONTACT_RESULT_CODE = 200;
+    private static final int PEOPLE_RESULT_CODE = 300;
 
     //private static final int MEDIA_RES_ID = R.raw.after_the_storm;
 
@@ -93,7 +93,7 @@ public class Main_Activity extends AppCompatActivity {
                         transaction.replace(R.id.musicItems, album_fragment).commit();
                         return true;
                     }
-                    Toast.makeText(getApplicationContext(), "Not available in Flashback Mode", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Not available in Vibe Mode", Toast.LENGTH_SHORT).show();
                     return false;
                 case R.id.navigation_songs:
                     if (!isFlashbackMode) {
@@ -107,7 +107,7 @@ public class Main_Activity extends AppCompatActivity {
                         transaction.replace(R.id.musicItems, song_fragment).commit();
                         return true;
                     }
-                    Toast.makeText(getApplicationContext(), "Not available in Flashback Mode", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Not available in Vibe Mode", Toast.LENGTH_SHORT).show();
                     return false;
 
                 case R.id.navigation_nowPlaying:
@@ -115,14 +115,13 @@ public class Main_Activity extends AppCompatActivity {
                         transaction.replace(R.id.musicItems, new NowPlayingFragment()).commit();
                         return true;
                     }
-                    Toast.makeText(getApplicationContext(), "Not available in Flashback Mode", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Not available in Vibe Mode", Toast.LENGTH_SHORT).show();
                     return false;
                 case R.id.navigation_flashbackMode:
                     if(!isFlashbackMode) {
                         //queryplays launches new mode as well
                         playListBuilder = new VibePlayListBuilder(populateMusic,contactList);
                         queryPlays(transaction);
-                        return true;
                     }else{
                         Toast.makeText(getApplicationContext(), "Standard mode", Toast.LENGTH_SHORT).show();
                         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("flash_back_mode", MODE_PRIVATE);
@@ -133,6 +132,14 @@ public class Main_Activity extends AppCompatActivity {
                         navigation.getMenu().getItem(2).setChecked(true);
                         isFlashbackMode = false;
                     }
+                    return true;
+                case R.id.navigation_download:
+                    if(!isFlashbackMode){
+                        transaction.replace(R.id.musicItems, new DownloadFragment()).commit();
+                        return true;
+                    }
+                    Toast.makeText(getApplicationContext(), "Not available in Vibe Mode", Toast.LENGTH_SHORT).show();
+                    return false;
             }
             return false;
         }
@@ -184,10 +191,11 @@ public class Main_Activity extends AppCompatActivity {
             Bundle song_bundle = new Bundle();
             String song_name = result;
             song_bundle.putString("song", song_name);
+            song_bundle.putSerializable("song_list",new ArrayList<Song>(queuedSongs));
             NowPlayingFragment npFragment = new NowPlayingFragment();
             npFragment.setArguments(song_bundle);
             transaction.replace(R.id.musicItems, npFragment).commit();
-            Toast.makeText(getApplicationContext(), "Flashback mode engaged", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Vibe mode engaged", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -202,6 +210,7 @@ public class Main_Activity extends AppCompatActivity {
         if(queuedSongs.isEmpty()){
             return "";
         }
+
         isFlashbackMode = true;
        // Toast.makeText(this, Integer.valueOf(queuedSongs.get(0).getScore()).toString(), Toast.LENGTH_SHORT).show();
         if(mediaPlayer == null){
@@ -270,12 +279,6 @@ public class Main_Activity extends AppCompatActivity {
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        // TODO remove this after testing
-        //context = getApplicationContext();
-        //DownloadHandler handler = new DownloadHandler(context);
-        //handler.download_file( context, "https://www.androidtutorialpoint.com/wp-content/uploads/2016/09/AndroidDownloadManager.mp3");
-        // TODO remove this after testing
-
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
@@ -323,6 +326,9 @@ public class Main_Activity extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         String flashback_mode = sharedPreferences.getString("isFlashBackMode", "");
+        /***********Luke***********/
+        flashback_mode = "";
+        /***********Luke***********/
         FragmentManager fragmentManager = getFragmentManager();
         final FragmentTransaction transaction = fragmentManager.beginTransaction();
 
@@ -355,6 +361,16 @@ public class Main_Activity extends AppCompatActivity {
                             }
                         }
                     });
+            /*
+            Bundle song_bundle = new Bundle();
+            String toBePlayed = setUpFlashBackMode();
+            song_bundle.putString("song", toBePlayed);
+            NowPlayingFragment npFragment = new NowPlayingFragment();
+            npFragment.setArguments(song_bundle);
+
+            transaction.replace(R.id.musicItems, npFragment).commit();
+            navigation.getMenu().getItem(2).setChecked(true);
+            Toast.makeText(getApplicationContext(), "Flashback mode engaged", Toast.LENGTH_SHORT).show();*/
 
         } 
         else if(flashback_mode.equals("false")) {
@@ -539,6 +555,4 @@ public class Main_Activity extends AppCompatActivity {
         return strAdd;
     }
     public PopulateMusic getPopulateMusic() { return populateMusic;}
-
-
-};
+}

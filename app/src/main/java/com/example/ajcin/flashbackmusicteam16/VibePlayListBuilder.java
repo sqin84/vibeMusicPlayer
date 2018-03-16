@@ -1,6 +1,8 @@
 package com.example.ajcin.flashbackmusicteam16;
 
+import android.util.Log;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -23,6 +25,7 @@ public class VibePlayListBuilder implements PlayListBuilder {
     }
     public void readyScores() {
 
+
         // Priority is given to a track based on first (a) whether it was played
         // near the user's present location, second (b) whether it was played in the last week,
         // and third (c) whether it was played by a friend.  When multiple of these factors are present,
@@ -35,7 +38,8 @@ public class VibePlayListBuilder implements PlayListBuilder {
 
         for(Play play:plays){
             play.score[0] = 1;
-            LocalDateTime playedTime = LocalDateTime.parse(play.getTime());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+            LocalDateTime playedTime = LocalDateTime.parse(play.getTime(),formatter);
             if(Math.abs(TimeMachine.now().toLocalDate().compareTo(playedTime.toLocalDate()))<= 7){
                 play.score[1] = 1;
             }else{
@@ -78,6 +82,7 @@ public class VibePlayListBuilder implements PlayListBuilder {
     public void addPlay(Play s){
         plays.add(s);
     }
+    public ArrayList<Play> getPlay(){return plays;};
     public void settContacts(List<String> c){ contacts = c;}
     public LinkedList<Song> build() {
         // we will need to remove the duplicates to produce song list with unique elements
