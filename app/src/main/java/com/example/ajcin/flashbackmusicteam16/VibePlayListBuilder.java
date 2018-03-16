@@ -1,10 +1,6 @@
 package com.example.ajcin.flashbackmusicteam16;
 
-<<<<<<< HEAD
 import android.util.Log;
-
-=======
->>>>>>> 2702ce35e724bec14f05a4af498a730272eaa8e3
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
