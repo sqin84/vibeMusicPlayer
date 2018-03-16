@@ -128,23 +128,4 @@
         android:layout_toEndOf="@+id/editText"
         android:text="Set Time" />
 
-    <TextView
-        android:id="@+id/UpcomingTrack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/location"
-        android:layout_marginStart="14dp"
-        android:layout_marginTop="33dp"
-        android:layout_toEndOf="@+id/location"
-        android:text="Upcoming Tracks:" />
-
-    <TextView
-        android:id="@+id/nextTrack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/UpcomingTrack"
-        android:layout_below="@+id/UpcomingTrack"
-        android:layout_marginTop="16dp"
-        android:text="No upcoming tracks" />
-
 </RelativeLayout>
