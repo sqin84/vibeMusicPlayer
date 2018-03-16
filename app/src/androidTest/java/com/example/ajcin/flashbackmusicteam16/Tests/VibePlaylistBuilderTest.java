@@ -30,6 +30,7 @@ public class VibePlaylistBuilderTest {
     PopulateMusic p;
     List<String> contacts;
     LinkedList<Song> songs;
+    ArrayList<Play> plays;
     Play play_one;
     Play play_two;
     Play play_three;
@@ -61,14 +62,14 @@ public class VibePlaylistBuilderTest {
         play_three.setSongName("test_song_three");
         play_three.setLatitude(1.0);
         play_three.setLongitude(2.0);
-        play_three.setTime("2016-04-22T12:30");
+        play_three.setTime("2017-04-01T12:30");
         play_three.setUser("Qida Sin");
         LocalDateTime dummyTime = LocalDateTime.of(2017, 04, 20, 12, 30);
         TimeMachine.useFixedClockAt(dummyTime);
         builder = new VibePlayListBuilder(null,contacts);
-        builder.addPlay(play_one);
-        builder.addPlay(play_two);
         builder.addPlay(play_three);
+        builder.addPlay(play_two);
+        builder.addPlay(play_one);
     }
     @Test
     public void readyScores(){
@@ -80,8 +81,17 @@ public class VibePlaylistBuilderTest {
         assertTrue(play_two.score[1]==1);
         assertTrue(play_two.score[2]==0);
         assertTrue(play_three.score[0]==1);
-        assertTrue(play_three.score[1]==1);
+        assertTrue(play_three.score[1]==0);
         assertTrue(play_three.score[2]==0);
+
+        plays = builder.getPlay();
+        Play play_test_one = plays.get(0);
+        Play play_test_two = plays.get(1);
+        Play play_test_three = plays.get(2);
+        assertTrue(play_test_one.getUser().equals(play_one.getUser()));
+        assertTrue(play_test_two.getUser().equals(play_two.getUser()));
+        assertTrue(play_test_three.getUser().equals(play_three.getUser()));
     }
+
 
 }
