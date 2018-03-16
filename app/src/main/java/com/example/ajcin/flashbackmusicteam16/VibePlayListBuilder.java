@@ -1,5 +1,10 @@
 package com.example.ajcin.flashbackmusicteam16;
 
+<<<<<<< HEAD
+import android.util.Log;
+
+=======
+>>>>>>> 2702ce35e724bec14f05a4af498a730272eaa8e3
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,6 +27,7 @@ public class VibePlayListBuilder implements PlayListBuilder {
         this.contacts = c;
     }
     public void readyScores() {
+
 
         // Priority is given to a track based on first (a) whether it was played
         // near the user's present location, second (b) whether it was played in the last week,
