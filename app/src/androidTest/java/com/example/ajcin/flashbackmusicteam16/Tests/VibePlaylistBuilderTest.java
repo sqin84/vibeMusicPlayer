@@ -93,5 +93,10 @@ public class VibePlaylistBuilderTest {
         assertTrue(play_test_three.getUser().equals(play_three.getUser()));
     }
 
+    @Test
+    public void build(){
+
+    }
+
 
 }
