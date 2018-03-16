@@ -122,7 +122,6 @@ public class Main_Activity extends AppCompatActivity {
                         //queryplays launches new mode as well
                         playListBuilder = new VibePlayListBuilder(populateMusic,contactList);
                         queryPlays(transaction);
-                        return true;
                     }else{
                         Toast.makeText(getApplicationContext(), "Standard mode", Toast.LENGTH_SHORT).show();
                         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("flash_back_mode", MODE_PRIVATE);
@@ -133,6 +132,14 @@ public class Main_Activity extends AppCompatActivity {
                         navigation.getMenu().getItem(2).setChecked(true);
                         isFlashbackMode = false;
                     }
+                    return true;
+                case R.id.navigation_download:
+                    if(!isFlashbackMode){
+                        transaction.replace(R.id.musicItems, new DownloadFragment()).commit();
+                        return true;
+                    }
+                    Toast.makeText(getApplicationContext(), "Not available in Flashback Mode", Toast.LENGTH_SHORT).show();
+                    return false;
             }
             return false;
         }

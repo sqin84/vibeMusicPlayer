@@ -1,0 +1,33 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.ajcin.flashbackmusicteam16.DownloadFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <EditText
+        android:id="@+id/url_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center"
+        android:layout_marginTop="175dp"
+        android:hint="Enter URL" />
+
+    <Button
+        android:id="@+id/enter_btn"
+        android:text="Download"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:id="@+id/download_instructions"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_gravity="top|center_vertical|center_horizontal"
+        android:layout_marginTop="125dp"
+        android:gravity="center"
+        android:text="Enter URL below and press download" />
+
+</FrameLayout>
