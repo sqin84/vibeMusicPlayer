@@ -210,6 +210,7 @@ public class Main_Activity extends AppCompatActivity {
         if(queuedSongs.isEmpty()){
             return "";
         }
+
         isFlashbackMode = true;
        // Toast.makeText(this, Integer.valueOf(queuedSongs.get(0).getScore()).toString(), Toast.LENGTH_SHORT).show();
         if(mediaPlayer == null){
@@ -360,6 +361,16 @@ public class Main_Activity extends AppCompatActivity {
                             }
                         }
                     });
+            /*
+            Bundle song_bundle = new Bundle();
+            String toBePlayed = setUpFlashBackMode();
+            song_bundle.putString("song", toBePlayed);
+            NowPlayingFragment npFragment = new NowPlayingFragment();
+            npFragment.setArguments(song_bundle);
+
+            transaction.replace(R.id.musicItems, npFragment).commit();
+            navigation.getMenu().getItem(2).setChecked(true);
+            Toast.makeText(getApplicationContext(), "Flashback mode engaged", Toast.LENGTH_SHORT).show();*/
 
         } 
         else if(flashback_mode.equals("false")) {
@@ -544,6 +555,4 @@ public class Main_Activity extends AppCompatActivity {
         return strAdd;
     }
     public PopulateMusic getPopulateMusic() { return populateMusic;}
-
-
-};
+}
