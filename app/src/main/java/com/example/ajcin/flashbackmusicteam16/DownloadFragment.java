@@ -41,7 +41,7 @@ public class DownloadFragment extends Fragment {
             public void onClick(View v){
                 String entered_url = URL.getText().toString();
                 DownloadHandler handler = new DownloadHandler(getContext());
-                handler.download_file( getContext(), "https://www.androidtutorialpoint.com/wp-content/uploads/2016/09/AndroidDownloadManager.mp3");
+                handler.download_file( getContext(), entered_url);
             }
         });
         return view;
