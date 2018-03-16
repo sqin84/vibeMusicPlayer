@@ -1,5 +1,7 @@
 package com.example.ajcin.flashbackmusicteam16;
 
+import com.google.firebase.database.Exclude;
+
 /**
  * Created by sqin8 on 3/4/2018.
  */
@@ -21,6 +23,9 @@ public class Play {
     String time;
     String user;
     String url;
+
+    @Exclude
+    public int[] score = new int[3];
 
     public Play setAddress(String a){address = a; return this;}
     public String getAddress(){return address;}

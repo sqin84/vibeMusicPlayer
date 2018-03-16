@@ -20,4 +20,10 @@
         android:icon="@drawable/ic_flash_on_black_24dp"
         android:title="Flashback Mode" />
 
+    <item
+        android:id="@+id/navigation_download"
+        android:icon="@drawable/ic_file_download_black_24dp"
+        android:title="Download Audio"
+        />
+
 </menu>
