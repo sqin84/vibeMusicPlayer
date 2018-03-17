@@ -434,12 +434,23 @@ public class Main_Activity extends AppCompatActivity {
                     editor.putString("address", queuedSongs.get(0).get_last_played_address());
                     editor.putString("time", queuedSongs.get(0).get_last_time_string());
                     editor.apply();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("song",queuedSongs.get(0).get_title());
+                    bundle.putSerializable("song_list",new ArrayList<Song>(queuedSongs));
+                    // launch new fragment
+                    NowPlayingFragment fragment = new NowPlayingFragment();
+                    fragment.setArguments(bundle);
+                    transaction.replace(R.id.musicItems, fragment).commit();
                     queuedSongs.remove(0);
+
                 }
             }
             else {
                 nextAlbumTrack();
             }
+
             return "";
         }
         protected void onPreExecute(){
@@ -448,6 +459,7 @@ public class Main_Activity extends AppCompatActivity {
         protected void onPostExecute(String result){
             Toast.makeText(getApplicationContext(), "song completed!", Toast.LENGTH_SHORT).show();
             progressBar.setVisibility(View.GONE);
+
             Log.w("address:",  result);
         }
 
@@ -473,6 +485,7 @@ public class Main_Activity extends AppCompatActivity {
         });
         currentlyPlaying = selected_song;
         selected_song.startPlayingSong(this, mediaPlayer, this);
+
     }
 
     //Test method
@@ -492,6 +505,15 @@ public class Main_Activity extends AppCompatActivity {
             editor.putString("address", curr_song.get_last_played_address());
             editor.apply();
             loadMedia(curr_song);
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            Bundle bundle = new Bundle();
+            bundle.putString("song",curr_song.get_title());
+            bundle.putSerializable("song_list",new ArrayList<Song>(album_playlist));
+            // launch new fragment
+            NowPlayingFragment fragment = new NowPlayingFragment();
+            fragment.setArguments(bundle);
+            transaction.replace(R.id.musicItems, fragment).commit();
         }
     }
 
