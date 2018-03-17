@@ -144,35 +144,6 @@ public class PopulateMusic {
         return album_song_list_string;
     }
 
-    public void getFilesFromDir(File filesFromSD) {
-
-        File listAllFiles[] = filesFromSD.listFiles();
-        Log.w("PM","TEST1");
-        Log.w("PM",filesFromSD.getAbsolutePath());
-        Log.w("PM","TEST1");
-        if (listAllFiles != null && listAllFiles.length > 0) {
-            for (File currentFile : listAllFiles) {
-                Log.w("PM",currentFile.getAbsolutePath());
-                if (currentFile.isDirectory()) {
-                    getFilesFromDir(currentFile);
-                } else {
-                    if (currentFile.getName().endsWith("")) {
-                        // File absolute path
-                        Log.w("PM", currentFile.getAbsolutePath());
-                        // File Name
-                        Log.w("PM", currentFile.getName());
-
-                    }
-                }
-            }
-        }
-        else{
-            Log.w("PM","TEST2");
-        }
-    }
-
-
-
     /** populateMusicList
       * Populate the list of songs and albums.
      */
@@ -205,9 +176,12 @@ public class PopulateMusic {
                 String song_name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
                 String song_artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST);
                 String song_album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
+
                 String url = files[i].getName();
                 Log.d("PopulateMusic", "name is: " + url);
-                Song curr_song = new UrlSong(song_name, song_artist, song_album, 1, url);
+                String id = files[i].getAbsolutePath();
+
+                Song curr_song = new UrlSong(song_name, song_artist, song_album, id, url);
                 song_list.add(curr_song);
                 Log.d("PM", "extracted metadata and added to song_list");
 
