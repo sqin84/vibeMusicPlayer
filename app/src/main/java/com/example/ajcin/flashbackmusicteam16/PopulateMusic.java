@@ -1,15 +1,23 @@
 package com.example.ajcin.flashbackmusicteam16;
 
+import android.*;
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaMetadataRetriever;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 /** PopulateMusic class to get albums and songs to be played.
@@ -21,6 +29,7 @@ public class PopulateMusic {
     private Context context;
     private ArrayList<Song> song_list;
     private ArrayList<Album> album_list;
+
 
     public PopulateMusic(Context current){
         this.context = current;
@@ -135,27 +144,71 @@ public class PopulateMusic {
         return album_song_list_string;
     }
 
+    public void getFilesFromDir(File filesFromSD) {
+
+        File listAllFiles[] = filesFromSD.listFiles();
+        Log.w("PM","TEST1");
+        Log.w("PM",filesFromSD.getAbsolutePath());
+        Log.w("PM","TEST1");
+        if (listAllFiles != null && listAllFiles.length > 0) {
+            for (File currentFile : listAllFiles) {
+                Log.w("PM",currentFile.getAbsolutePath());
+                if (currentFile.isDirectory()) {
+                    getFilesFromDir(currentFile);
+                } else {
+                    if (currentFile.getName().endsWith("")) {
+                        // File absolute path
+                        Log.w("PM", currentFile.getAbsolutePath());
+                        // File Name
+                        Log.w("PM", currentFile.getName());
+
+                    }
+                }
+            }
+        }
+        else{
+            Log.w("PM","TEST2");
+        }
+    }
+
+
+
     /** populateMusicList
       * Populate the list of songs and albums.
      */
     public void populateMusicList() {
-        /************************** AARON ******************************************/
-        //File[] files = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).listFiles();
-        /*File[] files = context.getExternalFilesDirs(Environment.DIRECTORY_MUSIC);
 
-        Log.d("PopulateMusic", "got list of files");
+        File[] files = ContextCompat.getExternalFilesDirs(context,Environment.DIRECTORY_MUSIC);
+        Log.d("PM",String.valueOf(files.length));
+
+        for(File f : files){
+            Log.d("PM",f.getName());
+            if(f.isDirectory()){
+                File[] file_list = f.listFiles();
+                Log.d("PM","is directory");
+                for(File x : file_list){
+                    Log.d("PM",f.getName());
+                }
+            }
+        }
+
+        files = files[0].listFiles();
+
+       Log.d("PM", "got list of files");
+       Log.w("PM",String.valueOf(files.length));
         MediaMetadataRetriever mmr = new MediaMetadataRetriever();
         for(int i = 0; i < files.length; i++) {
+            Log.w("PM",files[i].getPath());
             try {
                 mmr.setDataSource(files[i].getAbsolutePath());
-                Log.d("PopulateMusic", "set up mmr data source");
+                Log.d("PM", "set up mmr data source");
                 String song_name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
                 String song_artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST);
                 String song_album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
                 //String url = mmr.extractMetadata(MediaMetadataRetriever.METADATA_URL);
                 Song curr_song = new UrlSong(song_name, song_artist, song_album, 1, "test");
                 song_list.add(curr_song);
-                Log.d("PopulateMusic", "extracted metadata and added to song_list");
+                Log.d("PM", "extracted metadata and added to song_list");
 
                 Iterator<Album> itr = album_list.iterator();
                 boolean indexed = false;
@@ -173,8 +226,7 @@ public class PopulateMusic {
             catch(Exception e) {
                 e.printStackTrace();
             }
-        }*/
-        /************************** AARON ******************************************/
+        }
 
         Field[] fields = R.raw.class.getFields();
         int[] resArray = new int[fields.length];
@@ -183,11 +235,11 @@ public class PopulateMusic {
                 int res_id = fields[f].getInt(null);
                 AssetFileDescriptor assetFileDescriptor =
                         context.getResources().openRawResourceFd(res_id);
-                MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-                mmr.setDataSource(assetFileDescriptor.getFileDescriptor(),assetFileDescriptor.getStartOffset(), assetFileDescriptor.getLength());
-                String song_album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
-                String song_artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST);
-                String song_name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+                MediaMetadataRetriever m = new MediaMetadataRetriever();
+                m.setDataSource(assetFileDescriptor.getFileDescriptor(),assetFileDescriptor.getStartOffset(), assetFileDescriptor.getLength());
+                String song_album = m.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
+                String song_artist = m.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST);
+                String song_name = m.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
                 ResourceSong curr_song = new ResourceSong(song_name, song_artist, song_album, res_id);
                 song_list.add(curr_song);
                 Iterator<Album> itr = album_list.iterator();
