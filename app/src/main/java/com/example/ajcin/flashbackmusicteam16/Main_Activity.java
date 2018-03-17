@@ -89,6 +89,7 @@ public class Main_Activity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_albums:
                     if (!isFlashbackMode) {
+                        rescan();
                         String[] album_list_string = populateMusic.getAlbumListString();
                         Bundle album_bundle = new Bundle();
                         album_bundle.putStringArray("albums", album_list_string);
@@ -103,6 +104,7 @@ public class Main_Activity extends AppCompatActivity {
                     return false;
                 case R.id.navigation_songs:
                     if (!isFlashbackMode) {
+                        rescan();
                         String[] song_list_string = populateMusic.getSongListString();
                         //Bundle song_bundle = new Bundle();
                       //  song_bundle.putStringArray("songs", song_list_string);
@@ -118,6 +120,7 @@ public class Main_Activity extends AppCompatActivity {
 
                 case R.id.navigation_nowPlaying:
                     if (!isFlashbackMode){
+                        rescan();
                         transaction.replace(R.id.musicItems, new NowPlayingFragment()).commit();
                         return true;
                     }
@@ -125,10 +128,12 @@ public class Main_Activity extends AppCompatActivity {
                     return false;
                 case R.id.navigation_flashbackMode:
                     if(!isFlashbackMode) {
+                        rescan();
                         //queryplays launches new mode as well
                         playListBuilder = new VibePlayListBuilder(populateMusic, contactList);
                         queryPlays(transaction);
                     }else{
+                        rescan();
                         Toast.makeText(getApplicationContext(), "Standard mode", Toast.LENGTH_SHORT).show();
                         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("flash_back_mode", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -141,6 +146,7 @@ public class Main_Activity extends AppCompatActivity {
                     return true;
                 case R.id.navigation_download:
                     if(!isFlashbackMode){
+                        rescan();
                         transaction.replace(R.id.musicItems, new DownloadFragment()).commit();
                         return true;
                     }
@@ -568,6 +574,10 @@ public class Main_Activity extends AppCompatActivity {
         return strAdd;
     }
     public PopulateMusic getPopulateMusic() { return populateMusic;}
+
+    public void rescan(){
+        populateMusic = new PopulateMusic(this);
+    }
 
 
 

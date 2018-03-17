@@ -11,22 +11,25 @@ import android.util.Log;
 public class UrlSong extends Song {
 
     private final String url;
+    private final String id;
 
-    public UrlSong(String title, String artist, String album, int id, String url) {
+    public UrlSong(String title, String artist, String album, String id, String url) {
         super(title, artist, album);
         this.url = url;
+        this.id = id;
     }
 
     public String get_url() {
         return url;
     }
+    public String get_id(){return id;};
 
     @Override
     public void startPlayingSong(Activity activity, MediaPlayer mediaPlayer, Main_Activity mainActivity) {
-        String song_url = get_url();
+        String song_id = get_id();
 
         try {
-            mediaPlayer.setDataSource(song_url);
+            mediaPlayer.setDataSource(song_id);
             mainActivity.mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 public void onPrepared(MediaPlayer mp) {
                     mp.start();
