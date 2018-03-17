@@ -123,6 +123,7 @@ public class Main_Activity extends AppCompatActivity {
                         //queryplays launches new mode as well
                         playListBuilder = new VibePlayListBuilder(populateMusic, contactList);
                         queryPlays(transaction);
+                        isFlashbackMode = true;
                     }else{
                         Toast.makeText(getApplicationContext(), "Standard mode", Toast.LENGTH_SHORT).show();
                         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("flash_back_mode", MODE_PRIVATE);

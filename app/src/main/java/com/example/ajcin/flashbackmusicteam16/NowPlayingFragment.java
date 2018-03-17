@@ -43,6 +43,8 @@ import java.util.Random;
 import java.util.Set;
 
 import static android.content.Context.MODE_PRIVATE;
+import static android.graphics.Typeface.ITALIC;
+import static android.graphics.Typeface.NORMAL;
 
 /** NowPlayingFragment class to handle actions within the Now Playing tab.
  * Author: CSE 110 - Team 16, Winter 2018
@@ -264,6 +266,7 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
         Random randomgenerator = new Random();
         SharedPreferences sp= getContext().getSharedPreferences("proxy_contacts", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
+
         Set used_names = (HashSet<String>)sp.getStringSet("used_names",null);
         String pn = proxyNames[randomgenerator.nextInt(proxyNames.length)];
         if(used_names == null){
@@ -274,6 +277,7 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
             while(used_names.contains(pn)){
                 pn = proxyNames[randomgenerator.nextInt(proxyNames.length)];
             }
+            editor.putString(user_name,pn);
             used_names.add(pn);
         }
         editor.putStringSet("used_names",used_names);
@@ -303,15 +307,21 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
                         user_name_textview.setText(user_name);
                     }
                     else{
-                        SharedPreferences sharedPreferences = getContext().getSharedPreferences("proxy_contacts", MODE_PRIVATE);
-                        String proxy_name = sharedPreferences.getString(user_name,null);
-                        if(proxy_name == null){
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            proxy_name = assignName(user_name);
-                            editor.putString(user_name,proxy_name);
-                            editor.apply();
+                        if(user_name.equals(((Main_Activity)getActivity()).user)){
+                            user_name_textview.setTypeface(null, ITALIC);
+                            user_name_textview.setText("you");
+                        }else {
+                            SharedPreferences sharedPreferences = getContext().getSharedPreferences("proxy_contacts", MODE_PRIVATE);
+                            String proxy_name = sharedPreferences.getString(user_name, null);
+                            if (proxy_name == null) {
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                proxy_name = assignName(user_name);
+                                editor.putString(user_name, proxy_name);
+                                editor.apply();
+                            }
+                            user_name_textview.setTypeface(null, NORMAL);
+                            user_name_textview.setText("anonymous " + proxy_name);
                         }
-                        user_name_textview.setText("anonymous " + proxy_name);
                     }
 
                     song_name.setText(songName);
