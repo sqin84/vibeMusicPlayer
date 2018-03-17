@@ -1,13 +1,18 @@
 package com.example.ajcin.flashbackmusicteam16;
 
+import android.app.Activity;
 import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.widget.Toast;
 
 import java.io.BufferedInputStream;
@@ -27,14 +32,42 @@ import static android.content.Context.DOWNLOAD_SERVICE;
  * Created by ajcin on 3/7/2018.
  */
 
-public class DownloadHandler {
+public class DownloadHandler extends Activity {
     Context context;
     DownloadManager manager;
+    PopulateMusic populateMusic;
 
-    public DownloadHandler(Context c) {
+    public DownloadHandler(Context c, PopulateMusic p) {
         context = c;
         manager = (DownloadManager) context.getSystemService(DOWNLOAD_SERVICE);
+        populateMusic = p;
     }
+
+    private BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            //check if the broadcast message is for our enqueued download
+            long referenceId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+
+            if(referenceId != -1) {
+                Toast toast = Toast.makeText(context,
+                        "Music Download Complete", Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.TOP, 25, 400);
+                toast.show();
+                populateMusic = new PopulateMusic(context);
+            }
+            else{
+
+                Toast toast = Toast.makeText(context,
+                        "Music Download Failed", Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.TOP, 25, 400);
+                toast.show();
+            }
+        }
+    };
+
 
     public long download_file(Context context, String download_url) {
         try {
@@ -43,19 +76,12 @@ public class DownloadHandler {
             DownloadManager manager = (DownloadManager)context.getSystemService(DOWNLOAD_SERVICE);
             DownloadManager.Request request = new DownloadManager.Request(song_uri);
 
-            //MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-            //mmr.setDataSource(download_url);
-            //String song_name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-            //Log.d("DownloadHandler", "song name is: " + song_name);
-
-            request.setTitle("Test Song");
-            request.setDescription("Url is " + download_url);
-
-            File music = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
-            String download_path = music.getAbsolutePath();
-            //request.setDestinationInExternalFilesDir(context, download_path, song_name);
-            request.setDestinationInExternalFilesDir(context, download_path, "Test.mp3");
+            request.setMimeType("audio/MP3");
+            request.allowScanningByMediaScanner();
+            request.setDestinationInExternalFilesDir(context, Environment.DIRECTORY_MUSIC, "Test_Song.mp3");
             long download_ref = manager.enqueue(request);
+            IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+            context.registerReceiver(downloadReceiver, filter);
 
             //TODO check if download is album
 

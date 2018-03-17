@@ -25,7 +25,6 @@ public class VibePlayListBuilder implements PlayListBuilder {
     }
     public void readyScores() {
 
-
         // Priority is given to a track based on first (a) whether it was played
         // near the user's present location, second (b) whether it was played in the last week,
         // and third (c) whether it was played by a friend.  When multiple of these factors are present,

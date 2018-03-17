@@ -40,8 +40,8 @@ public class DownloadFragment extends Fragment {
             @Override
             public void onClick(View v){
                 String entered_url = URL.getText().toString();
-                DownloadHandler handler = new DownloadHandler(getContext());
-                handler.download_file( getContext(), entered_url);
+                DownloadHandler handler = new DownloadHandler(getContext(),((Main_Activity)getActivity()).getPopulateMusic());
+                handler.download_file((Main_Activity)getActivity(), entered_url);
             }
         });
         return view;

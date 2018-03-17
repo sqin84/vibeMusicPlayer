@@ -15,10 +15,13 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -72,6 +75,8 @@ public class Main_Activity extends AppCompatActivity {
 
     public static boolean isFlashbackMode = false;
 
+    int PERMISSION_ALL = 1;
+    String[] PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -267,6 +272,15 @@ public class Main_Activity extends AppCompatActivity {
         Intent intent = new Intent(this, GooglePeopleActivity.class);
         startActivityForResult(intent,PEOPLE_RESULT_CODE);
 
+        ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+
+        if(hasPermissions(context,PERMISSIONS) == true){
+            Log.w("PM","permission granted!");
+        }
+        else{
+            Log.w("PM","permission denied!");
+        }
+
         setContentView(R.layout.activity_album_view);
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
@@ -318,6 +332,7 @@ public class Main_Activity extends AppCompatActivity {
             Log.d("test1","ins");
             return;
         }
+
         locationManger.requestLocationUpdates(locationProvider,3000,0,locationListener);
 
 
@@ -555,4 +570,18 @@ public class Main_Activity extends AppCompatActivity {
         return strAdd;
     }
     public PopulateMusic getPopulateMusic() { return populateMusic;}
+
+
+
+    public static boolean hasPermissions(Context context, String... permissions) {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    Log.w("PM","No Permission " + permission);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }
