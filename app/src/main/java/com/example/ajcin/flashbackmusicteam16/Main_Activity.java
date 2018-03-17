@@ -70,6 +70,7 @@ public class Main_Activity extends AppCompatActivity {
     private FusedLocationProviderClient mFusedLocationClient;
 
     private static final int PEOPLE_RESULT_CODE = 300;
+    private static final int CONTACT_RESULT_CODE = 200;
 
     //private static final int MEDIA_RES_ID = R.raw.after_the_storm;
 
@@ -125,7 +126,7 @@ public class Main_Activity extends AppCompatActivity {
                 case R.id.navigation_flashbackMode:
                     if(!isFlashbackMode) {
                         //queryplays launches new mode as well
-                        playListBuilder = new VibePlayListBuilder(populateMusic,contactList);
+                        playListBuilder = new VibePlayListBuilder(populateMusic, contactList);
                         queryPlays(transaction);
                     }else{
                         Toast.makeText(getApplicationContext(), "Standard mode", Toast.LENGTH_SHORT).show();
@@ -335,8 +336,6 @@ public class Main_Activity extends AppCompatActivity {
 
         locationManger.requestLocationUpdates(locationProvider,3000,0,locationListener);
 
-
-
         SharedPreferences sharedPreferences = getSharedPreferences("flash_back_mode", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -369,7 +368,7 @@ public class Main_Activity extends AppCompatActivity {
                             // Got last known location. In some rare situations this can be null.
                             if (location != null) {
                                 // Logic to handle location object
-                                playListBuilder = new VibePlayListBuilder(populateMusic,contactList);
+                                playListBuilder = new VibePlayListBuilder(populateMusic, (List<String>)contactList);
                                 queryPlays(transaction);
                                 navigation.getMenu().getItem(2).setChecked(true);
                                 Toast.makeText(getApplicationContext(), "Flashback mode engaged", Toast.LENGTH_SHORT).show();
@@ -440,17 +439,17 @@ public class Main_Activity extends AppCompatActivity {
             if(isFlashbackMode) {
                 if (!queuedSongs.isEmpty()){
                     mediaPlayer.reset();
-                loadMedia(queuedSongs.get(0));
-                SharedPreferences sharedPreferences = getSharedPreferences("user_name", MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("song_name", queuedSongs.get(0).get_title());
-                editor.putString("artist_name", queuedSongs.get(0).get_artist());
-                editor.putString("album_name", queuedSongs.get(0).get_album());
-                editor.putString("address", queuedSongs.get(0).get_last_played_address());
-                editor.putString("time", queuedSongs.get(0).get_last_time_string());
-                editor.apply();
-                queuedSongs.remove(0);
-            }
+                    loadMedia(queuedSongs.get(0));
+                    SharedPreferences sharedPreferences = getSharedPreferences("user_name", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("song_name", queuedSongs.get(0).get_title());
+                    editor.putString("artist_name", queuedSongs.get(0).get_artist());
+                    editor.putString("album_name", queuedSongs.get(0).get_album());
+                    editor.putString("address", queuedSongs.get(0).get_last_played_address());
+                    editor.putString("time", queuedSongs.get(0).get_last_time_string());
+                    editor.apply();
+                    queuedSongs.remove(0);
+                }
             }
             else {
                 nextAlbumTrack();
@@ -509,7 +508,6 @@ public class Main_Activity extends AppCompatActivity {
             loadMedia(curr_song);
         }
     }
-
 
     @Override
     public void onDestroy() {
