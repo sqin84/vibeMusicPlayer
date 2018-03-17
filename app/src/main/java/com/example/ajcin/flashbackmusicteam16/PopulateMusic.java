@@ -205,8 +205,9 @@ public class PopulateMusic {
                 String song_name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
                 String song_artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST);
                 String song_album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
-                //String url = mmr.extractMetadata(MediaMetadataRetriever.METADATA_URL);
-                Song curr_song = new UrlSong(song_name, song_artist, song_album, 1, "test");
+                String url = files[i].getName();
+                Log.d("PopulateMusic", "name is: " + url);
+                Song curr_song = new UrlSong(song_name, song_artist, song_album, 1, url);
                 song_list.add(curr_song);
                 Log.d("PM", "extracted metadata and added to song_list");
 

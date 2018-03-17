@@ -78,7 +78,8 @@ public class DownloadHandler extends Activity {
 
             request.setMimeType("audio/MP3");
             request.allowScanningByMediaScanner();
-            request.setDestinationInExternalFilesDir(context, Environment.DIRECTORY_MUSIC, "Test_Song.mp3");
+            //request.setDestinationInExternalFilesDir(context, Environment.DIRECTORY_MUSIC, "Test_Song.mp3");
+            request.setDestinationInExternalFilesDir(context, Environment.DIRECTORY_MUSIC, download_url);
             long download_ref = manager.enqueue(request);
             IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
             context.registerReceiver(downloadReceiver, filter);
