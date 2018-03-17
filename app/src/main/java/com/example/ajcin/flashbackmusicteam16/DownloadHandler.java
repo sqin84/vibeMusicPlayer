@@ -35,12 +35,10 @@ import static android.content.Context.DOWNLOAD_SERVICE;
 public class DownloadHandler extends Activity {
     Context context;
     DownloadManager manager;
-    PopulateMusic populateMusic;
 
-    public DownloadHandler(Context c, PopulateMusic p) {
+    public DownloadHandler(Context c) {
         context = c;
         manager = (DownloadManager) context.getSystemService(DOWNLOAD_SERVICE);
-        populateMusic = p;
     }
 
     private BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
@@ -56,7 +54,7 @@ public class DownloadHandler extends Activity {
                         "Music Download Complete", Toast.LENGTH_LONG);
                 toast.setGravity(Gravity.TOP, 25, 400);
                 toast.show();
-                populateMusic = new PopulateMusic(context);
+
             }
             else{
 
